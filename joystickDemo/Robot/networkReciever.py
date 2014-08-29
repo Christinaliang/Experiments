@@ -14,7 +14,7 @@ class networkReciever:
     def openClientSocket(self):
 
         tcpSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        tcpSock.bind(('', self.TCP_PORT))
+        tcpSock.bind(('', 6000))
         tcpSock.listen(1)
         # tcpSock.settimeout(3)
         conn = tcpSock.accept()
