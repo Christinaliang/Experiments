@@ -21,9 +21,9 @@ class control:
     COLOR_DISPLAY_TEXT = (255, 255, 255)
     COLOR_BACKGROUND_TEXT = (0, 0, 0)
 
-    ROBOT_IP = "127.0.0.1"
+    ROBOT_IP = "10.16.2.186"
     #Use this one for testing on the normal wireless network
-    #UDP_IP = "127.0.0.1"
+    # ROBOT_IP = "127.0.0.1"
     PORT = 6000
 
     ## __init__

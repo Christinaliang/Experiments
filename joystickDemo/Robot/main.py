@@ -36,6 +36,9 @@ while True:
 
             con.reset()
 
+        for c in command:
+            print "  " + c
+
         leftSpeed = (50-command[2])*motorSpeedMod
         con.driveLeft(leftSpeed)
 
