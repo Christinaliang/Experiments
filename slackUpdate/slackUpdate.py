@@ -1,4 +1,6 @@
-from logging import exception
+#!/usr/bin/env python
+
+
 from urllib2 import Request, urlopen, URLError
 import sys
 
