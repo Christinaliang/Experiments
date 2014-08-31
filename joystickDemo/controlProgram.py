@@ -130,7 +130,7 @@ class control:
 
         #if shouldSend:
         self.sock.sendto(self.joyData, (self.ROBOT_IP, self.PORT))
-        time.sleep(0.01)
+        time.sleep(0.2)
 
 
     def loadJoystickData(self):

@@ -42,7 +42,7 @@ class networkReciever:
         received = None
 
         try:
-            received = bytearray(self.sock.recv(10))
+            received = bytearray(self.sock.recv(7))
         except:
             return None
 
