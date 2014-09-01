@@ -17,11 +17,10 @@ do
 	#Get the hostname of this machine
 	name=$(hostname)
 
-	#Constuct the update message
+	#Construct the update message
 	msg="$name has come online. It is on the network \"$networkName\" with the IP $ip"
 	
-	if ["$msg" == "$lastMsg"];
-	#if test $msg != $lastMsg
+	if [ "$msg" != "$lastMsg" ];
 	then
 		echo $msg
 	fi
