@@ -22,7 +22,8 @@ do
 	
 	if [ "$msg" != "$lastMsg" ];
 	then
-		echo $msg
+		./slackUpdate.py "$msg"
+		#echo $msg
 	fi
 
 	lastMsg=$msg
