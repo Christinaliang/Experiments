@@ -1,7 +1,7 @@
 #/bin/bash
 
 netDevice="wlan0"
-pollTime=5
+pollTime=300
 
 lastMsg=""
 

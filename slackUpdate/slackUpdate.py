@@ -11,7 +11,8 @@ if len(sys.argv) <= 1:
 text = sys.argv[1]
 
 channel = "C02HUEW3J"
-
+botName = "Robot"
+icon = "https://www.decalgirl.com/assets/designs/large/benderface.jpg"
 
 try:
     keyFile = open("slackKey.private", "r")
@@ -24,7 +25,7 @@ except IOError:
 
 formatedText = text.replace(" ", "%20")
 
-url = "https://slack.com/api/chat.postMessage?token=" + slackKey +"&channel=" + channel +"&text=" + formatedText
+url = "https://slack.com/api/chat.postMessage?token=" + slackKey +"&channel=" + channel +"&text=" + formatedText + "&username=" + botName + "&icon_url=" + icon
 
 request = Request(url)
 
