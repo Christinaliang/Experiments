@@ -10,8 +10,7 @@ if len(sys.argv) <= 1:
 
 text = sys.argv[1]
 
-channel = "C02A7FKH1"
-# text = "Python Test"
+channel = "C02HUEW3J"
 
 
 try:
@@ -27,7 +26,6 @@ formatedText = text.replace(" ", "%20")
 
 url = "https://slack.com/api/chat.postMessage?token=" + slackKey +"&channel=" + channel +"&text=" + formatedText
 
-# print key.read()
 request = Request(url)
 
 try:
