@@ -12,7 +12,7 @@ text = sys.argv[1]
 
 channel = "C02HUEW3J"
 botName = "Robot"
-icon = "https://www.decalgirl.com/assets/designs/large/benderface.jpg"
+icon = "http://i.imgur.com/7LNFbCX.png"
 
 try:
     keyFile = open("slackKey.private", "r")
