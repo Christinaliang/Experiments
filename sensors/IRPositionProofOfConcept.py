@@ -7,18 +7,19 @@ LUNARENA_HEIGHT = 738
 
 
 ##
-# Description: Generates a list of position sensor values [FORE, PORT, AFT, STARBOARD]
-# based on the three-tuple (X,Y,ORIENTATION).
+# Description: Generates a list of IR distance sensor values [FORE, PORT, AFT, STARBOARD]
+# based on the provided position of the robot.
+#
+# This uses math coordinates: Positive is up (Y) or right (X); angles are measured
+# counterclockwise from the right (EAST). A robot's position involves its X/Y position and its orientation (rotation).
 #
 # (0,0) is "bottom left" of the arena, if you start at the bottom.
 # (378, 738) is the "top right" of the arena.
 #
 # Note that our current IR sensors are valid for values from 15-150.
 #   (TODO: Not implemented yet. Currently using Perfect Information until we have an algorithm.)
-# Orientation:
 #
 # Parameters:
-#       The tuple (x,y,orientation), where:
 #           x: X-value (in cm, from "bottom left" of the arena).
 #           y: Y-value (in cm, from "bottom left" of the arena).
 #           orientation: degrees. 0 degrees is EAST (math coordinates). Valid inputs are 0 - 360.
@@ -26,11 +27,7 @@ LUNARENA_HEIGHT = 738
 # Returns:
 #       A list of position sensor values: [fore, port, aft, starboard].
 #
-def generateIRValuesFromPosition(position):
-    # Convert the tuple into friendlier, more descriptive variables.
-    x = position[0]
-    y = position[1]
-    angleDeg = position[2]
+def generateIRValuesFromPosition(x, y, angleDeg):
     effectiveAngleDeg = angleDeg
 
     # For now, pretend that the robot can only face from 0 to 90 degrees. Later, we'll use rotational symmetry to
