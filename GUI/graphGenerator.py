@@ -1,6 +1,7 @@
 __author__ = 'sherryliao_1'
 
-import pylab
+import numpy
+import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import threading
 
@@ -17,12 +18,11 @@ import threading
 class Graph(object):
     def __init__(self, title, xLabel, yLabel, yMin, yMax, root):
         # configure graph details
-        self.xAchse = pylab.arange(0, 100, 1)
-        self.yAchse = pylab.array([0]*100)
+        self.xAchse = numpy.arange(0, 100, 1)
+        self.yAchse = numpy.array([0]*100)
         self.yMin = yMin
         self.yMax = yMax
-        self.fig = pylab.figure(1)
-        self.fig.set_size_inches(3,3)
+        self.fig = matplotlib.figure.Figure((3,3))
         self.ax = self.fig.add_subplot(111)
         self.ax.grid(True)
         self.ax.set_title(title)
@@ -53,9 +53,9 @@ class Graph(object):
     # plot the values to graph
     def realTimePlotter(self):
         numVisibleDataPoints = min(len(self.values), 1000)
-        currentXAxis = pylab.arange(len(self.values) - numVisibleDataPoints, len(self.values), 1)
+        currentXAxis = numpy.arange(len(self.values) - numVisibleDataPoints, len(self.values), 1)
 
-        self.line1[0].set_data(currentXAxis, pylab.array(self.values[-numVisibleDataPoints:]))
+        self.line1[0].set_data(currentXAxis, numpy.array(self.values[-numVisibleDataPoints:]))
         self.ax.axis([currentXAxis.min(), currentXAxis.max(), self.yMin, self.yMax])
         self.canvas.draw()
         self.parent.after(50, self.realTimePlotter)
