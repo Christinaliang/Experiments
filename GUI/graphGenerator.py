@@ -12,8 +12,8 @@ import threading
 #
 # adapted from http://hardsoftlucid.wordpress.com/various-stuff/realtime-plotting/
 #
+# Note: Dependencies needed include numpy, matplotlib.
 ##
-
 
 class Graph(object):
     def __init__(self, title, xLabel, yLabel, yMin, yMax, root):
