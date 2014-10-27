@@ -71,42 +71,19 @@ void setup(){
   count = 0;
 }
 
-// This program rotates a motor in alternating directions
-// at ~90% power on a ~4 second cadence. 
+// This program drives forward.
 void loop(){
-  // Count how many milliseconds have passed
-  count = count + 1;
-
-  // First 4 seconds: Rotate one direction.
-  // Second 4 seconds: Rotate the opposite direction.
-  // After 8 seconds, repeat.
-  if(count < 4000) {
     // If the last move was backwards, we need to change direction.
     if(BACKWARD_LABEL == direction){
-      driveForwards(40,FRONT_LEFT_DRIVE_MOTOR_ID);
-      driveForwards(40,FRONT_RIGHT_DRIVE_MOTOR_ID);
-      driveForwards(40,MIDDLE_LEFT_DRIVE_MOTOR_ID);
-      driveForwards(40,MIDDLE_RIGHT_DRIVE_MOTOR_ID);
-      driveForwards(40,REAR_LEFT_DRIVE_MOTOR_ID);
-      driveForwards(40,REAR_RIGHT_DRIVE_MOTOR_ID);
+      unsigned char speed = 120;
+      driveForwards(speed, FRONT_LEFT_DRIVE_MOTOR_ID);
+      driveForwards(speed, FRONT_RIGHT_DRIVE_MOTOR_ID);
+      driveForwards(speed, MIDDLE_LEFT_DRIVE_MOTOR_ID);
+      driveForwards(speed, MIDDLE_RIGHT_DRIVE_MOTOR_ID);
+      driveForwards(speed, REAR_LEFT_DRIVE_MOTOR_ID);
+      driveForwards(speed, REAR_RIGHT_DRIVE_MOTOR_ID);
       direction = FORWARD_LABEL;
     }
-  }
-  else if (count < 8000) {
-    // If the last move was forwards, we need to change direction.
-    if(FORWARD_LABEL == direction){
-      driveBackwards(40,FRONT_LEFT_DRIVE_MOTOR_ID);
-      driveBackwards(40,FRONT_RIGHT_DRIVE_MOTOR_ID);
-      driveBackwards(40,MIDDLE_LEFT_DRIVE_MOTOR_ID);
-      driveBackwards(40,MIDDLE_RIGHT_DRIVE_MOTOR_ID);
-      driveBackwards(40,REAR_LEFT_DRIVE_MOTOR_ID);
-      driveBackwards(40,REAR_RIGHT_DRIVE_MOTOR_ID);
-      direction = BACKWARD_LABEL;
-    }
-  }
-  else {
-    count = 0; 
-  }
   // Avoid overloading the motor controller.
   delayMicroseconds(1000);
 
@@ -115,7 +92,7 @@ void loop(){
 
 // Function to drive forward. 
 // Packet format: Address Byte, Command Byte, Value Byte, Checksum.
-void driveForwards(char speed, char motor){
+void driveForwards(unsigned char speed, char motor){
   // Build the data packet:
   // Get the address and motor command ID from a predefined array.
   unsigned char address = DRIVE_MOTOR_ADDRESS[motor];
@@ -130,7 +107,7 @@ void driveForwards(char speed, char motor){
 
 // Function to drive backwards. 
 // Packet format: Address Byte, Command Byte, Value Byte, Checksum.
-void driveBackwards(char speed, char motor){
+void driveBackwards(unsigned char speed, char motor){
   unsigned char address = DRIVE_MOTOR_ADDRESS[motor];
   unsigned char command = DRIVE_MOTOR_COMMAND[motor] + 1;
   unsigned char checksum = (address + command + speed) & 0b01111111;
