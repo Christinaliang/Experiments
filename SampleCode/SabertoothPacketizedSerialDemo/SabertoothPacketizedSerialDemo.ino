@@ -3,8 +3,10 @@
  / "Packetized Serial" method of using the Sabertooth Motor
  / Controller. 
  /
- / SETUP: Be sure that the Sabertooth has DIPs 3,4,5,6 on (1,2 off).
- / Sabertooth should be connected on S1 to TX3 on an Arduino Mega 2560.
+ / SETUP: Be sure that the Sabertooth has DIPs 4,5,6 on (1,2 off).
+ /  DIP 3 is used to indicate Lithium battery mode, and will vary
+ /  in its position based on the power source.
+ / Sabertooth[s] should be connected on S1 to TX3 on an Arduino Mega 2560.
  / This allows it to read 9600-baud commands from the Arduino Mega.
  / Be careful to use TX3: TX1 should be reserved for Arduino-Computer
  / communications.
@@ -139,7 +141,3 @@ void driveBackwards(char speed, char motor){
   Serial3.write(speed);
   Serial3.write(checksum);
 }
-
-
-
-

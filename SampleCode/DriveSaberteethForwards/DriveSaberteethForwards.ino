@@ -1,13 +1,7 @@
 /* 
- / This is a simple Arduino program that demonstrates the
- / "Packetized Serial" method of using the Sabertooth Motor
- / Controller. 
- /
- / SETUP: Be sure that the Sabertooth has DIPs 3,4,5,6 on (1,2 off).
- / Sabertooth should be connected on S1 to TX3 on an Arduino Mega 2560.
- / This allows it to read 9600-baud commands from the Arduino Mega.
- / Be careful to use TX3: TX1 should be reserved for Arduino-Computer
- / communications.
+ / This is a simple Arduino program that drives all the 
+ / drive motors on the transporter forwards at the specified
+ / power value.
  */
 
 // Variable to store how many milliseconds have passed.
@@ -89,7 +83,6 @@ void loop(){
 
 }
 
-
 // Function to drive forward. 
 // Packet format: Address Byte, Command Byte, Value Byte, Checksum.
 void driveForwards(unsigned char speed, char motor){
@@ -104,19 +97,3 @@ void driveForwards(unsigned char speed, char motor){
   Serial3.write(speed);
   Serial3.write(checksum);
 }
-
-// Function to drive backwards. 
-// Packet format: Address Byte, Command Byte, Value Byte, Checksum.
-void driveBackwards(unsigned char speed, char motor){
-  unsigned char address = DRIVE_MOTOR_ADDRESS[motor];
-  unsigned char command = DRIVE_MOTOR_COMMAND[motor] + 1;
-  unsigned char checksum = (address + command + speed) & 0b01111111;
-  Serial3.write(address);
-  Serial3.write(command);
-  Serial3.write(speed);
-  Serial3.write(checksum);
-}
-
-
-
-
