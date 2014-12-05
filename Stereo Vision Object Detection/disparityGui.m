@@ -12,7 +12,7 @@ function mygui
     % Create a figure and axes
     f = figure('Visible','off');
     ax = axes('Units','pixels');
-    %surf(peaks)
+	
     myVars = load('disparityMap.mat');
     Z = myVars.Z;
     J1 = myVars.J1;

@@ -1,5 +1,5 @@
 %
-% Perform Stereo Camera Calbibration
+% Perform Stereo Camera Calibration
 %
 % Authors:
 %   Matt Holland
