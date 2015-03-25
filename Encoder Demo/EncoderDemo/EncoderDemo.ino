@@ -7,7 +7,7 @@ Modified by Derek Schumacher on March 24, 2015
 
 #define ENCODER0PINA         3      // this pin needs to support interrupts
 #define ENCODER0PINB         4     // no interrupt required
-#define ENCODER0INDEX        5      
+#define ENCODER0INDEX        2      //interrupt required
 #define CPR                  400    // encoder cycles per revolution
 #define CLOCKWISE            2       // direction constant
 #define COUNTER_CLOCKWISE    1       // direction constant
@@ -15,6 +15,7 @@ Modified by Derek Schumacher on March 24, 2015
 // variables modified by interrupt handler must be declared as volatile
 volatile long encoder0Position = 0;
 volatile long interruptsReceived = 0;
+volatile long numRotations = 0;
 
 // track direction: 0 = counter-clockwise; 1 = clockwise
 short currentDirection = CLOCKWISE;
@@ -32,6 +33,7 @@ void setup()
   
   // interrupts
   attachInterrupt(1, onInterrupt, RISING);
+  attachInterrupt(0, onIndexChanged, RISING);
 
   // enable diagnostic output
   Serial.begin (9600);
@@ -59,10 +61,7 @@ void onInterrupt()
   // read both inputs
   int a = digitalRead(ENCODER0PINA);
   int b = digitalRead(ENCODER0PINB);
-  
-  //read the index:
-  int index = digitalRead(ENCODER0INDEX);
-  
+    
   if (a == b )
   {
     // b is leading a (counter-clockwise)
@@ -79,13 +78,14 @@ void onInterrupt()
   // track 0 to 400
   encoder0Position = encoder0Position % CPR;
 
-  //If we hit the index this time, reset encoder position,
-  //and number of interrupts received.
-  if (index != 0) {
-     encoder0Position = 0; 
-     interruptsReceived = 0;
-  }
-
   // track the number of interrupts
   interruptsReceived++;
+}
+
+void onIndexChanged()
+{
+    //If we hit the index, display that information.
+  Serial.print("Hit Index. Num revolutions: ");
+  Serial.println(numRotations);
+  numRotations++;
 }
