@@ -1,6 +1,4 @@
-__author__ = 'Matt'
-
-
+#TODO: make this documentation not suck
 class data:
 
     def __init__(self):
@@ -12,13 +10,17 @@ class data:
         self.rearLeftWheel = wheel(0, 0.5, 0)
         self.rearRightWheel = wheel(0, 0.5, 0)
 
+        self.currentLocation = location(0, 0)
 
+
+
+#TODO: make this documentation not suck.
 class wheel:
 
     MAX_CURRENT = 5
 
     def __init__(self, theta, speed, current):
-        # Rotation of wheels relative to body. 0 is facing forwards
+        # Rotation of wheels relative to body. 0 is East relative to the robot
         self.theta = theta
 
         # Speed wheels are being told to drive
@@ -26,3 +28,36 @@ class wheel:
 
         # Current draw of wheel motors
         self.current = current
+
+##
+# This class defines the position of the robot. The arena is 3.78m by 7.38m. the expanded
+# robot is 1.2x1.5
+#
+#  3.78 meters (x)           pi / 2 rads
+#   +-----+-----+             |
+#   |     |     |             N
+#   |     |     | pi rads - W + E - 0 rads
+#   |     |     |             S
+#   |     |     |             |
+#   |     |     |          3 pi / 2 rads
+#   |     |     |
+#   |     |     |  7.38 meters (y)
+#   +-----+-----+
+#       (0,0)
+#
+# The origin is located at the exact center of the arena. Relative north is
+# facing the end of the arena (as shown above).
+#
+# Variables:
+# x - denotes the x position of the center of the robot (meters). -1.89 <= x <= +1.89
+# y - denotes the y position of the center of the robot (meters). 0 <= y <= 7.38
+# theta - the number of radians turned from E(ast); as the unit circle
+#
+# TODO: use verification to make sure that the robot does not hit the edges/go outside the arena.
+# TODO: functions about travel.
+##
+class location:
+    def __init__(self, x, y, theta):
+        self.x = x
+        self.y = y
+        self.theta = theta
