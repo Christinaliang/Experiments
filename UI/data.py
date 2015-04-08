@@ -18,6 +18,11 @@ class wheel:
     MAX_CURRENT = 5
 
     def __init__(self, theta, speed, current):
+        # Rotation of wheels relative to body. 0 is facing forwards
         self.theta = theta
+
+        # Speed wheels are being told to drive
         self.speed = speed
+
+        # Current draw of wheel motors
         self.current = current
