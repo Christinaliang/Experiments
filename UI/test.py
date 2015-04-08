@@ -19,7 +19,7 @@ class Application(Frame):
 
         self.canvas.delete("all")
 
-        self.d.frontLeftTheta += 0.1
+        self.d.frontLeftWheel.theta += 0.1
 
         drawWheelDisplay(self.canvas, 0, 0, 200, self.d)
 

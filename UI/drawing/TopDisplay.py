@@ -6,23 +6,21 @@ def drawWheelDisplay(canvas, x, y, size, data):
 
     wheelSize = size / 6
 
-    drawWheel(canvas, x+size*1/4, y+size/6, wheelSize, data.frontLeftTheta, data.frontLeftSpeed, 0)
-    drawWheel(canvas, x+size*1/4, y+size/6*3, wheelSize, data.frontLeftTheta, data.frontLeftSpeed, 0)
-    drawWheel(canvas, x+size*1/4, y+size/6*5, wheelSize, data.frontLeftTheta, data.frontLeftSpeed, 0)
+    drawWheel(canvas, x+size*1/4, y+size/6, wheelSize, data.frontLeftWheel)
+    drawWheel(canvas, x+size*1/4, y+size/6*3, wheelSize, data.midLeftWheel)
+    drawWheel(canvas, x+size*1/4, y+size/6*5, wheelSize, data.rearLeftWheel)
 
-    drawWheel(canvas, x+size*3/4, y+size/6, wheelSize, data.frontLeftTheta, data.frontLeftSpeed, 0)
-    drawWheel(canvas, x+size*3/4, y+size/6*3, wheelSize, data.frontLeftTheta, data.frontLeftSpeed, 0)
-    drawWheel(canvas, x+size*3/4, y+size/6*5, wheelSize, data.frontLeftTheta, data.frontLeftSpeed, 0)
-
-
-    return
+    drawWheel(canvas, x+size*3/4, y+size/6, wheelSize, data.frontRightWheel)
+    drawWheel(canvas, x+size*3/4, y+size/6*3, wheelSize, data.midRightWheel)
+    drawWheel(canvas, x+size*3/4, y+size/6*5, wheelSize, data.midRightWheel)
 
 
-def drawWheel(canvas, x, y, size, theta, speed, current):
+
+def drawWheel(canvas, x, y, size, wheelData):
 
     half_length = size/2
 
-    rotationMatrix = numpy.matrix([[math.cos(theta), -math.sin(theta)], [math.sin(theta), math.cos(theta)]])
+    rotationMatrix = numpy.matrix([[math.cos(wheelData.theta), -math.sin(wheelData.theta)], [math.sin(wheelData.theta), math.cos(wheelData.theta)]])
 
 
     rect = numpy.matrix(
@@ -34,7 +32,7 @@ def drawWheel(canvas, x, y, size, theta, speed, current):
 
     speedArrow = numpy.matrix(
         [[half_length, 0],
-         [half_length, half_length*speed]]
+         [half_length, half_length*wheelData.speed]]
     )
 
     rotRect = rect.dot(rotationMatrix)
