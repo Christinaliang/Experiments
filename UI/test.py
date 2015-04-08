@@ -14,10 +14,9 @@ class Application(Frame):
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
-        self.pack()
 
-        self.canvas = Canvas(width=200, height=200)
-        self.canvas.pack()
+        self.canvas = Canvas(width=800, height=600)
+        self.canvas.grid()
 
 
     def redraw(self):
