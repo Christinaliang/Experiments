@@ -1,7 +1,7 @@
 __author__ = 'Matt'
 
 
-class data:
+class RobotData:
 
     def __init__(self):
 

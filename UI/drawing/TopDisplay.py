@@ -2,6 +2,7 @@ import math
 import numpy
 __author__ = 'Matt'
 
+
 def drawWheelDisplay(canvas, x, y, size, data):
 
     wheelSize = size / 6
@@ -15,13 +16,20 @@ def drawWheelDisplay(canvas, x, y, size, data):
     drawWheel(canvas, x+size*3/4, y+size/6*5, wheelSize, data.midRightWheel)
 
 
-
+##
+# drawWheel
+#
+# Description - draws a wheel with position, rotation, and indicators based on given data
+#
 def drawWheel(canvas, x, y, size, wheelData):
 
     half_length = size/2
 
-    rotationMatrix = numpy.matrix([[math.cos(wheelData.theta), -math.sin(wheelData.theta)], [math.sin(wheelData.theta), math.cos(wheelData.theta)]])
-
+    # Some fun linear algebra to rotate the wheel
+    rotationMatrix = numpy.matrix(
+        [[math.cos(wheelData.theta), -math.sin(wheelData.theta)],
+         [math.sin(wheelData.theta), math.cos(wheelData.theta)]]
+    )
 
     rect = numpy.matrix(
         [[-half_length, -half_length],
@@ -37,8 +45,9 @@ def drawWheel(canvas, x, y, size, wheelData):
 
     rotRect = rect.dot(rotationMatrix)
     rotSpeed = speedArrow.dot(rotationMatrix)
+    # end of fun linear algebra
 
-
+    # Draw the wheel
     canvas.create_polygon(
         x+rotRect[0].item(0), y+rotRect[0].item(1),
         x+rotRect[1].item(0), y+rotRect[1].item(1),
@@ -47,6 +56,7 @@ def drawWheel(canvas, x, y, size, wheelData):
         fill="grey"
     )
 
+    # Draw the speed intensity bar
     canvas.create_line(
         x+rotSpeed[0].item(0), y+rotSpeed[0].item(1),
         x+rotSpeed[1].item(0), y+rotSpeed[1].item(1),
