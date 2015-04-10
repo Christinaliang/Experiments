@@ -12,7 +12,11 @@ class RobotData:
         self.rearLeftWheel = wheel(0, 0.5, 0)
         self.rearRightWheel = wheel(0, 0.5, 0)
 
-        self.currentLocation = location(0, 0)
+        self.leftArm = rockerBogieArm(0, 0)
+        self.rightArm = rockerBogieArm(0, 0)
+
+        self.currentLocation = location(0, 0, 0)
+
 
 class wheel:
 
@@ -27,6 +31,16 @@ class wheel:
 
         # Current draw of wheel motors
         self.current = current
+
+
+class rockerBogieArm:
+
+    def __init__(self, rockerTheta, bogieTheta):
+
+        self.rockerTheta = rockerTheta
+        self.bogieTheta = bogieTheta
+
+        return
 
 ##
 # This class defines the position of the robot. The arena is 3.78m by 7.38m. the expanded

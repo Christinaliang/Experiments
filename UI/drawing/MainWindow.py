@@ -11,6 +11,7 @@ except ImportError:
         exit()
 
 from TopDisplay import drawWheelDisplay
+from RockerBogieSide import drawRockerBogie
 
 
 ##
@@ -30,6 +31,9 @@ class Application(Frame):
 
         self.canvas.delete("all")
         drawWheelDisplay(self.canvas, 0, 0, 200, self.dataBox[0])
+
+        drawRockerBogie(self.canvas, 200, 0, 200, self.dataBox[0].leftArm, True)
+        drawRockerBogie(self.canvas, 200, 200, 200, self.dataBox[0].rightArm, False)
 
         self.after(10, self.redraw)
         return
