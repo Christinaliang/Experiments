@@ -32,6 +32,7 @@ class MARSControlConsole(Frame):
             ""
         try:
             # Fake the controls console
+            sampleControlAreaImage = PhotoImage(file="images/ControlsConsole.png")
             inputArea = Label(image=sampleControlAreaImage)
             inputArea.image=sampleControlAreaImage
             inputArea.grid(row=1, column=2, sticky=N+S+E+W, padx=5, pady=5)
