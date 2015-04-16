@@ -7,14 +7,17 @@ __author__ = 'Matt'
 
 from UI.UiRunner import *
 from UI.network.RobotDataClient import *
+from UI.RobotData import ManualControlData
 
 # Makeshift global variable.
 #   Pass around the array and change it's contents to change it globally
-theData = [RobotData()]
+robotData = [RobotData()]
+uiData = ManualControlData()
+
 
 # The objects that do everything
-dataClient = RobotDataClient(theData)
-uiRunner = UiRunner(theData)
+dataClient = RobotDataClient(robotData)
+uiRunner = UiRunner(robotData, uiData)
 
 # start the threads
 dataClient.start()

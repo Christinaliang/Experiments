@@ -18,6 +18,7 @@ class RobotData:
         self.currentLocation = location(0, 0, 0)
 
 
+
 class wheel:
 
     MAX_CURRENT = 5
@@ -39,6 +40,18 @@ class rockerBogieArm:
 
         self.rockerTheta = rockerTheta
         self.bogieTheta = bogieTheta
+
+        return
+
+
+class ManualControlData:
+
+    def __init__(self):
+
+        self.radius_offset_x = 0
+        self.radius_offset_y = 0
+        self.go_forward = True
+
 
         return
 
