@@ -90,9 +90,11 @@ rdd.start()
 while True:
 
     # Process a command
-    command = commandQueue.pop(0)
+    if len(commandQueue) > 0:
+        command = commandQueue.pop(0)
 
-    # TODO: stuff with the command
+        # TODO: stuff with the command
+        print command.go_forward
 
     # Update Robot data
 
