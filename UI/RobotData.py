@@ -18,7 +18,15 @@ class RobotData:
         self.currentLocation = location(0, 0, 0)
 
 
-
+##
+# This class defines the position of an individual wheel on the transport. The
+#
+# Variables:
+# - theta: the radian rotation of wheels relative to body. 0 is forward for the robot.
+# - speed: the speed the wheels are being told to drive at (TODO: speed/time)
+# - current: the current draw of the wheel motors (TODO: units)
+#
+##
 class wheel:
 
     MAX_CURRENT = 5
@@ -34,6 +42,12 @@ class wheel:
         self.current = current
 
 
+##
+#
+# Variables:
+# - rockerTheta: the rotation of the rocker. (TODO: what does this mean)
+# - bogeTheta: the rotation of the boge. (also...
+#
 class rockerBogieArm:
 
     def __init__(self, rockerTheta, bogieTheta):
