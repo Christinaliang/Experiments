@@ -5,12 +5,7 @@ import socket
 
 import threading
 
-#cPicke is faster
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
-
+from DataTransferProtocol import sendData, receiveData
 test_dataBox = [RobotData()]
 
 
@@ -35,20 +30,6 @@ class RobotDataClient(threading.Thread):
     def run(self):
 
         while True:
-            self.receiveData()
+            self.dataBox[0] = receiveData(self.socket)
 
         return
-
-    ##
-    # receiveData
-    #
-    # Description: Receive a serialized object string from the server and reformat it to an actual RobotData object
-    #
-    def receiveData(self):
-
-        # first we get a string that says how long the serialized string is
-        length = int(self.socket.recv(10))
-
-        # We receive and convert a serialized object string to an actual RobotData object
-        data_string = self.socket.recv(length)
-        self.dataBox[0] = pickle.loads(data_string)

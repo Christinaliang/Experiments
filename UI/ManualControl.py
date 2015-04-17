@@ -1,8 +1,7 @@
 __author__ = 'Matt'
 
 import cmath
-import pickle
-# from UiRunner import CanvasElement
+from UI.network.DataTransferProtocol import sendData
 
 
 class DriveControl:
@@ -217,14 +216,8 @@ class DriveControl:
 
         if event.x > self.x + self.path_area_size and event.y < self.y+self.path_area_size/self.SIDE_BOX_RATIO:
             if self.currentControl == self.ACTIVATE_AREA_SELECTED:
-                data_string = pickle.dumps(self.uiData)
 
-                length = str(len(data_string))
-                while len(length) < 10:
-                    length = "0" + length
-
-                self.dataCient.socket.send(length)
-                self.dataCient.socket.send(data_string)
+                sendData(self.dataCient.socket, self.uiData)
 
                 return
 

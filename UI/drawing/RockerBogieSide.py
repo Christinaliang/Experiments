@@ -78,5 +78,4 @@ def drawRockerBogie(canvas, x, y, size, armData, flip):
         fill="purple"
     )
 
-
     return
