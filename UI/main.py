@@ -17,7 +17,7 @@ uiData = ManualControlData()
 
 # The objects that do everything
 dataClient = RobotDataClient(robotData)
-uiRunner = UiRunner(robotData, uiData)
+uiRunner = UiRunner(robotData, uiData, dataClient)
 
 # start the threads
 dataClient.start()

@@ -50,6 +50,8 @@ class robotDataServer(threading.Thread):
     def run(self):
         try:
 
+            self.socket.setblocking(0)
+
             while True:
 
                 data_string = pickle.dumps(self.distributor.data)
@@ -60,6 +62,20 @@ class robotDataServer(threading.Thread):
 
                 self.socket.send(length)
                 self.socket.send(data_string)
+
+                try:
+                    # first we get a string that says how long the serialized string is
+                    length = int(self.socket.recv(10))
+
+                    # We receive and convert a serialized object string to an actual RobotData object
+                    data_string = self.socket.recv(length)
+                    manualControlCommand = pickle.loads(data_string)
+
+                    print manualControlCommand.go_forward
+
+                except socket.error:
+                    continue
+
 
         except socket.error:
             print "Lost connection with " + self.address[0]

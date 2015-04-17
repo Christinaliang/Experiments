@@ -23,10 +23,11 @@ class UiRunner(threading.Thread):
     WIDTH = 800
     HEIGHT = 800
 
-    def __init__(self, dataBox, uiData):
+    def __init__(self, dataBox, uiData, dataClient):
         threading.Thread.__init__(self)
         self.dataBox = dataBox
         self.uiData = uiData
+        self.dataClient = dataClient
 
         self.root = Tk()
         self.app = Frame(master=self.root, width=self.WIDTH, height=self.HEIGHT)
@@ -41,11 +42,7 @@ class UiRunner(threading.Thread):
 
         self.canvasElements = []
         self.canvasElements.append(
-            DriveControl(0, 0, 800, self.uiData)
-            # CanvasElement(0, 0, 800,
-            #               lambda c, x, y, s: drawDriveControl(c, x, y, s, self.uiData),
-            #               onMouseMotion=lambda event, x, y, s: handleDriveClick(event, x, y, s, self.uiData)
-            #   )
+            DriveControl(0, 0, 800, self.uiData, self.dataClient)
         )
 
     def run(self):
