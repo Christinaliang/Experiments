@@ -7,7 +7,12 @@ import threading
 from DataTransferProtocol import receiveData, sendData
 
 
-class robotDataDistributer(threading.Thread):
+##
+# robotDataDistributor
+#
+# Description: Thread that accepts network connections from clients and spawns a new thread to handle the connection
+#
+class robotDataDistributor(threading.Thread):
 
     def __init__(self):
         self.data = RobotData()
@@ -21,6 +26,7 @@ class robotDataDistributer(threading.Thread):
         s.bind(server_address)
         s.listen(1)
 
+        # Until the server closes, accept connections and spawn a thread to handle them
         while True:
             (clientsocket, address) = s.accept()
             print "Received connection from: " + address[0]
@@ -30,6 +36,11 @@ class robotDataDistributer(threading.Thread):
         return
 
 
+##
+# robotDataServer
+#
+# Description: Handles a connection with a particular client. Receives commands and sends data about the robot.
+#
 class robotDataServer(threading.Thread):
 
     def __init__(self, sock, distributor, address):
@@ -47,16 +58,18 @@ class robotDataServer(threading.Thread):
 
             while True:
 
-
                 self.socket.setblocking(1)
+
+                # Send the robot data to the client
                 sendData(self.socket, self.distributor.data)
 
                 # An extra exception because we have a non-blocking socket
                 try:
-
-
                     self.socket.setblocking(0)
-                    manualControlCommand = receiveData(self.socket)
+
+                    # Receive a command and add it to the command queue
+                    newCommand = receiveData(self.socket)
+                    commandQueue.append(newCommand)
 
                     # print manualControlCommand.go_forward
 
@@ -69,9 +82,19 @@ class robotDataServer(threading.Thread):
 
         return
 
-rdd = robotDataDistributer()
+
+commandQueue = []
+rdd = robotDataDistributor()
 rdd.start()
 
 while True:
+
+    # Process a command
+    command = commandQueue.pop(0)
+
+    # TODO: stuff with the command
+
+    # Update Robot data
+
     rdd.data.frontLeftWheel.theta += 0.01
     rdd.data.frontLeftWheel.theta %= 1000000
