@@ -19,7 +19,9 @@ class DriveControl:
         self.path_area = (x, y+self.path_area_size/self.SIDE_BOX_RATIO, x+size, y+size)
 
         # Where the robot is centered on the UI
-        self.robotCenter = (self.half_size, self.path_area[1]+self.half_size)
+        self.robotCenter = (self.path_area[0]+self.half_size, self.path_area[1]+self.half_size)
+
+        self.throttleCenter = (x+self.path_area_size, y + size/self.SIDE_BOX_RATIO + self.half_size)
 
         self.currentControl = self.NO_AREA_SELECTED
 
@@ -73,6 +75,11 @@ class DriveControl:
         if self.uiData.go_forward:
 
             canvas.create_line(self.robotCenter[0], self.y+self.size/self.SIDE_BOX_RATIO, self.x+self.path_area_size/2, self.y+self.size)
+            canvas.create_line(self.robotCenter[0],
+                               self.y+self.size/self.SIDE_BOX_RATIO+self.half_size,
+                               self.x+self.path_area_size/2,
+                               self.y+self.size/self.SIDE_BOX_RATIO+self.half_size+self.half_size*self.uiData.throttle/-100,
+                               fill="purple", width=2)
 
             canvas.create_rectangle((self.x, self.y, self.path_area_size, self.path_area_size/self.SIDE_BOX_RATIO), fill="purple")
             canvas.create_oval(arcCenter[0]-arcCenterRadius, arcCenter[1]-arcCenterRadius, arcCenter[0]+arcCenterRadius, arcCenter[1]+arcCenterRadius, fill="grey")
@@ -81,10 +88,60 @@ class DriveControl:
             radius = dist(arcCenter[0], arcCenter[1], self.robotCenter[0], self.robotCenter[1])
             canvas.create_oval(arcCenter[0]-radius, arcCenter[1]-radius, arcCenter[0]+radius, arcCenter[1]+radius, fill=None)
 
+            theta = 0.0
+
+            x1 = arcCenter[0]
+            y1 = arcCenter[1]
+
+            x2 = self.robotCenter[0]
+            y2 = self.robotCenter[1]
+
+            throttlePathMod = 1
+
+            # Top Right Quadrant
+            if x1 > x2 and y1 <= y2:
+                adjacent = x1 - x2
+                theta = 180 + (cmath.acos(float(adjacent)/float(radius)).real/cmath.pi.real*180).real
+            # Top Left Quadrant
+            if x1 < x2 and y1 < y2:
+                adjacent = x2 - x1
+                theta = 360 -(cmath.acos(float(adjacent)/float(radius)).real/cmath.pi.real*180).real
+            # Bottom Left Quadrant
+            if x1 < x2 and y1 > y2:
+                adjacent = y2 - y1
+                theta = (cmath.acos(float(adjacent)/float(radius)).real/cmath.pi.real*180).real-90
+            # Bottom Right Quadrant
+            if x1 > x2 and y1 > y2:
+                adjacent = y1 - y2
+                theta = (cmath.acos(float(adjacent)/float(radius)).real/cmath.pi.real*180).real+90
+
+            if x1 > x2:
+                throttlePathMod = -1
+
+            canvas.create_arc(arcCenter[0]-radius, arcCenter[1]-radius, arcCenter[0]+radius, arcCenter[1]+radius, fill=None, style="arc", outline="purple", width=2, start=theta, extent=359*self.uiData.throttle/100*throttlePathMod)
+
+
             canvas.create_rectangle((self.x, self.y, self.path_area_size, self.path_area_size/self.SIDE_BOX_RATIO), fill="grey")
             canvas.create_oval(arcCenter[0]-arcCenterRadius, arcCenter[1]-arcCenterRadius, arcCenter[0]+arcCenterRadius, arcCenter[1]+arcCenterRadius, fill="purple")
 
-        canvas.create_rectangle(self.x+self.path_area_size, self.y+self.size/self.SIDE_BOX_RATIO, self.x+self.size, self.y+self.size, fill="grey")
+        # Draw throttle area
+
+        throttleLeft = self.x+self.path_area_size
+        throttleRight = self.x+self.size
+
+        canvas.create_rectangle(throttleLeft, self.y+self.size/self.SIDE_BOX_RATIO, throttleRight, self.y+self.size, fill="grey")
+
+        throttleTop = self.throttleCenter[1]-2
+        throttleBottom = self.throttleCenter[1]+2
+
+        if self.uiData.throttle > 0:
+            throttleTop = self.throttleCenter[1] + self.half_size * self.uiData.throttle/-100
+        elif self.uiData.throttle < 0:
+            throttleBottom = self.throttleCenter[1] + self.half_size*self.uiData.throttle/-100
+
+        canvas.create_rectangle(throttleLeft, throttleTop, throttleRight, throttleBottom, fill="purple")
+
+        # Draw Activate Area
         canvas.create_rectangle(self.x+self.path_area_size, self.y, self.x+self.size, self.y+self.size/self.SIDE_BOX_RATIO, fill="green")
 
         return
@@ -145,11 +202,22 @@ class DriveControl:
                 self.uiData.radius_offset_y = event.y - self.robotCenter[1]
 
         if self.currentControl == self.THROTTLE_AREA_SELECTED:
+
+            if event.y > self.size or event.y < self.size/self.SIDE_BOX_RATIO:
+                return
+
+            self.uiData.throttle = (self.throttleCenter[1] - event.y)*100/self.half_size
             return
 
         return
 
     def onMouseRelease(self, event):
+
+        if event.x > self.x + self.path_area_size and event.y < self.y+self.path_area_size/self.SIDE_BOX_RATIO:
+            if self.currentControl == self.ACTIVATE_AREA_SELECTED:
+
+                return
+
         self.currentControl = self.NO_AREA_SELECTED
         return
 

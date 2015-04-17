@@ -52,6 +52,9 @@ class ManualControlData:
         self.radius_offset_y = 0
         self.go_forward = True
 
+        # 0 is stop, -100 is full reverse, 100 is full forward
+        self.throttle = 50
+
 
         return
 
