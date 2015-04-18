@@ -64,7 +64,7 @@ class ManualControlData:
         self.go_forward = True
 
         # 0 is stop, -100 is full reverse, 100 is full forward
-        self.throttle = 50
+        self.throttle = 33
 
 
         return
