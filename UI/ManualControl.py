@@ -4,6 +4,7 @@ import math
 import cmath
 from UI.network.DataTransferProtocol import sendData
 import UI.WheelComputation as WheelComputation
+from MathHelpers import *
 
 
 class DriveControl:
@@ -333,13 +334,27 @@ class DriveControl:
 
             arc_center_pos = (self.radius_offset_x, self.radius_offset_y)
 
-            # Compute the angle of each of the articulation joints
-            self.ui_data.fl_articulation_angle = WheelComputation.wheelComp(self.fl_pos, arc_center_pos, self.go_forward)
-            self.ui_data.fr_articulation_angle = WheelComputation.wheelComp(self.fr_pos, arc_center_pos, self.go_forward)
-            self.ui_data.ml_articulation_angle = WheelComputation.wheelComp(self.ml_pos, arc_center_pos, self.go_forward)
-            self.ui_data.mr_articulation_angle = WheelComputation.wheelComp(self.mr_pos, arc_center_pos, self.go_forward)
-            self.ui_data.rl_articulation_angle = WheelComputation.wheelComp(self.rl_pos, arc_center_pos, self.go_forward)
-            self.ui_data.rr_articulation_angle = WheelComputation.wheelComp(self.rr_pos, arc_center_pos, self.go_forward)
+            # Compute the angle and speed of each of the articulation joints/wheels
+            self.ui_data.fl_articulation_angle = WheelComputation.calc_articulation_angle(self.fl_pos, arc_center_pos, self.go_forward)
+            self.ui_data.fl_drive_speed = WheelComputation.calc_wheel_speed(self.fl_pos, arc_center_pos, self.go_forward)
+
+            self.ui_data.fr_articulation_angle = WheelComputation.calc_articulation_angle(self.fr_pos, arc_center_pos, self.go_forward)
+            self.ui_data.fr_drive_speed = WheelComputation.calc_wheel_speed(self.fr_pos, arc_center_pos, self.go_forward)
+
+            self.ui_data.ml_articulation_angle = WheelComputation.calc_articulation_angle(self.ml_pos, arc_center_pos, self.go_forward)
+            self.ui_data.ml_drive_speed = WheelComputation.calc_wheel_speed(self.ml_pos, arc_center_pos, self.go_forward)
+
+            self.ui_data.mr_articulation_angle = WheelComputation.calc_articulation_angle(self.mr_pos, arc_center_pos, self.go_forward)
+            self.ui_data.mr_drive_speed = WheelComputation.calc_wheel_speed(self.mr_pos, arc_center_pos, self.go_forward)
+
+            self.ui_data.rl_articulation_angle = WheelComputation.calc_articulation_angle(self.rl_pos, arc_center_pos, self.go_forward)
+            self.ui_data.rl_drive_speed = WheelComputation.calc_wheel_speed(self.rl_pos, arc_center_pos, self.go_forward)
+
+            self.ui_data.rr_articulation_angle = WheelComputation.calc_articulation_angle(self.rr_pos, arc_center_pos, self.go_forward)
+            self.ui_data.rr_drive_speed = WheelComputation.calc_wheel_speed(self.rr_pos, arc_center_pos, self.go_forward)
+
+            # Normalize all speeds to that they are between 0 and 1
+            WheelComputation.normalize_wheel_speeds(self.ui_data)
 
         # If the user first clicked in the throttle area
         if self.current_control == self.THROTTLE_AREA_SELECTED:
@@ -367,17 +382,3 @@ class DriveControl:
         self.current_control = self.NO_AREA_SELECTED
         return
 
-
-def dist(x1, y1, x2, y2):
-    dx = x1-x2
-    dy = y1-y2
-
-    return cmath.sqrt(dx*dx + dy*dy).real
-
-
-def rad2deg(theta):
-    return theta/cmath.pi.real*180.0
-
-
-def deg2rad(theta):
-    return theta*cmath.pi.real/180.0
