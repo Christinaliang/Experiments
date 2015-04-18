@@ -13,6 +13,7 @@ FR_WHEEL_POS = (1/6.0, -1/6.0)
 MR_WHEEL_POS = (1/6.0, 0.0)
 RR_WHEEL_POS = (1/6.0, 1/6.0)
 
+
 ##
 # Computes the angle that a given wheel needs to drive at for the entire system to drive along an arc
 #
@@ -34,6 +35,7 @@ def calc_articulation_angle(wheel_position, arc_center, go_forward):
 
     return articulation_theta.real
 
+
 ##
 # Computes the speed that a given wheel needs to drive at for the entire system to drive along an arc
 #
@@ -47,6 +49,7 @@ def calc_wheel_speed(wheel_position, arc_center, go_forward):
         wheel_drive_speed = 1/float(wheel_arc_radius)
 
     return wheel_drive_speed
+
 
 ##
 # normalizes the speeds of each wheel so that the maximum is one, and all others are some fraction.

@@ -5,6 +5,7 @@ import socket
 
 import threading
 from DataTransferProtocol import receiveData, sendData
+from UI.RobotData import ManualControlData
 
 
 ##
@@ -69,7 +70,10 @@ class robotDataServer(threading.Thread):
 
                     # Receive a command and add it to the command queue
                     newCommand = receiveData(self.socket)
-                    commandQueue.append(newCommand)
+                    if newCommand.e_stop:
+                        commandQueue.insert(0, newCommand)
+                    else:
+                        commandQueue.append(newCommand)
 
                     # print manualControlCommand.go_forward
 
@@ -78,6 +82,11 @@ class robotDataServer(threading.Thread):
 
         except socket.error as e:
             print "Lost connection with " + self.address[0]
+
+            # Add a E-STOP command
+            newCommand = ManualControlData()
+            newCommand.e_stop = True
+            commandQueue.insert(0, newCommand)
             return
 
         return

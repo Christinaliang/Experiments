@@ -85,6 +85,8 @@ class ManualControlData:
 
         self.drive_duration = 0
 
+        self.e_stop = False
+
         return
 
 

@@ -376,8 +376,16 @@ class DriveControl:
         if event.x > self.x + self.path_area_size and event.y < self.y+self.path_area_size/self.SIDE_BOX_RATIO:
             if self.current_control == self.ACTIVATE_AREA_SELECTED:
 
-                self.button_active = False
-                sendData(self.dataClient.socket, self.ui_data)
+                if self.button_active:
+                    self.button_active = False
+                    sendData(self.dataClient.socket, self.ui_data)
+
+                else:
+                    self.button_active = True
+
+                    self.ui_data.e_stop = True
+                    sendData(self.dataClient.socket, self.ui_data)
+                    self.ui_data.e_stop = False
 
         self.current_control = self.NO_AREA_SELECTED
         return
