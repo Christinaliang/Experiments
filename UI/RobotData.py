@@ -55,17 +55,35 @@ class rockerBogieArm:
         return
 
 
+##
+# This class is for holding all the data that will be sent to the robot and consists of one discrete command
+#
+# Variables:
+#  - xx_articulation_angle
+#           The angle of each articulation joint, in degrees. 0 is 0 on the unit circle
+#  - xx_drive_speed
+#             the speed we need to drive each of the motors at (UNDEFINED) TODO: Define units
+#  - drive_duration: How long, in seconds, that we drive the motors
+##
 class ManualControlData:
 
     def __init__(self):
 
-        self.radius_offset_x = 0
-        self.radius_offset_y = 0
-        self.go_forward = True
+        self.fl_articulation_angle = 90
+        self.fr_articulation_angle = 90
+        self.ml_articulation_angle = 90
+        self.mr_articulation_angle = 90
+        self.rl_articulation_angle = 90
+        self.rr_articulation_angle = 90
 
-        # 0 is stop, -100 is full reverse, 100 is full forward
-        self.throttle = 33
+        self.fl_drive_speed = 0
+        self.fr_drive_speed = 0
+        self.ml_drive_speed = 0
+        self.mr_drive_speed = 0
+        self.rl_drive_speed = 0
+        self.rr_drive_speed = 0
 
+        self.drive_duration = 0
 
         return
 
