@@ -54,28 +54,28 @@ class UiRunner(threading.Thread):
 
     def onMousePress(self, event):
         for c in self.canvasElements:
-            if None != c.onMousePress:
+            if None != c.on_mouse_press:
                 # noinspection PyChainedComparisons
                 if event.x > c.x and event.x < c.x+c.size and event.y > c.y and event.y < c.y+c.size:
-                    c.onMousePress(event)
+                    c.on_mouse_press(event)
                     return
         return
 
     def onMouseMotion(self, event):
         for c in self.canvasElements:
-            if None != c.onMouseMotion:
+            if None != c.on_mouse_motion:
                 # noinspection PyChainedComparisons
                 if event.x > c.x and event.x < c.x+c.size and event.y > c.y and event.y < c.y+c.size:
-                    c.onMouseMotion(event)
+                    c.on_mouse_motion(event)
                     return
         return
 
     def onMouseRelease(self, event):
         for c in self.canvasElements:
-            if None != c.onMouseRelease:
+            if None != c.on_mouse_release:
                 # noinspection PyChainedComparisons
                 if event.x > c.x and event.x < c.x+c.size and event.y > c.y and event.y < c.y+c.size:
-                    c.onMouseRelease(event)
+                    c.on_mouse_release(event)
                     return
         return
 

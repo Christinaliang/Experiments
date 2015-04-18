@@ -28,8 +28,8 @@ def wheelComp(wheelPos, arcCenter, goForward):
 
             tangent = opposite/float(adjacent)
 
-    theta = cmath.atan(tangent) + cmath.pi/2
+    articulation_theta = cmath.atan(tangent) + cmath.pi/2
 
-    theta = theta/cmath.pi*180
+    articulation_theta = articulation_theta/cmath.pi*180
 
-    return theta.real
+    return articulation_theta.real
