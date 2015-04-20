@@ -5,7 +5,7 @@ import cmath
 from UI.network.DataTransferProtocol import sendData
 import UI.WheelComputation as WheelComputation
 from MathHelpers import *
-
+import numpy
 
 class DriveControl:
 
@@ -59,6 +59,17 @@ class DriveControl:
         self.rr_pos = (self.path_area_size*WheelComputation.RR_WHEEL_POS[0]*self.SCALE,
                        self.path_area_size*WheelComputation.RR_WHEEL_POS[1]*self.SCALE)
 
+        self.wheel_matrix = numpy.matrix([
+                                         [-2, -5],
+                                         [-2,  5],
+                                         [ 5,  5],
+                                         [ 5,  10],
+                                         [20,  10],
+                                         [20, -10],
+                                         [ 5, -10],
+                                         [ 5, -5]
+                                         ])
+
         return
 
     NO_AREA_SELECTED = -1
@@ -92,21 +103,21 @@ class DriveControl:
                            self.robot_center[1]+self.robot_center_radius, fill="grey")
 
         # Draw the wheels
-        self.draw_wheel(canvas, (self.robot_center[0]+self.fl_pos[0], self.robot_center[1]+self.fl_pos[1]),
+        self.draw_wheel2(canvas, (self.robot_center[0]+self.fl_pos[0], self.robot_center[1]+self.fl_pos[1]),
                         arc_center,
                         self.path_area_size, self.ui_data.fl_articulation_angle)
-        self.draw_wheel(canvas, (self.robot_center[0]+self.ml_pos[0], self.robot_center[1]+self.ml_pos[1]),
+        self.draw_wheel2(canvas, (self.robot_center[0]+self.ml_pos[0], self.robot_center[1]+self.ml_pos[1]),
                         arc_center, self.path_area_size, self.ui_data.ml_articulation_angle)
-        self.draw_wheel(canvas, (self.robot_center[0]+self.rl_pos[0], self.robot_center[1]+self.rl_pos[1]),
+        self.draw_wheel2(canvas, (self.robot_center[0]+self.rl_pos[0], self.robot_center[1]+self.rl_pos[1]),
                         arc_center,
                         self.path_area_size, self.ui_data.rl_articulation_angle)
-        self.draw_wheel(canvas, (self.robot_center[0]+self.fr_pos[0], self.robot_center[1]+self.fr_pos[1]),
+        self.draw_wheel2(canvas, (self.robot_center[0]+self.fr_pos[0], self.robot_center[1]+self.fr_pos[1]),
                         arc_center,
                         self.path_area_size, self.ui_data.fr_articulation_angle)
-        self.draw_wheel(canvas, (self.robot_center[0]+self.mr_pos[0], self.robot_center[1]+self.mr_pos[1]),
+        self.draw_wheel2(canvas, (self.robot_center[0]+self.mr_pos[0], self.robot_center[1]+self.mr_pos[1]),
                         arc_center,
                         self.path_area_size, self.ui_data.mr_articulation_angle)
-        self.draw_wheel(canvas, (self.robot_center[0]+self.rr_pos[0], self.robot_center[1]+self.rr_pos[1]),
+        self.draw_wheel2(canvas, (self.robot_center[0]+self.rr_pos[0], self.robot_center[1]+self.rr_pos[1]),
                         arc_center,
                         self.path_area_size, self.ui_data.rr_articulation_angle)
 
@@ -283,6 +294,40 @@ class DriveControl:
 
         return
 
+
+    def draw_wheel2(self, canvas, wheel_pos, arc_center_pos, size, theta):
+
+        # theta = theta + 90
+        rot = numpy.matrix(
+            [[math.cos(deg2rad(theta)), -math.sin(deg2rad(theta))],
+            [math.sin(deg2rad(theta)), math.cos(deg2rad(theta))]]
+        )
+
+        rotated = self.wheel_matrix.dot(rot)
+
+        canvas.create_polygon(wheel_pos[0]+rotated[0].item(0), wheel_pos[1]+rotated[0].item(1),
+                              wheel_pos[0]+rotated[1].item(0), wheel_pos[1]+rotated[1].item(1),
+                              wheel_pos[0]+rotated[2].item(0), wheel_pos[1]+rotated[2].item(1),
+                              wheel_pos[0]+rotated[3].item(0), wheel_pos[1]+rotated[3].item(1),
+                              wheel_pos[0]+rotated[4].item(0), wheel_pos[1]+rotated[4].item(1),
+                              wheel_pos[0]+rotated[5].item(0), wheel_pos[1]+rotated[5].item(1),
+                              wheel_pos[0]+rotated[6].item(0), wheel_pos[1]+rotated[6].item(1),
+                              wheel_pos[0]+rotated[7].item(0), wheel_pos[1]+rotated[7].item(1))
+
+        # Created a dotted line from the wheel to the center of the circle it will be driving around
+        if not self.go_forward:
+            canvas.create_line(wheel_pos[0], wheel_pos[1],
+                               arc_center_pos[0], arc_center_pos[1],
+                               dash=(1, 1))
+
+
+        # Draw a dot at the center of the wheel
+        canvas.create_oval(wheel_pos[0]-2, wheel_pos[1]-2,
+                           wheel_pos[0]+2, wheel_pos[1]+2,
+                           fill="grey", outline=None)
+
+        return
+
     def on_mouse_press(self, event):
 
         # Mark which area the user first clicked in
@@ -305,12 +350,12 @@ class DriveControl:
 
             # If we are going forward then all wheels should be pointing in this direction
             if self.go_forward:
-                self.ui_data.fl_articulation_angle = 90
-                self.ui_data.fr_articulation_angle = 90
-                self.ui_data.ml_articulation_angle = 90
-                self.ui_data.mr_articulation_angle = 90
-                self.ui_data.rl_articulation_angle = 90
-                self.ui_data.rr_articulation_angle = 90
+                self.ui_data.fl_articulation_angle = 180
+                self.ui_data.fr_articulation_angle = 0
+                self.ui_data.ml_articulation_angle = 180
+                self.ui_data.mr_articulation_angle = 0
+                self.ui_data.rl_articulation_angle = 180
+                self.ui_data.rr_articulation_angle = 0
                 return
 
             # If the cursor leaves the path definition area then don't do anything
@@ -335,22 +380,22 @@ class DriveControl:
             arc_center_pos = (self.radius_offset_x, self.radius_offset_y)
 
             # Compute the angle and speed of each of the articulation joints/wheels
-            self.ui_data.fl_articulation_angle = WheelComputation.calc_articulation_angle(self.fl_pos, arc_center_pos, self.go_forward)
+            self.ui_data.fl_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.fl_pos, arc_center_pos, self.go_forward) + 180
             self.ui_data.fl_drive_speed = WheelComputation.calc_wheel_speed(self.fl_pos, arc_center_pos, self.go_forward)
 
-            self.ui_data.fr_articulation_angle = WheelComputation.calc_articulation_angle(self.fr_pos, arc_center_pos, self.go_forward)
+            self.ui_data.fr_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.fr_pos, arc_center_pos, self.go_forward)
             self.ui_data.fr_drive_speed = WheelComputation.calc_wheel_speed(self.fr_pos, arc_center_pos, self.go_forward)
 
-            self.ui_data.ml_articulation_angle = WheelComputation.calc_articulation_angle(self.ml_pos, arc_center_pos, self.go_forward)
+            self.ui_data.ml_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.ml_pos, arc_center_pos, self.go_forward) + 180
             self.ui_data.ml_drive_speed = WheelComputation.calc_wheel_speed(self.ml_pos, arc_center_pos, self.go_forward)
 
-            self.ui_data.mr_articulation_angle = WheelComputation.calc_articulation_angle(self.mr_pos, arc_center_pos, self.go_forward)
+            self.ui_data.mr_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.mr_pos, arc_center_pos, self.go_forward)
             self.ui_data.mr_drive_speed = WheelComputation.calc_wheel_speed(self.mr_pos, arc_center_pos, self.go_forward)
 
-            self.ui_data.rl_articulation_angle = WheelComputation.calc_articulation_angle(self.rl_pos, arc_center_pos, self.go_forward)
+            self.ui_data.rl_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.rl_pos, arc_center_pos, self.go_forward) + 180
             self.ui_data.rl_drive_speed = WheelComputation.calc_wheel_speed(self.rl_pos, arc_center_pos, self.go_forward)
 
-            self.ui_data.rr_articulation_angle = WheelComputation.calc_articulation_angle(self.rr_pos, arc_center_pos, self.go_forward)
+            self.ui_data.rr_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.rr_pos, arc_center_pos, self.go_forward)
             self.ui_data.rr_drive_speed = WheelComputation.calc_wheel_speed(self.rr_pos, arc_center_pos, self.go_forward)
 
             # Normalize all speeds to that they are between 0 and 1

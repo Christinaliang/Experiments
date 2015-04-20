@@ -21,7 +21,8 @@ RR_WHEEL_POS = (1/6.0, 1/6.0)
 def calc_articulation_angle(wheel_position, arc_center, go_forward):
 
     adjacent = wheel_position[0]-arc_center[0]
-    tangent = 0
+    # tangent = cmath.pi
+    articulation_theta = 90
 
     if not go_forward:
         if adjacent != 0:
@@ -29,9 +30,9 @@ def calc_articulation_angle(wheel_position, arc_center, go_forward):
 
             tangent = opposite/float(adjacent)
 
-    articulation_theta = cmath.atan(tangent) + cmath.pi/2
+            articulation_theta = cmath.atan(tangent)
 
-    articulation_theta = articulation_theta/cmath.pi*180
+            articulation_theta = articulation_theta/cmath.pi*180
 
     return articulation_theta.real
 

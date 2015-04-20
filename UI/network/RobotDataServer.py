@@ -59,6 +59,7 @@ class robotDataServer(threading.Thread):
 
             while True:
 
+                # Set blocking so we can identify if we have lost connection
                 self.socket.setblocking(1)
 
                 # Send the robot data to the client
