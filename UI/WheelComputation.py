@@ -2,16 +2,40 @@ __author__ = 'Matt'
 
 import cmath
 from MathHelpers import *
+import numpy
 from UI.RobotData import ManualControlData
 
 # hard coded
-FL_WHEEL_POS = (-1/6.0, -1/6.0)
-ML_WHEEL_POS = (-1/6.0, 0.0)
-RL_WHEEL_POS = (-1/6.0, 1/6.0)
+FL_WHEEL_POS = (-67/2.0, -49)
+ML_WHEEL_POS = (-67/2.0, 0.0)
+RL_WHEEL_POS = (-67/2.0, 49)
 
-FR_WHEEL_POS = (1/6.0, -1/6.0)
-MR_WHEEL_POS = (1/6.0, 0.0)
-RR_WHEEL_POS = (1/6.0, 1/6.0)
+FR_WHEEL_POS = (67/2.0, -49)
+MR_WHEEL_POS = (67/2.0, 0.0)
+RR_WHEEL_POS = (67/2.0, 49)
+
+
+WHEEL_MATRIX = numpy.matrix([
+    [-2, -2],
+    [-2,  2],
+    [2.5,  2],
+    [2.5,  10.5],
+    [30,  10.5],
+    [30, -10.5],
+    [2.5, -10.5],
+    [2.5, -2]
+])
+
+WHEEL_POS_MATRIX = numpy.matrix([
+    [-33.5, -67],   # FL
+    [33.5, -67],    # FR
+    [-33.5, 0],     # ML
+    [33.5, 0],      # MR
+    [-33.5, -67],   # RL
+    [33.5, -67],    # RR
+])
+
+WHEEL_CENTER_OFFSET = 16.75
 
 
 ##

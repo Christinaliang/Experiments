@@ -1,12 +1,12 @@
-__author__ = 'Matt'
-
+import time
+import threading
 from UI.RobotData import RobotData
+from UI.RobotData import ManualControlData
+from DataTransferProtocol import *
 import socket
 
-import threading
-from DataTransferProtocol import receiveData, sendData
-from UI.RobotData import ManualControlData
-
+# In Hertz
+sendRate = 10
 
 ##
 # robotDataDistributor
@@ -56,15 +56,15 @@ class robotDataServer(threading.Thread):
 
     def run(self):
         try:
-
+            sendTime = 0
             while True:
 
-                # Set blocking so we can identify if we have lost connection
                 self.socket.setblocking(1)
-
+                if sendTime < time.time():
                 # Send the robot data to the client
-                sendData(self.socket, self.distributor.data)
-
+                    sendData(self.socket, self.distributor.data)
+                    sendTime = time.time() + 1/float(sendRate)
+                    print sendTime
                 # An extra exception because we have a non-blocking socket
                 try:
                     self.socket.setblocking(0)
@@ -75,6 +75,8 @@ class robotDataServer(threading.Thread):
                         commandQueue.insert(0, newCommand)
                     else:
                         commandQueue.append(newCommand)
+
+                    print "received command"
 
                     # print manualControlCommand.go_forward
 
@@ -97,14 +99,15 @@ commandQueue = []
 rdd = robotDataDistributor()
 rdd.start()
 
+print "About to start..."
+
 while True:
 
     # Process a command
     if len(commandQueue) > 0:
         command = commandQueue.pop(0)
-
-        # TODO: stuff with the command
-        print command.go_forward
+        print "processing command"
+    # TODO: stuff with the command
 
     # Update Robot data
 

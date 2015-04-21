@@ -21,8 +21,11 @@ class RobotDataClient(threading.Thread):
         self.dataBox = dataBox
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = ('192.168.1.137', 10000)
+        # server_address = ('192.168.1.137', 10000)
+        server_address = ('localhost', 10000)
         self.socket.connect(server_address)
+
+        self.socket.setblocking(0)
 
         threading.Thread.__init__(self)
 
@@ -31,6 +34,9 @@ class RobotDataClient(threading.Thread):
     def run(self):
 
         while True:
-            self.dataBox[0] = receiveData(self.socket)
+            try:
+                self.dataBox[0] = receiveData(self.socket)
+            except Exception:
+                doNothing = 0
 
         return

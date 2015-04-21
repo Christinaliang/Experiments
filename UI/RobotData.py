@@ -69,12 +69,12 @@ class ManualControlData:
 
     def __init__(self):
 
-        self.fl_articulation_angle = 90
-        self.fr_articulation_angle = 90
-        self.ml_articulation_angle = 90
-        self.mr_articulation_angle = 90
-        self.rl_articulation_angle = 90
-        self.rr_articulation_angle = 90
+        self.fl_articulation_angle = 0
+        self.fr_articulation_angle = 180
+        self.ml_articulation_angle = 0
+        self.mr_articulation_angle = 180
+        self.rl_articulation_angle = 0
+        self.rr_articulation_angle = 180
 
         self.fl_drive_speed = 0
         self.fr_drive_speed = 0

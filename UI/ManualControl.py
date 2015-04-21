@@ -41,34 +41,25 @@ class DriveControl:
         # 0 is stop, -100 is full reverse, 100 is full forward
         self.throttle = 0
 
-        self.fl_pos = (self.path_area_size*WheelComputation.FL_WHEEL_POS[0]*self.SCALE,
-                       self.path_area_size*WheelComputation.FL_WHEEL_POS[1]*self.SCALE)
+        self.fl_pos = (WheelComputation.FL_WHEEL_POS[0],
+                       WheelComputation.FL_WHEEL_POS[1])
 
-        self.fr_pos = (self.path_area_size*WheelComputation.FR_WHEEL_POS[0]*self.SCALE,
-                       self.path_area_size*WheelComputation.FR_WHEEL_POS[1]*self.SCALE)
+        self.fr_pos = (WheelComputation.FR_WHEEL_POS[0],
+                       WheelComputation.FR_WHEEL_POS[1])
 
-        self.ml_pos = (self.path_area_size*WheelComputation.ML_WHEEL_POS[0]*self.SCALE,
-                       self.path_area_size*WheelComputation.ML_WHEEL_POS[1]*self.SCALE)
+        self.ml_pos = (WheelComputation.ML_WHEEL_POS[0],
+                       WheelComputation.ML_WHEEL_POS[1])
 
-        self.mr_pos = (self.path_area_size*WheelComputation.MR_WHEEL_POS[0]*self.SCALE,
-                       self.path_area_size*WheelComputation.MR_WHEEL_POS[1]*self.SCALE)
+        self.mr_pos = (WheelComputation.MR_WHEEL_POS[0],
+                       WheelComputation.MR_WHEEL_POS[1])
 
-        self.rl_pos = (self.path_area_size*WheelComputation.RL_WHEEL_POS[0]*self.SCALE,
-                       self.path_area_size*WheelComputation.RL_WHEEL_POS[1]*self.SCALE)
+        self.rl_pos = (WheelComputation.RL_WHEEL_POS[0],
+                       WheelComputation.RL_WHEEL_POS[1])
 
-        self.rr_pos = (self.path_area_size*WheelComputation.RR_WHEEL_POS[0]*self.SCALE,
-                       self.path_area_size*WheelComputation.RR_WHEEL_POS[1]*self.SCALE)
+        self.rr_pos = (WheelComputation.RR_WHEEL_POS[0],
+                       WheelComputation.RR_WHEEL_POS[1])
 
-        self.wheel_matrix = numpy.matrix([
-                                         [-2, -5],
-                                         [-2,  5],
-                                         [ 5,  5],
-                                         [ 5,  10],
-                                         [20,  10],
-                                         [20, -10],
-                                         [ 5, -10],
-                                         [ 5, -5]
-                                         ])
+        self.wheel_matrix = WheelComputation.WHEEL_MATRIX
 
         return
 
@@ -77,19 +68,13 @@ class DriveControl:
     THROTTLE_AREA_SELECTED = 1
     ACTIVATE_AREA_SELECTED = 2
 
-    SCALE = 1/3.0
+    SCALE = 1
 
     SIDE_BOX_RATIO = 18
 
-    WHEEL_LENGTH_RATIO = 25/SCALE
-    WHEEL_WIDTH_RATIO = 50/SCALE
-
-    WHEEL_GAP_X_RATIO = 6/SCALE
-    WHEEL_GAP_Y_RATIO = 6/SCALE
-
-    ROBOT_DOT_RADIUS_RATIO = 25/SCALE
-    PATH_DOT_RADIUS_RATIO = 50/SCALE
-    WHEEL_DOT_RADIUS_RATIO = 100/SCALE
+    ROBOT_DOT_RADIUS_RATIO = 75
+    PATH_DOT_RADIUS_RATIO = 150
+    WHEEL_DOT_RADIUS_RATIO = 300
 
     def draw(self, canvas):
 
