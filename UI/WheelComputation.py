@@ -71,6 +71,18 @@ def calc_wheel_speed(wheel_position, arc_center, go_forward):
         wheel_drive_speed = 1
     else:
         wheel_arc_radius = dist(*wheel_position+arc_center)
+
+        if wheel_position[0] < 0 and arc_center[0] < wheel_position[0]:
+            wheel_arc_radius += WHEEL_CENTER_OFFSET
+        if wheel_position[0] > 0 and arc_center[0] > wheel_position[0]:
+            wheel_arc_radius += WHEEL_CENTER_OFFSET
+
+        if wheel_position[0] > 0 and arc_center[0] < wheel_position[0]:
+            wheel_arc_radius -= WHEEL_CENTER_OFFSET
+        if wheel_position[0] < 0 and arc_center[0] > wheel_position[0]:
+            wheel_arc_radius -= WHEEL_CENTER_OFFSET
+
+
         wheel_drive_speed = 1/float(wheel_arc_radius)
 
     return wheel_drive_speed
