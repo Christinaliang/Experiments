@@ -365,22 +365,23 @@ class DriveControl:
             arc_center_pos = (self.radius_offset_x, self.radius_offset_y)
 
             # Compute the angle and speed of each of the articulation joints/wheels
-            self.ui_data.fl_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.fl_pos, arc_center_pos, self.go_forward) + 180
+            self.ui_data.fl_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.fl_pos, arc_center_pos, self.go_forward) + 180 - 360
             self.ui_data.fl_drive_speed = WheelComputation.calc_wheel_speed(self.fl_pos, arc_center_pos, self.go_forward)
+            print self.ui_data.fl_articulation_angle
 
-            self.ui_data.fr_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.fr_pos, arc_center_pos, self.go_forward)
+            self.ui_data.fr_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.fr_pos, arc_center_pos, self.go_forward) - 360
             self.ui_data.fr_drive_speed = WheelComputation.calc_wheel_speed(self.fr_pos, arc_center_pos, self.go_forward)
 
-            self.ui_data.ml_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.ml_pos, arc_center_pos, self.go_forward) + 180
+            self.ui_data.ml_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.ml_pos, arc_center_pos, self.go_forward) + 180 - 360
             self.ui_data.ml_drive_speed = WheelComputation.calc_wheel_speed(self.ml_pos, arc_center_pos, self.go_forward)
 
-            self.ui_data.mr_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.mr_pos, arc_center_pos, self.go_forward)
+            self.ui_data.mr_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.mr_pos, arc_center_pos, self.go_forward) - 360
             self.ui_data.mr_drive_speed = WheelComputation.calc_wheel_speed(self.mr_pos, arc_center_pos, self.go_forward)
 
-            self.ui_data.rl_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.rl_pos, arc_center_pos, self.go_forward) + 180
+            self.ui_data.rl_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.rl_pos, arc_center_pos, self.go_forward) + 180 - 360
             self.ui_data.rl_drive_speed = WheelComputation.calc_wheel_speed(self.rl_pos, arc_center_pos, self.go_forward)
 
-            self.ui_data.rr_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.rr_pos, arc_center_pos, self.go_forward)
+            self.ui_data.rr_articulation_angle = 360 - WheelComputation.calc_articulation_angle(self.rr_pos, arc_center_pos, self.go_forward) - 360
             self.ui_data.rr_drive_speed = WheelComputation.calc_wheel_speed(self.rr_pos, arc_center_pos, self.go_forward)
 
             # Normalize all speeds to that they are between 0 and 1

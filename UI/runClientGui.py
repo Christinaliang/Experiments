@@ -7,7 +7,7 @@ __author__ = 'Matt'
 
 from UI.UiRunner import *
 from UI.network.RobotDataClient import *
-from UI.RobotData import ManualControlData, RobotData
+from RobotData import ManualControlData, RobotData
 
 # Makeshift global variable.
 #   Pass around the array and change it's contents to change it globally
