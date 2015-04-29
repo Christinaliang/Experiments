@@ -1,11 +1,11 @@
 __author__ = 'Matt'
-
+import time
 from UI.network.RobotDataClient import RobotDataClient
-from RobotData import ManualControlData
+from UI.RobotData import ManualControlData
 from UI.network.DataTransferProtocol import sendData, receiveData
 
 data = ManualControlData()
-data.fl_articulation_angle = 350
+data.fl_articulation_angle = 0
 data.fr_articulation_angle = 180
 data.ml_articulation_angle = 0
 data.mr_articulation_angle = 180
@@ -24,10 +24,10 @@ data.e_stop = False
 client = RobotDataClient([None])
 
 sendData(client.socket, data)
-
-# Keep running the command, will E-STOP when program terminates
-while True:
-    try:
-        receiveData(client.socket)
-    except:
-        print ""
+print "First command sent"
+time.sleep(3)
+data.e_stop = True
+sendData(client.socket, data)
+print "E-stop sent"
+time.sleep(1)
+client.socket.close()
