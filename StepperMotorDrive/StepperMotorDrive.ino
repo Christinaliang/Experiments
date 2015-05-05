@@ -14,8 +14,9 @@ Green (A-)
 Yellow (B+)
 Blue (B-)
 
-PUL+ (pin 8)
-DIR+ (pin 9)
+PUL+ (pin 9)
+DIR+ (pin 8)
+PUL- and DIR- grounded
 
 ENA+ connected to ground
 ENA- connected to pin 10 (+5V when turning, otherwise 0V)
@@ -37,7 +38,7 @@ void setup(){
   pinMode(DIRECTION_PIN, OUTPUT);
   pinMode(PULSE_PIN, OUTPUT);
   pinMode(ENABLE, OUTPUT);
-  digitalWrite(ENABLE, HIGH); //the motor should not make loud screeching
+//  digitalWrite(ENABLE, HIGH); //the motor should not make loud screeching
   Serial.begin(9600);
 }
 
