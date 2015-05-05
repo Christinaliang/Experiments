@@ -78,11 +78,11 @@ void actuate(int steps) {
   //select which direction to go
   if (steps > 0) {
     digitalWrite(DIRECTION_PIN, LOW);
-    dir = -1;
+    dir = 1;
   }
   else {
     digitalWrite(DIRECTION_PIN, HIGH);
-    dir = 1;
+    dir = -1;
   }
   
   for(int i = 0; i < abs(steps); i++) {
@@ -138,7 +138,7 @@ int moveToPercent(int percent){
   if (percent > 100 || percent < 0) return ERROR_OUT_OF_RANGE;
   
   //calculate number of steps and move.
-  int stepsToMove = int((toPercent(currentSteps) - percent)/100.0 * FULL_STEPS);
+  int stepsToMove = int(-(toPercent(currentSteps) - percent)/100.0 * FULL_STEPS);
   Serial.print("Moving to ");
   Serial.print(percent, DEC);
   Serial.print("% from ");
