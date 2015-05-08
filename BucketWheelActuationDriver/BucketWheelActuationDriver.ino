@@ -27,6 +27,9 @@ ENA- connected to pin 10 (+5V when turning, otherwise 0V)
 */
 #define ERROR_OUT_OF_RANGE -1
 
+const int BUCKET_SABERTOOTH_ADDRESS = 1;
+
+
 int DIRECTION_PIN = 8;
 int PULSE_PIN = 9;
 int ENABLE = 10;
@@ -52,6 +55,8 @@ void setup() {
   pinMode(PULSE_PIN, OUTPUT);
   pinMode(ENABLE, OUTPUT);
   //  digitalWrite(ENABLE, HIGH); //the motor should not make loud screeching
+  Serial3.begin(9600);
+  
   Serial.begin(9600);
   Serial.println("Send position to go to (percent):");
   printPosition();
@@ -61,8 +66,33 @@ void loop() {
 
   if (Serial.available())
   {
-    int readValue = Serial.parseInt();
-    moveToPercent(readValue);
+    char cmd = Serial.read();
+    if (cmd == 'r' || cmd == 'R') {
+      Serial.println("Enter a height for bucket wheel:");
+      while (!Serial.available());
+      int readValue = Serial.parseInt();
+      moveToPercent(readValue);
+    }
+    
+    if (cmd == 's' || cmd == 'S') {
+      Serial.println("Enter a speed for bucket wheel:");
+      while (!Serial.available());
+      int readValue = Serial.parseInt();
+      if (readValue >= 0) {
+//        128
+//        130
+//        131
+        driveClockwise(128, readValue, 1);
+        driveClockwise(130, readValue, 1);
+        driveClockwise(131, readValue, 1);
+        Serial.println("Spinning bucketwheel clockwise");
+      } else {
+        driveCounterclockwise(128, -1*readValue, 0);
+        driveCounterclockwise(130, -1*readValue, 0);
+        driveCounterclockwise(131, -1*readValue, 0);
+        Serial.println("Spinning bucketwheel counter-clockwise");
+      }
+    }
 
   }
   e_stop = false;
@@ -151,3 +181,54 @@ int moveToPercent(int percent){
 double toPercent(int steps) {
   return steps*100.0/FULL_STEPS;
 }
+
+/**
+ * Drives a given motor at a given speed in a clockwise direction
+ *
+ * Paramteters:
+ *  motorID - the id of the motor to spin (0-11)
+ *  speed - the speed at which to spin the motor.
+ */
+void driveClockwise(int motorID, int speed, unsigned char command){
+
+  
+  // Packet format: Address Byte, Command Byte, Value Byte, Checksum.
+  // Build the data packet:
+  // Get the address and motor command ID from a predefined array.
+  unsigned char address = motorID;
+  // If the motor is connected backwards, we need to flip the command from 0/4 to 1/5:
+
+  unsigned char checksum = (address + command + ((char)speed)) & 0b01111111;
+
+  // Write the packet.
+  Serial3.write(address);
+  Serial3.write(command);
+  Serial3.write(((char)speed));
+  Serial3.write(checksum);
+  //TODO: Move the delay time to a constant
+  delayMicroseconds(1000); 
+}
+
+/**
+ * Drives a given motor at a given speed in a counterclockwise direction
+ *
+ * Paramteters:
+ *  motorID - the id of the motor to spin (0-11)
+ *  speed - the speed at which to spin the motor.
+ */
+void driveCounterclockwise(char motorID, char speed, unsigned char command){ 
+
+  // Packet format: Address Byte, Command Byte, Value Byte, Checksum.
+  unsigned char address = motorID;
+  // If the motor is connected backwards, we need to flip the command from 1/5 to 0/4:
+
+  unsigned char checksum = (address + command + speed) & 0b01111111;
+  Serial3.write(address);
+  Serial3.write(command);
+  Serial3.write(speed);
+  Serial3.write(checksum);
+  //TODO: Move the delay time to a constant
+  delayMicroseconds(1000);
+}
+
+
