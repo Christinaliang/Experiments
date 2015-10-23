@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 __author__="Jaimiey Sears"
 __copyright__="October 22, 2015"
 __version__= 0.10
@@ -9,7 +9,7 @@ import Queue, threading, usb, sys, time, argparse, struct, socket, binascii
 ## UNIT TEST 1 START ##
 #######################
 def main():
-	lt = LidarThreads()
+	lt = LidarThreads(debug=True)
 
 	lt.debugPrint("Starting")
 	th1_stop = threading.Event()
@@ -42,7 +42,7 @@ def main():
 # Placeholder for cartesian conversion ftn
 ##
 def sphericalToCartesian(data):
-	time.sleep(0.2)
+	time.sleep(0.05)
 	print("Placeholder: Cartesian map conversion")
 	return data
 
@@ -54,12 +54,12 @@ def sphericalToCartesian(data):
 # **Version 0.10 the actual functions are simulated with time.sleep statements**
 ##
 class LidarThreads():
-	def __init__(self):
+	def __init__(self, debug=False):
 		# don't forget: netsh interface ip set address "Local Area Connection" static 192.168.0.100
 		# global nhokreadings
 
 		# controls a number of debug statements which should only print sometimes
-		self.debug = True
+		self.debug = debug
 
 		# establish communication with the sensor
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -93,7 +93,7 @@ class LidarThreads():
 
 			data = "{0} : This_is_a_string_containing_data".format(counter)
 			try:
-				print "Producer : "+data
+				self.debugPrint("Producer : "+data)
 				dataQueue.put(data)
 			except Queue.Full, e:
 				continue
@@ -149,6 +149,7 @@ class LidarThreads():
 			return 0
 		else:
 			return -1
+
 
 ## run the program
 main()
