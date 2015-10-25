@@ -12,7 +12,7 @@ class hokuyoDataReader():
 		s.settimeout(2.0)
 		s.connect(("192.168.0.10", 10940))
 		s.send('PP\n')
-		s.send('MS'+'0000'+'0000'+'01'+'0'+'03\n')
+		s.send('MS'+'0000'+'1080'+'01'+'0'+'01\n')
 		res = [ ]
 		for i in range(100):
 			lres = s.recv(100).split("\n")
