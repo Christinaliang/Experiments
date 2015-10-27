@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 __author__="Jaimiey Sears"
-__copyright__="October 22, 2015"
-__version__= 0.10
+__copyright__="October 26, 2015"
+__version__= 0.12
 
-import Queue, threading, usb, sys, time, argparse, struct, socket, binascii
+import Queue, threading, usb, sys, time, argparse, struct, socket, binascii, math
+from utility import *
 
 #######################
 ## UNIT TEST 1 START ##
@@ -23,7 +24,7 @@ def main():
 	th1.start()
 	th2.start()
 
-	time.sleep(5.0)
+	time.sleep(3.0)
 
 
 	while th1.isAlive():
@@ -81,6 +82,9 @@ class LidarThreads():
 		# controls a number of debug statements which should only print sometimes
 		self.debug = debug
 
+		#command to get data from the lidar
+		self.command = 'MD'+'0540'+'0540'+'01'+'0'+'01'
+
 		# establish communication with the sensor
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		try:
@@ -105,14 +109,14 @@ class LidarThreads():
 	##
 	def produce(self, dataQueue, stop_event):
 		counter = 0
-		self.socket.send('PP\n')
+		# self.socket.send('PP\n')
 
-		while (not stop_event.is_set()):
+		while not stop_event.is_set():
 
 			#simulate a move of the LIDAR scanner
 			time.sleep(0.05)
 			# get data from the LIDAR scanner
-			self.socket.send('MS'+'0000'+'0009'+'01'+'0'+'01\n')
+			self.socket.send("{}\n".format(self.command))
 			#time.sleep(0.05) #simulate scan-time
 
 
@@ -122,7 +126,7 @@ class LidarThreads():
 					data = self.socket.recv(100).split("\n")
 					data.reverse()
 				except socket.timeout, e:
-					print "waiting for data"
+					self.debugPrint("waiting for data")
 					break
 
 				while data:
@@ -149,15 +153,28 @@ class LidarThreads():
 	#   stop_event - the event to watch for quitting.
 	##
 	def consume(self, dataQueue, stop_event):
-		while (not stop_event.is_set()):
+		counter = 0
+		while not stop_event.is_set():
 
 			try:
 				# get some data from the queue, process it to cartesian
 				dataline = dataQueue.get(timeout=0.25)
-				cartDataline = sphericalToCartesian(dataline)
 
-				self.debugPrint("Consumer " + cartDataline)
-				print "Consumer: ", cartDataline
+				if dataline == "":
+					continue
+				elif dataline == self.command:
+					counter = 0
+				else:
+					counter += 1
+
+				dists, coords= decode(dataline, math.pi/2, 90)
+
+				# self.debugPrint("Consumer: " + )
+				self.debugPrint("Consumer: data= {}".format(dataline))
+				if counter == 5:
+					print "Consumer: dists(mm)=", dists, "; coords=", coords
+					print "\tqueue size= ", dataQueue.qsize()
+
 
 			except Queue.Empty, e:
 				print "Data Queue is empty"
