@@ -180,9 +180,9 @@ class LidarThreads():
 
                 # dists, coords= decode(dataline, math.pi/2, 90)
                 X, Y, Z = decodeHMZ(dataline, math.pi/2, 90)
-                xLines.append(X)
-                yLines.append(Y)
-                zLines.append(Z)
+                xLines.append(X[:])
+                yLines.append(Y[:])
+                zLines.append(Z[:])
 
                 # self.debugPrint("Consumer: " + )
                 self.debugPrint("Consumer: data= {}".format(dataline))
