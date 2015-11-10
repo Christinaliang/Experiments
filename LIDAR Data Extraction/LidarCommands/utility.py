@@ -73,8 +73,8 @@ def decodeHMZ(string,angle,scanStartAngle):
     string = string[:len(string)-1]
 
     #init the result lists
-    results = []
-    coordList = []
+    # results = []
+    # coordList = []
     x = []
     y = []
     z = []
@@ -112,7 +112,7 @@ def decodeHMZ(string,angle,scanStartAngle):
         # coords = (value*sinePhi*math.cos(currentAngle),value*sinePhi*math.sin(currentAngle),value*cosPhi)
         xCoord = value*sinePhi*math.cos(currentAngle)
         yCoord = value*sinePhi*math.sin(currentAngle)
-        zCoord = value*sinePhi*math.sin(currentAngle),value*cosPhi
+        zCoord = value*cosPhi
         #display those coords
         # print coords
 

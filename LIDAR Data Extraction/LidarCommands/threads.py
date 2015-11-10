@@ -33,11 +33,11 @@ def main():
     th2.start()
 
     # operation time = 3.0 seconds
-    time.sleep(3.0)
+    # time.sleep(3.0)
 
     # close the threads down
     while th1.isAlive():
-        th1_stop.set()
+        # th1_stop.set()
         th1.join(1.0)
 
     print "producer stopped"
@@ -47,6 +47,13 @@ def main():
         th2.join(1.0)
 
     print "consumer stopped"
+    print "\n\n\n"
+    print "Final Data:"
+    print "__________________________"
+    print "=========================="
+    print "X = {}".format(lt.processedDataArrays[0])
+    print "Y = {}".format(lt.processedDataArrays[1])
+    print "Z = {}".format(lt.processedDataArrays[2])
 
     # th1_stop.set()
     # th2_stop.set()
@@ -91,7 +98,7 @@ class LidarThreads():
         self.debug = debug
 
         #command to get data from the lidar
-        self.command = 'MD'+'0540'+'0540'+'01'+'0'+'01'
+        self.command = 'MD'+'180'+'900'+'01'+'0'+'01'
 
         # establish communication with the sensor
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -105,6 +112,8 @@ class LidarThreads():
         # dataQueue is a Queue of strings
         # each string representing a slice (scan)
         self.dataQueue = Queue.Queue(maxsize=90)
+
+        self.processedDataArrays = []
 
     ##
     # produce
@@ -123,6 +132,10 @@ class LidarThreads():
 
             #simulate a move of the LIDAR scanner
             time.sleep(0.05)
+
+            inp = input("Enter Scan Angle: ")
+            angle = math.radians(int(inp))
+
             # get data from the LIDAR scanner
             self.socket.send("{}\n".format(self.command))
             #time.sleep(0.05) #simulate scan-time
@@ -141,7 +154,7 @@ class LidarThreads():
                     try:
                         str = data.pop()
                         self.debugPrint("Producer : "+str)
-                        dataQueue.put(str)
+                        dataQueue.put((str, angle))
 
                     except Queue.Full, e:
                         print "Data Queue is full."
@@ -169,7 +182,7 @@ class LidarThreads():
 
             try:
                 # get some data from the queue, process it to cartesian
-                dataline = dataQueue.get(timeout=0.25)
+                dataline, anglePhi = dataQueue.get(timeout=0.25)
 
                 if dataline == "":
                     continue
@@ -178,14 +191,15 @@ class LidarThreads():
                 else:
                     counter += 1
 
-                # dists, coords= decode(dataline, math.pi/2, 90)
-                X, Y, Z = decodeHMZ(dataline, math.pi/2, 90)
-                xLines.append(X[:])
-                yLines.append(Y[:])
-                zLines.append(Z[:])
-
                 # self.debugPrint("Consumer: " + )
                 self.debugPrint("Consumer: data= {}".format(dataline))
+
+                if counter == 5:
+                    # dists, coords= decode(dataline, math.pi/2, 90)
+                    X, Y, Z = decodeHMZ(dataline, anglePhi, 0)
+                    xLines = xLines + X
+                    yLines = yLines + Y
+                    zLines = zLines + Z
 
                 # if counter == 5:
                 #     print "Consumer: dists(mm)=", dists, "; coords=", coords
@@ -194,8 +208,10 @@ class LidarThreads():
 
 
             except Queue.Empty, e:
-                print "Data Queue is empty"
+                self.debugPrint( "Data Queue is empty")
                 continue
+
+        self.processedDataArrays = (xLines, yLines, zLines)
 
     ##
     # debugPrint
