@@ -1,8 +1,10 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 __author__="Jaimiey Sears"
 __copyright__="October 26, 2015"
 __version__= 0.12
-
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 import Queue
 import threading
 import time
@@ -66,6 +68,12 @@ def main():
     # 	print "consumer still running."
 
     time.sleep(0.5)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],lt.processedDataArrays[2])
+
+    plt.show()
     lt.debugPrint("Done running threads")
     lt.debugPrint("exiting with code {}".format(lt.exit()))
     lt.debugPrint("queue size at exit: {}".format(lt.dataQueue.qsize()))
@@ -97,8 +105,10 @@ class LidarThreads():
         # controls a number of debug statements which should only print sometimes
         self.debug = debug
 
+        
+
         #command to get data from the lidar
-        self.command = 'MD'+'180'+'900'+'01'+'0'+'01'
+        self.command = 'MD'+'0000'+'1080'+'00'+'0'+'01'
 
         # establish communication with the sensor
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -134,6 +144,8 @@ class LidarThreads():
             time.sleep(0.05)
 
             inp = input("Enter Scan Angle: ")
+            if not isinstance(inp,int):
+                break
             angle = math.radians(int(inp))
 
             # get data from the LIDAR scanner
@@ -142,7 +154,7 @@ class LidarThreads():
 
 
             #data = "{0} : This_is_a_string_containing_data".format(counter)
-            for i in range(100):
+            for i in range(0, 100):
                 try:
                     data = self.socket.recv(100).split("\n")
                     data.reverse()
@@ -152,14 +164,14 @@ class LidarThreads():
 
                 while data:
                     try:
-                        str = data.pop()
+                        str = data.pop().replace("\\","\\\\")
                         self.debugPrint("Producer : "+str)
                         dataQueue.put((str, angle))
 
                     except Queue.Full, e:
                         print "Data Queue is full."
                         continue
-                counter += 1
+                counter += 1.0
 
         # close thread
         # raise SystemExit
@@ -193,10 +205,11 @@ class LidarThreads():
 
                 # self.debugPrint("Consumer: " + )
                 self.debugPrint("Consumer: data= {}".format(dataline))
-
+                
                 if counter == 5:
+                    print dataline
                     # dists, coords= decode(dataline, math.pi/2, 90)
-                    X, Y, Z = decodeHMZ(dataline, anglePhi, 0)
+                    X, Y, Z = decodeHMZ(dataline, anglePhi, -45.0)
                     xLines = xLines + X
                     yLines = yLines + Y
                     zLines = zLines + Z

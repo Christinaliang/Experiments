@@ -1,4 +1,4 @@
-__author__="Sully Cothran"
+﻿__author__="Sully Cothran"
 __copyright__="October 26, 2015"
 __version__= 0.10
 
@@ -87,7 +87,7 @@ def decodeHMZ(string,angle,scanStartAngle):
     numChars = 3
 
     #for each set of char values, decode the distance value and determine cartesian coords
-    count = 0
+    count = 0.0
     for i in range(numChars - 1,len(string),numChars):
 
         #Get the middle value(upper for 2char decoding, middle for 3char decoding (shift left logically 8)
@@ -115,13 +115,20 @@ def decodeHMZ(string,angle,scanStartAngle):
         zCoord = value*cosPhi
         #display those coords
         # print coords
-
+        xCoord = smallToZero(xCoord)
+        yCoord = smallToZero(yCoord)
+        zCoord = smallToZero(zCoord)
         #add values to results
         x.append(xCoord)
         y.append(yCoord)
         z.append(zCoord)
-        count += 1
+        count += 1.0
     return x, y, z
+
+def smallToZero(val):
+    if val < .001 and val >= -.001:
+        return 0
+    return val
 
 ##
 # debugPrint
