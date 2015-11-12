@@ -70,8 +70,13 @@ def main():
     time.sleep(0.5)
 
     fig = plt.figure()
+    print len(lt.processedDataArrays[0])
     ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],lt.processedDataArrays[2])
+    zArray = []
+    #to see what order the data points are recived, lowest height is first
+    for i in range(0,len(lt.processedDataArrays[0])):
+        zArray.append(i)
+    ax.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],zArray)
 
     plt.show()
     lt.debugPrint("Done running threads")
@@ -121,7 +126,7 @@ class LidarThreads():
 
         # dataQueue is a Queue of strings
         # each string representing a slice (scan)
-        self.dataQueue = Queue.Queue(maxsize=90)
+        self.dataQueue = Queue.Queue()
 
         self.processedDataArrays = []
 
@@ -154,9 +159,13 @@ class LidarThreads():
 
 
             #data = "{0} : This_is_a_string_containing_data".format(counter)
-            for i in range(0, 100):
+            for i in range(0, 4500):
                 try:
-                    data = self.socket.recv(100).split("\n")
+                    temp = self.socket.recv(4500)
+                    print "\nSocket.Recv: " + temp
+                    print len(temp)
+                    data = temp.split("\n")
+                    #print len(data)
                     data.reverse()
                 except socket.timeout, e:
                     self.debugPrint("waiting for data")
@@ -164,7 +173,7 @@ class LidarThreads():
 
                 while data:
                     try:
-                        str = data.pop().replace("\\","\\\\")
+                        str = data.pop()#.replace("\\","\\\\")
                         self.debugPrint("Producer : "+str)
                         dataQueue.put((str, angle))
 
@@ -190,6 +199,8 @@ class LidarThreads():
         xLines = []
         yLines = []
         zLines = []
+
+        dataSet = ""
         while not stop_event.is_set():
 
             try:
@@ -197,6 +208,13 @@ class LidarThreads():
                 dataline, anglePhi = dataQueue.get(timeout=0.25)
 
                 if dataline == "":
+                    if not dataSet == "":
+                        print "Length of dataSet: " + str(len(dataSet))
+                        X, Y, Z = decodeHMZ(dataSet, anglePhi, -45.0)
+                        xLines = xLines + X
+                        yLines = yLines + Y
+                        zLines = zLines + Z
+                    dataSet = ""
                     continue
                 elif dataline == self.command:
                     counter = 0
@@ -206,13 +224,11 @@ class LidarThreads():
                 # self.debugPrint("Consumer: " + )
                 self.debugPrint("Consumer: data= {}".format(dataline))
                 
-                if counter == 5:
-                    print dataline
+                if counter >= 5:
+                    dataSet = dataSet + dataline
+                    #print dataline
                     # dists, coords= decode(dataline, math.pi/2, 90)
-                    X, Y, Z = decodeHMZ(dataline, anglePhi, -45.0)
-                    xLines = xLines + X
-                    yLines = yLines + Y
-                    zLines = zLines + Z
+                    
 
                 # if counter == 5:
                 #     print "Consumer: dists(mm)=", dists, "; coords=", coords

@@ -105,7 +105,8 @@ def decodeHMZ(string,angle,scanStartAngle):
         #get the current angle of the scanner for this value (may need to be changed for values)
         currentAngle = math.radians(scanStartAngle + count*resolution)
 
-        #print angle
+        if(count % 5 == 0):
+            print currentAngle
         # debugPrint("Angle of Scan: " + str(math.degrees(currentAngle)))
 
         #find the cartesian coordinates
