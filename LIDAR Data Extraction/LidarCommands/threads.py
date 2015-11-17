@@ -68,15 +68,39 @@ def main():
     # 	print "consumer still running."
 
     time.sleep(0.5)
+    winSize = 100
+
+    plt.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],c='r')
+    plt.xlim(-1*winSize,winSize)
+    plt.ylim(-1*winSize,winSize)
+
+    plt.scatter(lt.processedDataArrays[1],lt.processedDataArrays[2],c= 'b')
+    plt.xlim(-1*winSize,winSize)
+    plt.ylim(-1*winSize,winSize)
+
+    plt.scatter(lt.processedDataArrays[0],lt.processedDataArrays[2],c= 'g')
+    plt.xlim(-1*winSize,winSize)
+    plt.ylim(-1*winSize,winSize)
 
     fig = plt.figure()
     print len(lt.processedDataArrays[0])
     ax = fig.add_subplot(111, projection='3d')
+    ax.set_xlim(-1*winSize,winSize)
+    ax.set_ylim(-1*winSize,winSize)
+    ax.set_zlim(-1*winSize,winSize)
     zArray = []
     #to see what order the data points are recived, lowest height is first
-    for i in range(0,len(lt.processedDataArrays[0])):
-        zArray.append(i)
-    ax.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],zArray)
+    #for i in range(0,len(lt.processedDataArrays[0])):
+        #zArray.append(i)
+    ax.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],lt.processedDataArrays[2],c=lt.processedDataArrays[2])
+
+    commandFile = open("lidar_commands.txt",'w')
+    commandFile.write("{}".format(lt.commandOutput))
+    commandFile.close()
+
+    commandFile = open("lidar_data.txt",'w')
+    commandFile.write("{}".format(lt.dataOutput))
+    commandFile.close()
 
     plt.show()
     lt.debugPrint("Done running threads")
@@ -110,7 +134,10 @@ class LidarThreads():
         # controls a number of debug statements which should only print sometimes
         self.debug = debug
 
-        
+        self.commandOutput = ""
+        self.dataOutput = ""
+
+        self.slitAngle = -45
 
         #command to get data from the lidar
         self.command = 'MD'+'0000'+'1080'+'00'+'0'+'01'
@@ -147,7 +174,9 @@ class LidarThreads():
 
             #simulate a move of the LIDAR scanner
             time.sleep(0.05)
-
+            while dataQueue.qsize() > 0:
+                pass
+            self.slitAngle = -45
             inp = input("Enter Scan Angle: ")
             if not isinstance(inp,int):
                 break
@@ -210,7 +239,12 @@ class LidarThreads():
                 if dataline == "":
                     if not dataSet == "":
                         print "Length of dataSet: " + str(len(dataSet))
-                        X, Y, Z = decodeHMZ(dataSet, anglePhi, -45.0)
+                        X, Y, Z, lastAngle, outVal = decodeHMZ(dataSet, anglePhi, self.slitAngle)
+                        
+                        self.slitAngle = lastAngle
+
+                        self.dataOutput += outVal + "\n\n\n"
+
                         xLines = xLines + X
                         yLines = yLines + Y
                         zLines = zLines + Z
@@ -223,7 +257,8 @@ class LidarThreads():
 
                 # self.debugPrint("Consumer: " + )
                 self.debugPrint("Consumer: data= {}".format(dataline))
-                
+
+                self.commandOutput += dataline + '\n'
                 if counter >= 5:
                     dataSet = dataSet + dataline
                     #print dataline

@@ -4,12 +4,14 @@ __version__= 0.10
 
 #from testScript import *
 import math
+import numpy as np
 
 global debug
 
 def decode(string,angle,scanStartAngle):
     #get the first letter of the result string
     firstLetter = string[0:1]
+
 
     #set the resolution (for default, .25 degrees per scan) (for testing, using 45 degrees per scan
     resolution = 0.25
@@ -54,7 +56,7 @@ def decode(string,angle,scanStartAngle):
         coords = (value*sinePhi*math.cos(currentAngle),value*sinePhi*math.sin(currentAngle),value*cosPhi)
         #display those coords
         # print coords
-
+        
         #add values to results
         coordList.append(coords)
         results.append(value)
@@ -68,6 +70,9 @@ def decodeHMZ(string,angle,scanStartAngle):
 
     #set the resolution (for default, .25 degrees per scan) (for testing, using 45 degrees per scan
     resolution = 0.25
+    
+    #output data
+    dataOutput = ""
 
     #get the whole result string except for first letter
     string = string[:len(string)-1]
@@ -80,20 +85,21 @@ def decodeHMZ(string,angle,scanStartAngle):
     z = []
 
     #pre calculate sine of phi and cosine of phi
-    sinePhi = math.sin(angle)
-    cosPhi = math.cos(angle)
+    
+    sinePhi = math.sin(math.pi/2)
+    cosPhi = math.cos(math.pi/2)
 
     #set the number of chars per result based off of first letter of result string
     numChars = 3
 
     #for each set of char values, decode the distance value and determine cartesian coords
-    count = 0.0
+    count = 0
     for i in range(numChars - 1,len(string),numChars):
 
         #Get the middle value(upper for 2char decoding, middle for 3char decoding (shift left logically 8)
         middle = int(ord(string[i - 1])) - 0x30 << 6
         #Get the lower value
-        lower = int(ord(string[i])) - 0x30
+        lower = int(ord(string[i ])) - 0x30
         #put values together
         value = middle + lower
         #if we are using 3char decoding, find the upper part
@@ -105,26 +111,50 @@ def decodeHMZ(string,angle,scanStartAngle):
         #get the current angle of the scanner for this value (may need to be changed for values)
         currentAngle = math.radians(scanStartAngle + count*resolution)
 
-        if(count % 5 == 0):
-            print currentAngle
+        #if value > 500:
+        #    value =  0
+
+        #if(count % 5 == 0):
+        #    print currentAngle
         # debugPrint("Angle of Scan: " + str(math.degrees(currentAngle)))
 
         #find the cartesian coordinates
         # coords = (value*sinePhi*math.cos(currentAngle),value*sinePhi*math.sin(currentAngle),value*cosPhi)
+        
         xCoord = value*sinePhi*math.cos(currentAngle)
         yCoord = value*sinePhi*math.sin(currentAngle)
         zCoord = value*cosPhi
+
+        
+        yCoord = yCoord*math.cos(angle) + zCoord*math.sin(angle)
+        zCoord = yCoord*(-1*math.sin(angle)) + zCoord*math.cos(angle)
+        #rotation_matrix = np.matrix(    (  (1,0,0),(0,math.cos(angle),-math.sin(angle)),(0,math.sin(angle),math.cos(angle))))
+        
+        #coord_matrix = np.matrix(((xCoord,yCoord,zCoord)))
+
+        #result_matrix = coord_matrix * rotation_matrix
+
+        #xCoord = result_matrix.item(0)
+        #yCoord = result_matrix.item(1)
+        #zCoord = result_matrix.item(2)
+
+        #xCoord = xCoord*math.cos(angle) - yCoord*math.sin(angle)
+        ##yCoord = yCoord*math.cos(angle) + zCoord*math.sin(angle)
+        #zCoord = zCoord*math.cos(angle) - yCoord*math.sin(angle)
         #display those coords
         # print coords
         xCoord = smallToZero(xCoord)
         yCoord = smallToZero(yCoord)
         zCoord = smallToZero(zCoord)
+
+        dataOutput += "Angle: " + str(math.degrees(currentAngle)) + " Dist: " + str(value/10) +  " X: " + str(xCoord) + " Y: " + str(yCoord) + " Z: " + str(zCoord) + '\n'
         #add values to results
         x.append(xCoord)
         y.append(yCoord)
         z.append(zCoord)
-        count += 1.0
-    return x, y, z
+        count += 1
+    print "Final Count: " + str(count)
+    return x, y, z, scanStartAngle + count*resolution, dataOutput
 
 def smallToZero(val):
     if val < .001 and val >= -.001:
