@@ -1,4 +1,5 @@
-﻿__author__="Sully Cothran"
+
+__author__="Sully Cothran"
 __copyright__="October 26, 2015"
 __version__= 0.10
 
@@ -8,74 +9,19 @@ import numpy as np
 
 global debug
 
-def decode(string,angle,scanStartAngle):
-    #get the first letter of the result string
-    firstLetter = string[0:1]
-
-
-    #set the resolution (for default, .25 degrees per scan) (for testing, using 45 degrees per scan
-    resolution = 0.25
-
-    #get the whole result string except for first letter
-    string = string[:len(string)-1]
-
-    #init the result lists
-    results = []
-    coordList = []
-
-    #pre calculate sine of phi and cosine of phi
-    sinePhi = math.sin(angle)
-    cosPhi = math.cos(angle)
-
-    #set the number of chars per result based off of first letter of result string
-    numChars = 3
-
-    #for each set of char values, decode the distance value and determine cartesian coords
-    count = 0
-    for i in range(numChars - 1,len(string),numChars):
-
-        #Get the middle value(upper for 2char decoding, middle for 3char decoding (shift left logically 8)
-        middle = int(ord(string[i - 1])) - 0x30 << 6
-        #Get the lower value
-        lower = int(ord(string[i])) - 0x30
-        #put values together
-        value = middle + lower
-        #if we are using 3char decoding, find the upper part
-        if numChars == 3:
-            #shift left logically 16
-            upper = (int(ord(string[i - 2])) - 0x30 << 12)
-            #put the value together with rest
-            value =  upper + value
-        #get the current angle of the scanner for this value (may need to be changed for values)
-        currentAngle = math.radians(scanStartAngle + count*resolution)
-
-        #print angle
-        # debugPrint("Angle of Scan: " + str(math.degrees(currentAngle)))
-
-        #find the cartesian coordinates
-        coords = (value*sinePhi*math.cos(currentAngle),value*sinePhi*math.sin(currentAngle),value*cosPhi)
-        #display those coords
-        # print coords
-        
-        #add values to results
-        coordList.append(coords)
-        results.append(value)
-        # debugPrint(value)
-        count += 1
-    return (results, coordList)
 
 def decodeHMZ(string,angle,scanStartAngle):
     #get the first letter of the result string
     firstLetter = string[0:1]
 
-    #set the resolution (for default, .25 degrees per scan) (for testing, using 45 degrees per scan
+    #set the resolution (for default, .25 degrees per scan)
     resolution = 0.25
     
     #output data
     dataOutput = ""
 
     #get the whole result string except for first letter
-    string = string[:len(string)-1]
+    # string = string[:len(string)-1]
 
     #init the result lists
     # results = []
@@ -94,20 +40,20 @@ def decodeHMZ(string,angle,scanStartAngle):
 
     #for each set of char values, decode the distance value and determine cartesian coords
     count = 0
-    for i in range(numChars - 1,len(string),numChars):
+    for i in range(numChars - 1, len(string)-1, numChars):
 
-        #Get the middle value(upper for 2char decoding, middle for 3char decoding (shift left logically 8)
-        middle = int(ord(string[i - 1])) - 0x30 << 6
         #Get the lower value
-        lower = int(ord(string[i ])) - 0x30
-        #put values together
-        value = middle + lower
-        #if we are using 3char decoding, find the upper part
-        if numChars == 3:
-            #shift left logically 16
-            upper = (int(ord(string[i - 2])) - 0x30 << 12)
-            #put the value together with rest
-            value =  upper + value
+        lower = ord(string[i]) - 48
+
+        #Get the middle value(upper for 2char decoding, middle for 3char decoding (shift left logically 6)
+        middle = (ord(string[i - 1]) - 48) << 6
+
+        #shift left logically 12
+        upper = (ord(string[i-2]) - 48) << 12
+
+        #put the value together with rest
+        value =  upper + middle + lower
+
         #get the current angle of the scanner for this value (may need to be changed for values)
         currentAngle = math.radians(scanStartAngle + count*resolution)
 
@@ -125,7 +71,6 @@ def decodeHMZ(string,angle,scanStartAngle):
         yCoord = value*math.sin(currentAngle)
         zCoord = 0#value*cosPhi
 
-        
         yc = yCoord*math.cos(angle)
         zc = yCoord*(-1*math.sin(angle))
 
@@ -156,7 +101,7 @@ def decodeHMZ(string,angle,scanStartAngle):
         y.append(yCoord)
         z.append(zCoord)
         count += 1
-    print "Final Count: " + str(count)
+    # print "Final Count: " + str(count)
     return x, y, z, scanStartAngle + count*resolution, dataOutput
 
 def smallToZero(val):
@@ -183,33 +128,11 @@ def setDebug(ison=False):
     debug = ison
 
 
-# result, coords = decode("0005005005005005005005",math.pi/2)
-
-#for testing purposes
-# for y in range(10,-10,-1):
-# 	row = ""
-# 	for x in range(-10,10):
-# 		found = False
-# 		count = 0
-# 		for coord in coords:
-# 			if int(coord[0]) == x and int(coord[1]) == y:
-#
-# 				found = True
-# 				break
-# 			count += 1
-# 		if x == 0 and y == 0:
-# 			row += "+"
-# 		elif found:
-# 			row += str(count)[0]
-# 		elif x == 0:
-# 			row += "|"
-# 		elif y == 0:
-# 			row += "-"
-# 		else:
-# 			row += " "
-# 	print row
-
-
+## UNIT TEST FOR DECODE ##
+print "Unit test 1"
+X, Y, Z, scanAngle, dataOutput = decodeHMZ(str('0CB0'), 0, 0)
+if dataOutput == str('Angle: 0.0 Dist: 123 X: 1234.0 Y: 0 Z: 0\n'): print "Passed."
+else: print "failed."
 
 
 

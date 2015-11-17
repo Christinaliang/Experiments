@@ -1,7 +1,8 @@
-﻿#!/usr/bin/env python
+
 __author__="Jaimiey Sears"
 __copyright__="October 26, 2015"
-__version__= 0.12
+__version__= 0.15
+
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
@@ -68,7 +69,7 @@ def main():
     # 	print "consumer still running."
 
     time.sleep(0.5)
-    winSize = 100
+    winSize = 200000
 
     plt.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],c='r')
     plt.xlim(-1*winSize,winSize)
@@ -179,6 +180,7 @@ class LidarThreads():
             self.slitAngle = -45
             inp = input("Enter Scan Angle: ")
             if not isinstance(inp,int):
+                print "enter an integer"
                 break
             angle = math.radians(int(inp))
 
@@ -239,15 +241,14 @@ class LidarThreads():
                 if dataline == "":
                     if not dataSet == "":
                         print "Length of dataSet: " + str(len(dataSet))
-                        X, Y, Z, lastAngle, outVal = decodeHMZ(dataSet, anglePhi, self.slitAngle)
+                        for string in dataSet.split('\n'):
+                            X, Y, Z, lastAngle, outVal = decodeHMZ(string, anglePhi, self.slitAngle)
                         
-                        self.slitAngle = lastAngle
+                            self.slitAngle = lastAngle
 
-                        self.dataOutput += outVal + "\n\n\n"
-
-                        xLines = xLines + X
-                        yLines = yLines + Y
-                        zLines = zLines + Z
+                            xLines = xLines + X
+                            yLines = yLines + Y
+                            zLines = zLines + Z
                     dataSet = ""
                     continue
                 elif dataline == self.command:
