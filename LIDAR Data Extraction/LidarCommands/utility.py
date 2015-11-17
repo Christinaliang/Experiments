@@ -121,13 +121,16 @@ def decodeHMZ(string,angle,scanStartAngle):
         #find the cartesian coordinates
         # coords = (value*sinePhi*math.cos(currentAngle),value*sinePhi*math.sin(currentAngle),value*cosPhi)
         
-        xCoord = value*sinePhi*math.cos(currentAngle)
-        yCoord = value*sinePhi*math.sin(currentAngle)
-        zCoord = value*cosPhi
+        xCoord = value*math.cos(currentAngle)
+        yCoord = value*math.sin(currentAngle)
+        zCoord = 0#value*cosPhi
 
         
-        yCoord = yCoord*math.cos(angle) + zCoord*math.sin(angle)
-        zCoord = yCoord*(-1*math.sin(angle)) + zCoord*math.cos(angle)
+        yc = yCoord*math.cos(angle)
+        zc = yCoord*(-1*math.sin(angle))
+
+        yCoord = yc
+        zCoord = zc
         #rotation_matrix = np.matrix(    (  (1,0,0),(0,math.cos(angle),-math.sin(angle)),(0,math.sin(angle),math.cos(angle))))
         
         #coord_matrix = np.matrix(((xCoord,yCoord,zCoord)))
