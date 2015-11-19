@@ -10,9 +10,9 @@ import Queue
 import threading
 import time
 import socket
+import logging
 from utility import *
 # import usb, binascii, math, argparse, struct, sys
-
 
 #######################
 #  UNIT TEST 1 START  #
