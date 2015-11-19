@@ -1,4 +1,4 @@
-
+﻿
 __author__="Sully Cothran"
 __copyright__="October 26, 2015"
 __version__= 0.10
@@ -68,6 +68,20 @@ def decodeHMZ(string,angle,scanStartAngle):
     print "Distances: ", dists
     return x, y, z, scanStartAngle + count*resolution, dataOutput
 
+def splitNparts(string, n):
+    doSplit = True
+    strList = []
+    while(doSplit):
+        if string == "":
+            return strList
+        if(len(string) < n):
+            strList.append(string)
+            return strList
+        else:
+            strList.append(string[0:n])
+            string = string[n:len(string)]
+
+
 def smallToZero(val):
     if abs(val) < .001:
         return 0
@@ -96,5 +110,14 @@ result = decodeShort(str('CB'))
 if str(result) == str('1234'): print "Short decode Passed."
 else: print "Short decode failed with {}".format(result)
 
+print "Unit test 3"
+result = splitNparts("HelloHelloHello",5)
+if result == ["Hello", "Hello","Hello"]: print "Split 5 Parts Passed."
+else: print "Split 5 Failed with {}".format(result)
+
+print "Unit test 4"
+result = splitNparts("HelloHelloHello",4)
+if result == ["Hell", "oHel","loHe","llo"]: print "Split 4 Parts Passed."
+else: print "Split 4 Failed with {}".format(result)
 
 

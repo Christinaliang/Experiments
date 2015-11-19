@@ -1,4 +1,4 @@
-
+﻿
 __author__="Jaimiey Sears"
 __copyright__="October 26, 2015"
 __version__= 0.15
@@ -69,7 +69,7 @@ def main():
     # 	print "consumer still running."
 
     time.sleep(0.5)
-    winSize = 200000
+    winSize = 1500
 
     plt.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],c='r')
     plt.xlim(-1*winSize,winSize)
@@ -241,7 +241,8 @@ class LidarThreads():
                 if dataline == "":
                     if not dataSet == "":
                         print "Length of dataSet: " + str(len(dataSet))
-                        for string in dataSet.split('\n'):
+                        for string in splitNparts(dataSet,64):
+                            print "String: " + string + '\n'
                             X, Y, Z, lastAngle, outVal = decodeHMZ(string, anglePhi, self.slitAngle)
                         
                             self.slitAngle = lastAngle
