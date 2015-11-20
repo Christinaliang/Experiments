@@ -65,7 +65,7 @@ def decodeHMZ(string,angle,scanStartAngle):
         count += 1
 
     # print "Final Count: " + str(count)
-    print "Distances: ", dists
+    #print "Distances: ", dists
     return x, y, z, scanStartAngle + count*resolution, dataOutput
 
 def splitNparts(string, n):

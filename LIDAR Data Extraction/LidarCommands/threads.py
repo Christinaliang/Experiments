@@ -43,20 +43,20 @@ def main():
         # th1_stop.set()
         th1.join(1.0)
 
-    print "producer stopped"
+    #print "producer stopped"
 
     while th2.isAlive():
         th2_stop.set()
         th2.join(1.0)
 
-    print "consumer stopped"
-    print "\n\n\n"
-    print "Final Data:"
-    print "__________________________"
-    print "=========================="
-    print "X = {}".format(lt.processedDataArrays[0])
-    print "Y = {}".format(lt.processedDataArrays[1])
-    print "Z = {}".format(lt.processedDataArrays[2])
+    #print "consumer stopped"
+    #print "\n\n\n"
+    #print "Final Data:"
+    #print "__________________________"
+    #print "=========================="
+    #print "X = {}".format(lt.processedDataArrays[0])
+    #print "Y = {}".format(lt.processedDataArrays[1])
+    #print "Z = {}".format(lt.processedDataArrays[2])
 
     # th1_stop.set()
     # th2_stop.set()
@@ -69,7 +69,7 @@ def main():
     # 	print "consumer still running."
 
     time.sleep(0.5)
-    winSize = 1500
+    winSize = 200
 
     plt.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],c='r')
     plt.xlim(-1*winSize,winSize)
@@ -84,7 +84,7 @@ def main():
     plt.ylim(-1*winSize,winSize)
 
     fig = plt.figure()
-    print len(lt.processedDataArrays[0])
+    print "Number of Data Points: " + str(len(lt.processedDataArrays[0]))
     ax = fig.add_subplot(111, projection='3d')
     ax.set_xlim(-1*winSize,winSize)
     ax.set_ylim(-1*winSize,winSize)
@@ -193,8 +193,8 @@ class LidarThreads():
             for i in range(0, 4500):
                 try:
                     temp = self.socket.recv(4500)
-                    print "\nSocket.Recv: " + temp
-                    print len(temp)
+                    #print "\nSocket.Recv: " + temp
+                    #print len(temp)
                     data = temp.split("\n")
                     #print len(data)
                     data.reverse()
@@ -240,9 +240,9 @@ class LidarThreads():
 
                 if dataline == "":
                     if not dataSet == "":
-                        print "Length of dataSet: " + str(len(dataSet))
+                        #print "Length of dataSet: " + str(len(dataSet))
                         for string in splitNparts(dataSet,64):
-                            print "String: " + string + '\n'
+                            #print "String: " + string + '\n'
                             X, Y, Z, lastAngle, outVal = decodeHMZ(string, anglePhi, self.slitAngle)
                         
                             self.slitAngle = lastAngle
