@@ -1,4 +1,4 @@
-﻿
+
 __author__="Jaimiey Sears"
 __copyright__="October 26, 2015"
 __version__= 0.15
@@ -146,7 +146,7 @@ class LidarThreads():
         # establish communication with the sensor
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            self.socket.settimeout(0.1)
+            self.socket.settimeout(.1)
             self.socket.connect(("192.168.0.10", 10940))
         except socket.timeout, e:
             self.debugPrint("I can't connect. Exiting.")
@@ -170,48 +170,55 @@ class LidarThreads():
     def produce(self, dataQueue, stop_event):
         counter = 0
         # self.socket.send('PP\n')
+        ang = 0
+        #while not stop_event.is_set():
+        for i in range (0,10):
 
-        while not stop_event.is_set():
+             #simulate a move of the LIDAR scanner
+                time.sleep(0.05)
+                while dataQueue.qsize() > 0:
+                  pass
+                self.slitAngle = -45
+                #inp = input("Rotate LiDAR to a " + angle +"degree angle")
+                print ["Rotate LiDAR to a ", ang, "degree angle"]
+                inp = raw_input("Press enter when ready to make a scan")
+                if inp == "":
+                    # if not isinstance(inp,int):
+                    #   print ""
+                    #  break
+                    angle = math.radians(int(ang))
+                    ang += 10
 
-            #simulate a move of the LIDAR scanner
-            time.sleep(0.05)
-            while dataQueue.qsize() > 0:
-                pass
-            self.slitAngle = -45
-            inp = input("Enter Scan Angle: ")
-            if not isinstance(inp,int):
-                print "enter an integer"
-                break
-            angle = math.radians(int(inp))
-
-            # get data from the LIDAR scanner
-            self.socket.send("{}\n".format(self.command))
-            #time.sleep(0.05) #simulate scan-time
+                    # get data from the LIDAR scanner
+                    self.socket.send("{}\n".format(self.command))
+                    #time.sleep(0.05) #simulate scan-time
 
 
-            #data = "{0} : This_is_a_string_containing_data".format(counter)
-            for i in range(0, 4500):
-                try:
-                    temp = self.socket.recv(4500)
-                    print "\nSocket.Recv: " + temp
-                    print len(temp)
-                    data = temp.split("\n")
-                    #print len(data)
-                    data.reverse()
-                except socket.timeout, e:
-                    self.debugPrint("waiting for data")
-                    break
-
-                while data:
+         #data = "{0} : This_is_a_string_containing_data".format(counter)
+                for i in range(0, 4500):
                     try:
-                        str = data.pop()#.replace("\\","\\\\")
-                        self.debugPrint("Producer : "+str)
-                        dataQueue.put((str, angle))
+                        temp = self.socket.recv(4500)
+                        print "\nSocket.Recv: " + temp
+                        print len(temp)
+                        data = temp.split("\n")
+                        #print len(data)
+                        data.reverse()
+                    except socket.timeout, e:
+                        self.debugPrint("waiting for data")
+                        break
 
-                    except Queue.Full, e:
-                        print "Data Queue is full."
-                        continue
-                counter += 1.0
+                    while data:
+                        try:
+                            str = data.pop()#.replace("\\","\\\\")
+                            self.debugPrint("Producer : "+str)
+                            dataQueue.put((str, angle))
+
+                        except Queue.Full, e:
+                            print "Data Queue is full."
+                            continue
+                    counter += 1.0
+
+
 
         # close thread
         # raise SystemExit
