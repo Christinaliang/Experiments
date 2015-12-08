@@ -3,33 +3,30 @@ __author__="Jaimiey Sears"
 __copyright__="October 26, 2015"
 __version__= 0.15
 
-import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
 import Queue
 import threading
-import time
 import socket
-import logging
+from openpyxl import Workbook
+from openpyxl.cell import get_column_letter as toLetter
 from utility import *
-# import usb, binascii, math, argparse, struct, sys
+from constants import *
 
-#######################
-#  UNIT TEST 1 START  #
-#######################
+##############################
+#  PROGRAM MAIN ENTRY POINT  #
+##############################
 def main():
     lt = LidarThreads(debug=False)
 
     # make the first string for reading LIDAR data
-    lt.debugPrint("Starting")
+    debugPrint("Starting", ROSTA)
     th1_stop = threading.Event()
     th1 = threading.Thread(target=lt.produce, args=(lt.dataQueue, th1_stop,), name="data_reader")
-    lt.debugPrint("Done making thread 1")
+    debugPrint("Done making thread 1", ROSTA)
 
     # make the second string to process the LIDAR data
     th2_stop = threading.Event()
     th2 = threading.Thread(target=lt.consume, args=(lt.dataQueue, th2_stop,), name="cartesian_converter")
-    lt.debugPrint("done making thread 2")
+    debugPrint("done making thread 2", ROSTA)
 
     # start both strings
     th1.start()
@@ -43,70 +40,50 @@ def main():
         # th1_stop.set()
         th1.join(1.0)
 
-    print "producer stopped"
+    debugPrint("producer stopped", ROSTA)
 
     while th2.isAlive():
         th2_stop.set()
         th2.join(1.0)
 
-    print "consumer stopped"
-    print "\n\n\n"
-    print "Final Data:"
-    print "__________________________"
-    print "=========================="
-    print "X = {}".format(lt.processedDataArrays[0])
-    print "Y = {}".format(lt.processedDataArrays[1])
-    print "Z = {}".format(lt.processedDataArrays[2])
+    debugPrint("consumer stopped", ROSTA)
+    # print "\n\n\n"
+    # print "Final Data:"
+    # print "__________________________"
+    # print "=========================="
+    # print "X = {}".format(lt.processedDataArrays[0])
+    # print "Y = {}".format(lt.processedDataArrays[1])
+    # print "Z = {}".format(lt.processedDataArrays[2])
 
-    # th1_stop.set()
-    # th2_stop.set()
-    #
-    # th1.join(1.0)
-    # if th1.isAlive():
-    # 	print "producer still running."
-    # th2.join(1.0)
-    # if th2.isAlive():
-    # 	print "consumer still running."
+    # write to excel workbook
+    wb = Workbook()
+    # outfile = load_workbook(filename=generateStampedFileName(), read_only=False, keep_vba=True)
+    sheet1 = wb.active
+    # sheet1 = outfile.active
+    sheet1['A1'] = "X"
+    sheet1['B1'] = "Y"
+    sheet1['C1'] = "Z"
+    sheet1['D1'] = "Phi"
+    sheet1['E1'] = "Theta"
+    sheet1['F1'] = "Dist"
+    sheet1['G1'] = "Time"
 
-    time.sleep(0.5)
-    winSize = 1500
+    # insert x y z into excel document
+    for i in range(6):
+        dataset = lt.processedDataArrays[i]
+        for j in range(len(dataset)):
+            cell = '{}{}'.format(toLetter(i+1),j+2)
+            sheet1[cell] = dataset[j]
 
-    plt.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],c='r')
-    plt.xlim(-1*winSize,winSize)
-    plt.ylim(-1*winSize,winSize)
+    wb.save(generateStampedFileName())
+    debugPrint("workbook saved.", ROSTA)
 
-    plt.scatter(lt.processedDataArrays[1],lt.processedDataArrays[2],c= 'b')
-    plt.xlim(-1*winSize,winSize)
-    plt.ylim(-1*winSize,winSize)
+    th1_stop.set()
+    th2_stop.set()
 
-    plt.scatter(lt.processedDataArrays[0],lt.processedDataArrays[2],c= 'g')
-    plt.xlim(-1*winSize,winSize)
-    plt.ylim(-1*winSize,winSize)
-
-    fig = plt.figure()
-    print len(lt.processedDataArrays[0])
-    ax = fig.add_subplot(111, projection='3d')
-    ax.set_xlim(-1*winSize,winSize)
-    ax.set_ylim(-1*winSize,winSize)
-    ax.set_zlim(-1*winSize,winSize)
-    zArray = []
-    #to see what order the data points are recived, lowest height is first
-    #for i in range(0,len(lt.processedDataArrays[0])):
-        #zArray.append(i)
-    ax.scatter(lt.processedDataArrays[0],lt.processedDataArrays[1],lt.processedDataArrays[2],c=lt.processedDataArrays[2])
-
-    commandFile = open("lidar_commands.txt",'w')
-    commandFile.write("{}".format(lt.commandOutput))
-    commandFile.close()
-
-    commandFile = open("lidar_data.txt",'w')
-    commandFile.write("{}".format(lt.dataOutput))
-    commandFile.close()
-
-    plt.show()
-    lt.debugPrint("Done running threads")
-    lt.debugPrint("exiting with code {}".format(lt.exit()))
-    lt.debugPrint("queue size at exit: {}".format(lt.dataQueue.qsize()))
+    debugPrint("Done running threads", ROSTA)
+    debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
+    debugPrint("queue size at exit: {}".format(lt.dataQueue.qsize()), ROSTA)
     raise SystemExit
 #####################
 ## UNIT TEST 1 END ##
@@ -138,10 +115,10 @@ class LidarThreads():
         self.commandOutput = ""
         self.dataOutput = ""
 
-        self.slitAngle = -45
+        self.slitAngle = START_ANGLE
 
         #command to get data from the lidar
-        self.command = 'MD'+'0000'+'1080'+'00'+'0'+'01'
+        self.command = 'MD'+'0180'+'0900'+'00'+'0'+'01'
 
         # establish communication with the sensor
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -149,7 +126,7 @@ class LidarThreads():
             self.socket.settimeout(.1)
             self.socket.connect(("192.168.0.10", 10940))
         except socket.timeout, e:
-            self.debugPrint("I can't connect. Exiting.")
+            debugPrint("I can't connect. Exiting.", SOCKET_MSG)
             exit(-1)
 
         # dataQueue is a Queue of strings
@@ -169,59 +146,52 @@ class LidarThreads():
     ##
     def produce(self, dataQueue, stop_event):
         counter = 0
-        # self.socket.send('PP\n')
         ang = 0
+
         #while not stop_event.is_set():
         for i in range (0,10):
 
              #simulate a move of the LIDAR scanner
                 time.sleep(0.05)
+
+                # wait for the Queue to empty
                 while dataQueue.qsize() > 0:
                   pass
-                self.slitAngle = -45
-                #inp = input("Rotate LiDAR to a " + angle +"degree angle")
-                print ["Rotate LiDAR to a ", ang, "degree angle"]
-                inp = raw_input("Press enter when ready to make a scan")
+
+                # get the starting theta angle
+                self.slitAngle = START_ANGLE
+
+                # get data from the user
+                print "\nROSta: Rotate LiDAR to {} degrees".format(ang)
+                inp = raw_input("ROSta: Press enter when ready to make a scan")
                 if inp == "":
-                    # if not isinstance(inp,int):
-                    #   print ""
-                    #  break
                     angle = math.radians(int(ang))
                     ang += 10
 
-                    # get data from the LIDAR scanner
+                    # send scan request to the LIDAR
                     self.socket.send("{}\n".format(self.command))
-                    #time.sleep(0.05) #simulate scan-time
 
-
-         #data = "{0} : This_is_a_string_containing_data".format(counter)
-                for i in range(0, 4500):
+                # receive data from the LIDAR
+                for j in range(0, 4500):
                     try:
                         temp = self.socket.recv(4500)
-                        print "\nSocket.Recv: " + temp
-                        print len(temp)
+                        debugPrint("Recv:\n" + temp, SOCKET_DATA)
                         data = temp.split("\n")
-                        #print len(data)
                         data.reverse()
                     except socket.timeout, e:
-                        self.debugPrint("waiting for data")
+                        debugPrint("waiting for data", SOCKET_MSG)
                         break
 
                     while data:
                         try:
-                            str = data.pop()#.replace("\\","\\\\")
-                            self.debugPrint("Producer : "+str)
+                            str = data.pop()
+                            # put data into our queue for the consumer to use
                             dataQueue.put((str, angle))
 
                         except Queue.Full, e:
-                            print "Data Queue is full."
+                            debugPrint("Data Queue is full.", SOCKET_MSG)
                             continue
                     counter += 1.0
-
-
-
-        # close thread
-        # raise SystemExit
 
     ##
     # consume
@@ -237,26 +207,37 @@ class LidarThreads():
         xLines = []
         yLines = []
         zLines = []
+        phiLines = []
+        thetaLines = []
+        distLines = []
+        timeLines = []
 
         dataSet = ""
+        currTime = 0
+        emptied = False
+
         while not stop_event.is_set():
 
             try:
                 # get some data from the queue, process it to cartesian
                 dataline, anglePhi = dataQueue.get(timeout=0.25)
+                emptied = False
 
                 if dataline == "":
                     if not dataSet == "":
-                        print "Length of dataSet: " + str(len(dataSet))
                         for string in splitNparts(dataSet,64):
-                            print "String: " + string + '\n'
-                            X, Y, Z, lastAngle, outVal = decodeHMZ(string, anglePhi, self.slitAngle)
-                        
+                            X, Y, Z, lastAngle, outVal, phi, th, dist = decodeHMZ(string, anglePhi, self.slitAngle)
+
                             self.slitAngle = lastAngle
 
                             xLines = xLines + X
                             yLines = yLines + Y
                             zLines = zLines + Z
+                            phiLines = phiLines + phi
+                            thetaLines = thetaLines + th
+                            distLines = distLines + dist
+                            # timeLines = timeLines.append(currTime)
+
                     dataSet = ""
                     continue
                 elif dataline == self.command:
@@ -264,39 +245,21 @@ class LidarThreads():
                 else:
                     counter += 1
 
-                # self.debugPrint("Consumer: " + )
-                self.debugPrint("Consumer: data= {}".format(dataline))
+                debugPrint("Consumer: data= {}".format(dataline), SOCKET_DATA)
 
                 self.commandOutput += dataline + '\n'
+                if counter == 4:
+                    currTime = decodeShort(dataline[:-1])
                 if counter >= 5:
                     dataSet = dataSet + dataline
-                    #print dataline
-                    # dists, coords= decode(dataline, math.pi/2, 90)
-                    
-
-                # if counter == 5:
-                #     print "Consumer: dists(mm)=", dists, "; coords=", coords
-                #     print "\tqueue size= ", dataQueue.qsize()
-
-
 
             except Queue.Empty, e:
-                self.debugPrint( "Data Queue is empty")
+                if not emptied:
+                    debugPrint( "Data Queue is empty", SOCKET_MSG)
+                    emptied = True
                 continue
 
-        self.processedDataArrays = (xLines, yLines, zLines)
-
-    ##
-    # debugPrint
-    #
-    # Description: prints the specified string only when debug boolean is set to True
-    #
-    # __params__
-    ##
-    def debugPrint(self, str):
-        if self.debug:
-            print str
-        return
+        self.processedDataArrays = (xLines, yLines, zLines, phiLines, thetaLines, distLines)
 
     ##
     # exit
@@ -310,7 +273,6 @@ class LidarThreads():
             return 0
         else:
             return -1
-
 
 # run the program
 main()
