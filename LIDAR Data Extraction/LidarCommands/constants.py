@@ -1,5 +1,8 @@
 __author__ = 'Jaimiey'
 
+OPERATION_SUCCESS = 0
+OPERATION_FAILURE = -1
+
 # indexes of lidar data in processedDataArrays
 X_IDX = 0
 Y_IDX = 1
@@ -21,7 +24,7 @@ RESOLUTION = 0.25
 # 2 = print producer and consumer messages
 # 3 = print producer and consumer data
 # 4 = print data as it is processed (for use in utility.py)
-DEBUG_LEVEL = 1
+DEBUG_LEVEL = 4
 ROSTA = 1
 SOCKET_MSG = 2
 SOCKET_DATA = 3

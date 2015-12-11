@@ -55,7 +55,10 @@ def main():
     # print "Z = {}".format(lt.processedDataArrays[2])
 
     #save into an excel worksheet
-    wbSave(generateStampedFileName('.xlsx'), lt.processedDataArrays)
+    # wbSave(generateStampedFileName(), lt.processedDataArrays)
+
+    # pickle the file to be used later
+    writeToPickle(generateStampedFileName('.dat'), lt.processedDataArrays)
 
     th1_stop.set()
     th2_stop.set()

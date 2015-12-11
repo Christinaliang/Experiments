@@ -3,9 +3,13 @@ __author__="Sully Cothran"
 __copyright__="October 26, 2015"
 __version__= 0.5
 
-import math, time
+import math, time, pickle
 import datetime as dt
 from constants import *
+from openpyxl import Workbook
+from openpyxl.cell import get_column_letter as toLetter
+
+
 
 def decodeHMZ(string,angle,scanStartAngle):
     #get the first letter of the result string
@@ -106,10 +110,29 @@ def decodeShort(dataStr):
 
     return result
 
-def generateStampedFileName():
+def generateStampedFileName(ext):
     timestamp = dt.datetime.now()
-    return "test_vectors_{}_{}_{}_{}_{}_{}.xlsx".format(timestamp.year, timestamp.month, timestamp.day,\
-           timestamp.hour, timestamp.minute, timestamp.second)
+    return "test_vectors_{}_{}_{}_{}_{}_{}{}".format(timestamp.year, timestamp.month, timestamp.day,\
+           timestamp.hour, timestamp.minute, timestamp.second, ext)
+
+# Writes an object to a pickle file
+def writeToPickle(filename, obj):
+    with open(filename, 'wb') as f:
+        pickle.dump(obj, f)
+        debugPrint("Pickle file {} written".format(filename), ROSTA)
+
+
+def pickle2xlsx(filename):
+    dataArrays = None
+    try:
+        with open(filename, 'rb') as f:
+            dataArrays = pickle.load(f)
+    except:
+        return OPERATION_FAILURE
+    wbSave(generateStampedFileName('.xlsx'), dataArrays)
+    debugPrint("Wrote .xlsx file", UTILITY)
+    return OPERATION_SUCCESS
+
 
 ##
 # debugPrint
@@ -122,6 +145,30 @@ def debugPrint(string, lvl):
     if DEBUG_LEVEL >= lvl:
         print "{}:\n{}".format(DEBUG_SRC[lvl], string)
     return
+
+def wbSave(filename, dataArrays):
+    # write to excel workbook
+    wb = Workbook()
+    # outfile = load_workbook(filename=generateStampedFileName(), read_only=False, keep_vba=True)
+    sheet1 = wb.active
+    # sheet1 = outfile.active
+    sheet1['A1'] = "X"
+    sheet1['B1'] = "Y"
+    sheet1['C1'] = "Z"
+    sheet1['D1'] = "Phi"
+    sheet1['E1'] = "Theta"
+    sheet1['F1'] = "Dist"
+    sheet1['G1'] = "Time"
+
+    # insert x y z into excel document
+    for i in range(len(dataArrays)):
+        dataset = dataArrays[i]
+        for j in range(len(dataset)):
+            cell = '{}{}'.format(toLetter(i+1),j+2)
+            sheet1[cell] = dataset[j]
+
+    wb.save(filename)
+    debugPrint("workbook saved.", ROSTA)
 
 
 ## UNIT TESTS FOR DECODE ##
@@ -144,3 +191,5 @@ debugPrint( "Unit test 4", UTILITY)
 result = splitNparts("HelloHelloHello",4)
 if result == ["Hell", "oHel","loHe","llo"]: debugPrint("Split 4 Parts Passed.\n", UTILITY)
 else: debugPrint( "Split 4 Failed with {}".format(result), UTILITY)
+
+pickle2xlsx("test_vectors_2015_12_10_19_20_21.dat")
