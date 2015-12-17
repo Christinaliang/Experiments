@@ -1,15 +1,13 @@
 ﻿
 __author__="Sully Cothran"
 __copyright__="October 26, 2015"
-__version__= 0.5
+__version__= 1.0
 
 import math, time, pickle
 import datetime as dt
 from constants import *
 from openpyxl import Workbook
 from openpyxl.cell import get_column_letter as toLetter
-
-
 
 def decodeHMZ(string,angle,scanStartAngle):
     #get the first letter of the result string
@@ -143,7 +141,7 @@ def pickle2xlsx(filename):
 ##
 def debugPrint(string, lvl):
     if DEBUG_LEVEL >= lvl:
-        print "{}:\n{}".format(DEBUG_SRC[lvl], string)
+        print "{}\t\t{}".format(DEBUG_SRC[lvl], string)
     return
 
 def wbSave(filename, dataArrays):
@@ -168,7 +166,7 @@ def wbSave(filename, dataArrays):
             sheet1[cell] = dataset[j]
 
     wb.save(filename)
-    debugPrint("workbook saved.", ROSTA)
+    debugPrint("workbook saved as {}".format(filename), ROSTA)
 
 
 ## UNIT TESTS FOR DECODE ##

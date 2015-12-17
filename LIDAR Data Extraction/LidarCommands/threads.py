@@ -1,20 +1,19 @@
 
 __author__="Jaimiey Sears"
 __copyright__="October 26, 2015"
-__version__= 0.50
+__version__= 0.55
 
 import Queue
 import threading
 import socket
 from utility import *
 from constants import *
-import pickle
 
 ##############################
 #  PROGRAM MAIN ENTRY POINT  #
 ##############################
 def main():
-    lt = LidarThreads(debug=False)
+    lt = LidarThreads()
 
     # make the first string for reading LIDAR data
     debugPrint("Starting", ROSTA)
@@ -46,16 +45,9 @@ def main():
         th2.join(1.0)
 
     debugPrint("consumer stopped", ROSTA)
-    # print "\n\n\n"
-    # print "Final Data:"
-    # print "__________________________"
-    # print "=========================="
-    # print "X = {}".format(lt.processedDataArrays[0])
-    # print "Y = {}".format(lt.processedDataArrays[1])
-    # print "Z = {}".format(lt.processedDataArrays[2])
 
     #save into an excel worksheet
-    wbSave(generateStampedFileName('.xlsx'), lt.processedDataArrays)
+    wbSave('test_data/{}'.format(generateStampedFileName('.xlsx')), lt.processedDataArrays)
 
     th1_stop.set()
     th2_stop.set()
@@ -63,7 +55,6 @@ def main():
     debugPrint("Done running threads", ROSTA)
     debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
     debugPrint("queue size at exit: {}".format(lt.dataQueue.qsize()), ROSTA)
-    raise SystemExit
 #####################
 ## UNIT TEST 1 END ##
 #####################
@@ -84,12 +75,9 @@ def sphericalToCartesian(data):
 # **Version 0.10 the actual functions are simulated with time.sleep statements**
 ##
 class LidarThreads():
-    def __init__(self, debug=False):
+    def __init__(self):
         # don't forget: netsh interface ip set address "Local Area Connection" static 192.168.0.100
         global nhokreadings
-
-        # controls a number of debug statements which should only print sometimes
-        self.debug = debug
 
         self.commandOutput = ""
         self.dataOutput = ""
@@ -140,9 +128,10 @@ class LidarThreads():
                 # get the starting theta angle
                 self.slitAngle = START_ANGLE
 
+
                 # get data from the user
-                print "\nROSta: Rotate LiDAR to {} degrees".format(ang)
-                inp = raw_input("ROSta: Press enter when ready to make a scan")
+                print "\n>>> Rotate LiDAR to {} degrees".format(ang)
+                inp = raw_input(">>> Press enter when ready to make a scan\n")
                 if inp == "":
                     angle = math.radians(int(ang))
                     ang += 10
@@ -253,5 +242,5 @@ class LidarThreads():
         else:
             return -1
 
-# run the program
-main()
+# # run the program
+# main()
