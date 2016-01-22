@@ -74,7 +74,7 @@ def decodeHMZ(string,angle,scanStartAngle):
 
         #add values to results
         x.append(xCoord)
-        y.append(yCoord + yOffset)
+        y.append(yCoord - yOffset)
         z.append(zCoord + zOffset)
         count += 1
 
