@@ -69,10 +69,13 @@ def decodeHMZ(string,angle,scanStartAngle):
         zCoord = smallToZero(zCoord)
 
         dataOutput += "Angle: " + str(math.degrees(currentAngle)) + " Dist: " + str(dist/10) +  " X: " + str(xCoord) + " Y: " + str(yCoord) + " Z: " + str(zCoord) + '\n'
+        
+        yOffset, zOffset = offsetConversion(angle)
+
         #add values to results
         x.append(xCoord)
-        y.append(yCoord)
-        z.append(zCoord)
+        y.append(yCoord + yOffset)
+        z.append(zCoord + zOffset)
         count += 1
 
     # print "Final Count: " + str(count)
@@ -133,6 +136,19 @@ def pickle2xlsx(filename):
     debugPrint("Wrote .xlsx file", UTILITY)
     return OPERATION_SUCCESS
 
+def offsetConversion(angle):
+    height = Z_OFFSET
+    width = Y_OFFSET
+    if width == 0:
+        start_angle = math.pi/2
+    else:
+        start_angle = math.atan(height/width)
+    distance = math.sqrt(height*height + width*width)
+    x = distance*math.cos(start_angle - angle)
+    y = distance*math.sin(start_angle - angle)
+
+    return x,y
+
 
 ##
 # debugPrint
@@ -191,5 +207,15 @@ debugPrint( "Unit test 4", UTILITY)
 result = splitNparts("HelloHelloHello",4)
 if result == ["Hell", "oHel","loHe","llo"]: debugPrint("Split 4 Parts Passed.\n", UTILITY)
 else: debugPrint( "Split 4 Failed with {}".format(result), UTILITY)
+
+debugPrint( "Unit test 5", UTILITY)
+result = offsetConversion(0)
+if result == (Y_OFFSET,Z_OFFSET) : debugPrint("offsetConversion Passed.\n", UTILITY)
+else: debugPrint( "offsetConversion failed with {}".format(result), UTILITY)
+
+debugPrint( "Unit test 5", UTILITY)
+result = offsetConversion(math.pi/2)
+if result == (Z_OFFSET,Y_OFFSET) : debugPrint("offsetConversion Passed.\n", UTILITY)
+else: debugPrint( "offsetConversion failed with {}".format(result), UTILITY)
 
 pickle2xlsx("test_vectors_2015_12_10_19_20_21.dat")

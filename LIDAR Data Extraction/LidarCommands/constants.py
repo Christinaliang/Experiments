@@ -1,4 +1,4 @@
-__author__ = 'Jaimiey'
+﻿__author__ = 'Jaimiey'
 
 OPERATION_SUCCESS = 0
 OPERATION_FAILURE = -1
@@ -14,6 +14,10 @@ TIME_IDX = 6
 
 # Starting theta angle of our scans
 START_ANGLE = 0
+
+#Scanner offset from rotation point (0,0,0)
+Y_OFFSET = 51.84
+Z_OFFSET = 0
 
 # Resolution of LIDAR scans. this should change based on grouping
 RESOLUTION = 0.25
