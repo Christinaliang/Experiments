@@ -8,6 +8,7 @@ import threading
 import socket
 from utility import *
 from constants import *
+from lidar_servo_driver import turnTo
 import pickle
 
 ##############################
@@ -144,14 +145,17 @@ class LidarThreads():
                 self.slitAngle = START_ANGLE
 
                 # get data from the user
-                print "\nROSta: Rotate LiDAR to {} degrees".format(ang)
-                inp = raw_input("ROSta: Press enter when ready to make a scan")
-                if inp == "":
-                    angle = math.radians(int(ang))
-                    ang += 10
+                # print "\n>>> Rotate LiDAR to {} degrees".format(ang)
+                # inp = raw_input(">>> Press enter when ready to make a scan\n")
+                # if inp == "":
 
-                    # send scan request to the LIDAR
-                    self.socket.send("{}\n".format(self.command))
+                # rotate the lidar to the correct degree setting
+                turnTo(ang)
+                angle = math.radians(int(ang))
+                ang += 10
+
+                # send scan request to the LIDAR
+                self.socket.send("{}\n".format(self.command))
 
                 # receive data from the LIDAR
                 for j in range(0, 4500):
