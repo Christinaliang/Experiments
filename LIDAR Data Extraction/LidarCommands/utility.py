@@ -6,8 +6,8 @@ __version__= 1.0
 import math, time, pickle
 import datetime as dt
 from constants import *
-from openpyxl import Workbook
-from openpyxl.cell import get_column_letter as toLetter
+# from openpyxl import Workbook
+# from openpyxl.cell import get_column_letter as toLetter
 
 def decodeHMZ(string,angle,scanStartAngle):
     #get the first letter of the result string
@@ -120,16 +120,16 @@ def writeToPickle(filename, obj):
         debugPrint("Pickle file {} written".format(filename), ROSTA)
 
 
-def pickle2xlsx(filename):
-    dataArrays = None
-    try:
-        with open(filename, 'rb') as f:
-            dataArrays = pickle.load(f)
-    except:
-        return OPERATION_FAILURE
-    wbSave(generateStampedFileName('.xlsx'), dataArrays)
-    debugPrint("Wrote .xlsx file", UTILITY)
-    return OPERATION_SUCCESS
+# def pickle2xlsx(filename):
+#     dataArrays = None
+#     try:
+#         with open(filename, 'rb') as f:
+#             dataArrays = pickle.load(f)
+#     except:
+#         return OPERATION_FAILURE
+#     wbSave(generateStampedFileName('.xlsx'), dataArrays)
+#     debugPrint("Wrote .xlsx file", UTILITY)
+#     return OPERATION_SUCCESS
 
 
 ##
@@ -145,29 +145,29 @@ def debugPrint(string, lvl):
     return
 
 # Saves a workbook (MS Excel)
-def wbSave(filename, dataArrays):
-    # write to excel workbook
-    wb = Workbook()
-    # outfile = load_workbook(filename=generateStampedFileName(), read_only=False, keep_vba=True)
-    sheet1 = wb.active
-    # sheet1 = outfile.active
-    sheet1['A1'] = "X"
-    sheet1['B1'] = "Y"
-    sheet1['C1'] = "Z"
-    sheet1['D1'] = "Phi"
-    sheet1['E1'] = "Theta"
-    sheet1['F1'] = "Dist"
-    sheet1['G1'] = "Time"
-
-    # insert x y z into excel document
-    for i in range(len(dataArrays)):
-        dataset = dataArrays[i]
-        for j in range(len(dataset)):
-            cell = '{}{}'.format(toLetter(i+1),j+2)
-            sheet1[cell] = dataset[j]
-
-    wb.save(filename)
-    debugPrint("workbook saved as {}".format(filename), ROSTA)
+# def wbSave(filename, dataArrays):
+#     # write to excel workbook
+#     wb = Workbook()
+#     # outfile = load_workbook(filename=generateStampedFileName(), read_only=False, keep_vba=True)
+#     sheet1 = wb.active
+#     # sheet1 = outfile.active
+#     sheet1['A1'] = "X"
+#     sheet1['B1'] = "Y"
+#     sheet1['C1'] = "Z"
+#     sheet1['D1'] = "Phi"
+#     sheet1['E1'] = "Theta"
+#     sheet1['F1'] = "Dist"
+#     sheet1['G1'] = "Time"
+#
+#     # insert x y z into excel document
+#     for i in range(len(dataArrays)):
+#         dataset = dataArrays[i]
+#         for j in range(len(dataset)):
+#             cell = '{}{}'.format(toLetter(i+1),j+2)
+#             sheet1[cell] = dataset[j]
+#
+#     wb.save(filename)
+#     debugPrint("workbook saved as {}".format(filename), ROSTA)
 
 
 ## UNIT TESTS FOR DECODE ##
@@ -191,4 +191,4 @@ result = splitNparts("HelloHelloHello",4)
 if result == ["Hell", "oHel","loHe","llo"]: debugPrint("Split 4 Parts Passed.\n", UTILITY)
 else: debugPrint( "Split 4 Failed with {}".format(result), UTILITY)
 
-pickle2xlsx("test_vectors_2015_12_10_19_20_21.dat")
+# pickle2xlsx("test_vectors_2015_12_10_19_20_21.dat")
