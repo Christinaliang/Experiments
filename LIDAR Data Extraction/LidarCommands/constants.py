@@ -1,5 +1,6 @@
 __author__ = 'Jaimiey'
 
+####### GENERAL PURPOSE CONSTANTS #######
 OPERATION_SUCCESS = 0
 OPERATION_FAILURE = -1
 
@@ -18,15 +19,31 @@ START_ANGLE = 0
 # Resolution of LIDAR scans. this should change based on grouping
 RESOLUTION = 0.25
 
+####### DEBUG MESSAGE CONSTANTS #######
 # Debug level for different message levels.
 # 0 = only essential messages
 # 1 = print ROSta messages
 # 2 = print producer and consumer messages
 # 3 = print producer and consumer data
 # 4 = print data as it is processed (for use in utility.py)
-DEBUG_LEVEL = 1
+DEBUG_LEVEL = 2
 ROSTA = 1
+SERVO_DRIVER = 2
 SOCKET_MSG = 2
 SOCKET_DATA = 3
 UTILITY = 4
-DEBUG_SRC = ["", "ROSta", "Socket", "Socket.data", "Utility"]
+
+
+####### SERVO CONTROL CONSTANTS #######
+#initial setup
+# pwm frequency is 50 Hz
+PWM_FREQ = 50
+# connect to BCM pin 21 on RPi
+SERVO_PIN = 21
+
+# pwm range is 1.8 to 11.9
+PWM_MIN = 1.8
+PWM_MAX = 11.9
+DEGREE_MIN = 0
+DEGREE_MAX = 200
+PER_DEGREE_SPEED = .24/60

@@ -1,13 +1,14 @@
 
-__author__="Jaimiey Sears"
+__author__="Jaimiey Sears, Sully Cothran"
 __copyright__="October 26, 2015"
-__version__= 0.55
+__version__= 1
 
 import Queue
 import threading
 import socket
 from utility import *
 from constants import *
+from servo_driver import turnTo
 
 ##############################
 #  PROGRAM MAIN ENTRY POINT  #
@@ -130,14 +131,17 @@ class LidarThreads():
 
 
                 # get data from the user
-                print "\n>>> Rotate LiDAR to {} degrees".format(ang)
-                inp = raw_input(">>> Press enter when ready to make a scan\n")
-                if inp == "":
-                    angle = math.radians(int(ang))
-                    ang += 10
+                # print "\n>>> Rotate LiDAR to {} degrees".format(ang)
+                # inp = raw_input(">>> Press enter when ready to make a scan\n")
+                # if inp == "":
 
-                    # send scan request to the LIDAR
-                    self.socket.send("{}\n".format(self.command))
+                # rotate the lidar to the correct degree setting
+                turnTo(ang)
+                angle = math.radians(int(ang))
+                ang += 10
+
+                # send scan request to the LIDAR
+                self.socket.send("{}\n".format(self.command))
 
                 # receive data from the LIDAR
                 for j in range(0, 4500):

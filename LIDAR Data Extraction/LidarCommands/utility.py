@@ -140,10 +140,11 @@ def pickle2xlsx(filename):
 # __params__
 ##
 def debugPrint(string, lvl):
-    if DEBUG_LEVEL >= lvl:
-        print "{}\t\t{}".format(DEBUG_SRC[lvl], string)
+    if lvl <= DEBUG_LEVEL:
+        print "{}\t\t{}".format("DEBUG LOG:",string)
     return
 
+# Saves a workbook (MS Excel)
 def wbSave(filename, dataArrays):
     # write to excel workbook
     wb = Workbook()
