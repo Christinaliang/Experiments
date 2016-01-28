@@ -8,7 +8,7 @@ import threading
 import socket
 from utility import *
 from constants import *
-from servo_driver import turnTo
+from lidar_servo_driver import turnTo
 
 ##############################
 #  PROGRAM MAIN ENTRY POINT  #
