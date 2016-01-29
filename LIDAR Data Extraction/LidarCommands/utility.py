@@ -1,5 +1,5 @@
 ﻿
-__author__="Sully Cothran"
+__author__="Sully Cothran, Jaimiey Sears"
 __copyright__="October 26, 2015"
 __version__= 1.0
 
@@ -140,7 +140,7 @@ def writeToPickle(filename, obj):
 # __params__
 ##
 def debugPrint(string, lvl):
-    if lvl <= DEBUG_LEVEL:
+    if lvl in DEBUG_LEVELS:
         print "{}\t\t{}".format("DEBUG LOG:",string)
     return
 

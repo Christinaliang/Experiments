@@ -26,12 +26,12 @@ RESOLUTION = 0.25
 # 2 = print producer and consumer messages
 # 3 = print producer and consumer data
 # 4 = print data as it is processed (for use in utility.py)
-DEBUG_LEVEL = 2
 ROSTA = 1
-SERVO_DRIVER = 2
 SOCKET_MSG = 2
 SOCKET_DATA = 3
 UTILITY = 4
+SERVO_DRIVER = 5
+DEBUG_LEVELS = [ROSTA, SERVO_DRIVER, SOCKET_MSG]
 
 
 ####### SERVO CONTROL CONSTANTS #######
@@ -46,4 +46,3 @@ PWM_MIN = 1.8
 PWM_MAX = 11.9
 DEGREE_MIN = 0
 DEGREE_MAX = 200
-PER_DEGREE_SPEED = .24/60

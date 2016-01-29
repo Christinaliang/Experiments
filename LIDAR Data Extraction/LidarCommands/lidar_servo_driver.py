@@ -11,7 +11,7 @@ __version__ = 2
 # available on the RPi.
 #########################################################################
 
-import RPi.GPIO as GPIO, time
+import RPi.GPIO as GPIO
 from utility import debugPrint
 from constants import *
 
@@ -23,6 +23,10 @@ GPIO.setup(SERVO_PIN, GPIO.OUT)
 pwm = GPIO.PWM(SERVO_PIN, PWM_FREQ)
 pwm.start(0)
 
+##
+# runManual()
+# Description: begin infinite loop of servo control
+##
 def runManual():
     while True:
         degree = input("What angle do you want me to turn to?\n")
@@ -40,8 +44,14 @@ def runManual():
 ##
 def turnTo(degree):
     if degree in range(DEGREE_MIN, DEGREE_MAX):
-        pwm_duty_cycle = (degree * (PWM_MAX-PWM_MIN) / (DEGREE_MAX-DEGREE_MIN)) + DEGREE_MIN
+        pwm_duty_cycle = (degree * (PWM_MAX-PWM_MIN) / (DEGREE_MAX-DEGREE_MIN)) + PWM_MIN
         pwm.ChangeDutyCycle(pwm_duty_cycle)
-        pwm.ChangeDutyCycle(0)
     else:
         debugPrint("Degree input outside expected range", SERVO_DRIVER)
+
+##
+# stop()
+# Description: stop writing PWM signals.
+##
+def stop():
+    pwm.ChangeDutyCycle(0)
