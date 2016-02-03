@@ -45,7 +45,7 @@ def main():
     debugPrint("consumer stopped", ROSTA)
 
     #save into an excel worksheet
-    # wbSave('test_data/{}'.format(generateStampedFileName('.xlsx')), lt.processedDataArrays)
+    wbSave('test_data/{}'.format(generateStampedFileName('.xlsx')), lt.processedDataArrays)
 
     th1_stop.set()
     th2_stop.set()
@@ -98,7 +98,7 @@ class LidarThreads():
         # each string representing a slice (scan)
         self.dataQueue = Queue.Queue()
 
-        self.processedDataArrays = []
+        self.processedDataArrays = [[],[],[],[],[],[]]
 
     ##
     # produce
@@ -119,9 +119,6 @@ class LidarThreads():
                 # rotate the lidar to the correct degree setting
                 # turnTo(angleDegrees)
                 angleRadians = math.radians(int(angleDegrees))
-                # move the angle 10 degrees for next run
-                # TODO: move to bottom of fn
-                angleDegrees += 10
 
                 # wait for the Queue to empty so we don't overflow the buffer
                 while dataQueue.qsize() > 0:
@@ -166,6 +163,8 @@ class LidarThreads():
                     debugPrint("Data Queue is full.", SOCKET_MSG)
                     continue
                 counter += 1.0
+                angleDegrees += 10
+                raw_input("Turn to {} degrees and press enter".format(angleDegrees))
 
     ##
     # consume

@@ -1,13 +1,12 @@
-﻿
-__author__="Sully Cothran, Jaimiey Sears"
+﻿__author__="Sully Cothran, Jaimiey Sears"
 __copyright__="October 26, 2015"
 __version__= 1.0
 
 import math, time, pickle
 import datetime as dt
 from constants import *
-# from openpyxl import Workbook
-# from openpyxl.cell import get_column_letter as toLetter
+from openpyxl import Workbook
+from openpyxl.cell import get_column_letter as toLetter
 
 def decode_new(string, anglePhi):
     # resolution of the scan angle TODO: move to constants.py
@@ -32,12 +31,20 @@ def decode_new(string, anglePhi):
 
     # translate to XYZ-coords based on angleTheta and anglePhi
     for dist in dists:
+
+        angleThetaRadians = math.radians(angleTheta)
         #find the cartesian coordinates
-        xCoord = dist*math.cos(angleTheta)
-        yCoord = dist*math.sin(angleTheta)
+        xCoord = dist*math.cos(angleThetaRadians)
+        yCoord = dist*math.sin(angleThetaRadians)
 
         yCoord = yCoord*math.cos(anglePhi)
         zCoord = yCoord*(-1*math.sin(anglePhi))
+
+        # calculate offsets
+        yOffset, zOffset = offsetConversion(anglePhi)
+
+        yCoord += yOffset
+        zCoord += zOffset
 
         x.append(xCoord)
         y.append(yCoord)
@@ -49,76 +56,19 @@ def decode_new(string, anglePhi):
 
     return x, y, z, dists, phis, thetas
 
+def offsetConversion(angle):
+    height = Z_OFFSET
+    width = Y_OFFSET
 
+    if width == 0:
+        startAngle = math.pi/2
+    else:
+        startAngle = math.atan(height/width)
 
-# def decode(string, angle, scanStartAngle):
-#     #get the first letter of the result string
-#     firstLetter = string[0]
-#     lastLetter = string[len(string)-1]
-#
-#     #set the resolution (for default, .25 degrees per scan)
-#     resolution = 0.25
-#
-#     #output data
-#     dataOutput = ""
-#
-#     #init the result lists
-#     dists = []
-#     x = []
-#     y = []
-#     z = []
-#     phis = []
-#     thetas = []
-#
-#     # #pre calculate sine of phi and cosine of phi
-#     # sinePhi = math.sin(math.pi/2)
-#     # cosPhi = math.cos(math.pi/2)
-#
-#     #set the number of chars per result based off of first letter of result string
-#     NUM_CHARS = 3
-#
-#     #for each set of char values, decode the distance value and determine cartesian coords
-#     count = 0
-#     for i in range(NUM_CHARS - 1, len(string)-1, NUM_CHARS):
-#
-#         # record phi
-#         phis.append(angle)
-#
-#         # Just decode an N-letter section of the data
-#         dist = decodeShort(string[i-(NUM_CHARS-1):i+1])
-#         dists.append(dist)
-#
-#         #get the current angle of the scanner for this value (may need to be changed for values)
-#         currentAngle = math.radians(scanStartAngle + count*RESOLUTION)
-#         thetas.append(currentAngle)
-#
-#         #find the cartesian coordinates
-#         xCoord = dist*math.cos(currentAngle)
-#         yCoord = dist*math.sin(currentAngle)
-#         # zCoord = 0    # value*cosPhi
-#
-#         yc = yCoord*math.cos(angle)
-#         zc = yCoord*(-1*math.sin(angle))
-#
-#         yCoord = yc
-#         zCoord = zc
-#
-#         # print coords
-#         xCoord = smallToZero(xCoord)
-#         yCoord = smallToZero(yCoord)
-#         zCoord = smallToZero(zCoord)
-#
-#         dataOutput += "Angle: " + str(math.degrees(currentAngle)) + " Dist: " + str(dist/10) +  " X: " + str(xCoord) + " Y: " + str(yCoord) + " Z: " + str(zCoord) + '\n'
-#         #add values to results
-#         x.append(xCoord)
-#         y.append(yCoord)
-#         z.append(zCoord)
-#         count += 1
-#
-#     # print "Final Count: " + str(count)
-#     # print "Distances: ", dists
-#     return x, y, z, scanStartAngle + count*resolution, dataOutput, phis, thetas, dists
-
+    dist = math.sqrt(height*height + width*width)
+    x = dist*math.cos(startAngle-angle)
+    y = dist*math.sin(startAngle-angle)
+    return x, y
 def splitNparts(string, n):
     doSplit = True
     strList = []
@@ -131,12 +81,6 @@ def splitNparts(string, n):
         else:
             strList.append(string[0:n])
             string = string[n:len(string)]
-
-
-def smallToZero(val):
-    if abs(val) < .001:
-        return 0
-    return val
 
 def decodeShort(dataStr):
     result = 0
@@ -162,16 +106,16 @@ def writeToPickle(filename, obj):
         debugPrint("Pickle file {} written".format(filename), ROSTA)
 
 
-# def pickle2xlsx(filename):
-#     dataArrays = None
-#     try:
-#         with open(filename, 'rb') as f:
-#             dataArrays = pickle.load(f)
-#     except:
-#         return OPERATION_FAILURE
-#     wbSave(generateStampedFileName('.xlsx'), dataArrays)
-#     debugPrint("Wrote .xlsx file", UTILITY)
-#     return OPERATION_SUCCESS
+def pickle2xlsx(filename):
+    dataArrays = None
+    try:
+        with open(filename, 'rb') as f:
+            dataArrays = pickle.load(f)
+    except:
+        return OPERATION_FAILURE
+    wbSave(generateStampedFileName('.xlsx'), dataArrays)
+    debugPrint("Wrote .xlsx file", UTILITY)
+    return OPERATION_SUCCESS
 
 
 ##
@@ -187,29 +131,28 @@ def debugPrint(string, lvl):
     return
 
 # Saves a workbook (MS Excel)
-# def wbSave(filename, dataArrays):
-#     # write to excel workbook
-#     wb = Workbook()
-#     # outfile = load_workbook(filename=generateStampedFileName(), read_only=False, keep_vba=True)
-#     sheet1 = wb.active
-#     # sheet1 = outfile.active
-#     sheet1['A1'] = "X"
-#     sheet1['B1'] = "Y"
-#     sheet1['C1'] = "Z"
-#     sheet1['D1'] = "Phi"
-#     sheet1['E1'] = "Theta"
-#     sheet1['F1'] = "Dist"
-#     sheet1['G1'] = "Time"
-#
-#     # insert x y z into excel document
-#     for i in range(len(dataArrays)):
-#         dataset = dataArrays[i]
-#         for j in range(len(dataset)):
-#             cell = '{}{}'.format(toLetter(i+1),j+2)
-#             sheet1[cell] = dataset[j]
-#
-#     wb.save(filename)
-#     debugPrint("workbook saved as {}".format(filename), ROSTA)
+def wbSave(filename, dataArrays):
+    # write to excel workbook
+    wb = Workbook()
+    # outfile = load_workbook(filename=generateStampedFileName(), read_only=False, keep_vba=True)
+    sheet1 = wb.active
+    # sheet1 = outfile.active
+    sheet1['A1'] = "X"
+    sheet1['B1'] = "Y"
+    sheet1['C1'] = "Z"
+    sheet1['D1'] = "Dist"
+    sheet1['E1'] = "Phi"
+    sheet1['F1'] = "Theta"
+
+    # insert x y z into excel document
+    for i in range(len(dataArrays)):
+        dataset = dataArrays[i]
+        for j in range(len(dataset)):
+            cell = '{}{}'.format(toLetter(i+1),j+2)
+            sheet1[cell] = dataset[j]
+
+    wb.save(filename)
+    debugPrint("workbook saved as {}".format(filename), ROSTA)
 
 
 ## UNIT TESTS FOR DECODE ##
