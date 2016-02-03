@@ -176,4 +176,14 @@ result = splitNparts("HelloHelloHello",4)
 if result == ["Hell", "oHel","loHe","llo"]: debugPrint("Split 4 Parts Passed.\n", UTILITY)
 else: debugPrint( "Split 4 Failed with {}".format(result), UTILITY)
 
-# pickle2xlsx("test_vectors_2015_12_10_19_20_21.dat")
+debugPrint( "Unit test 5", UTILITY)
+result = offsetConversion(0)
+if result == (Y_OFFSET,Z_OFFSET) : debugPrint("offsetConversion Passed.\n", UTILITY)
+else: debugPrint( "offsetConversion failed with {}".format(result), UTILITY)
+
+debugPrint( "Unit test 5", UTILITY)
+result = offsetConversion(math.pi/2)
+if result == (Z_OFFSET,Y_OFFSET) : debugPrint("offsetConversion Passed.\n", UTILITY)
+else: debugPrint( "offsetConversion failed with {}".format(result), UTILITY)
+
+pickle2xlsx("test_vectors_2015_12_10_19_20_21.dat")

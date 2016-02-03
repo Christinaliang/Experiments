@@ -1,4 +1,4 @@
-__author__ = 'Jaimiey'
+﻿__author__ = 'Jaimiey'
 
 ####### GENERAL PURPOSE CONSTANTS #######
 OPERATION_SUCCESS = 0
@@ -15,6 +15,10 @@ TH_IDX = 5
 
 # Starting theta angle of our scans
 START_ANGLE = 0
+
+#Scanner offset from rotation point (0,0,0)
+Y_OFFSET = 51.84
+Z_OFFSET = 0
 
 # Resolution of LIDAR scans. this should change based on grouping
 RESOLUTION = 0.25
