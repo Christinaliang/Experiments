@@ -1,14 +1,14 @@
 
 __author__="Jaimiey Sears, Sully Cothran"
-__copyright__="October 26, 2015"
-__version__= 1
+__copyright__="January 31, 2016"
+__version__= 2
 
 import Queue
 import threading
 import socket
 from utility import *
 from constants import *
-from lidar_servo_driver import turnTo
+# from lidar_servo_driver import turnTo
 
 ##############################
 #  PROGRAM MAIN ENTRY POINT  #
@@ -48,7 +48,7 @@ def main():
     debugPrint("consumer stopped", ROSTA)
 
     #save into an excel worksheet
-    wbSave('test_data/{}'.format(generateStampedFileName('.xlsx')), lt.processedDataArrays)
+    # wbSave('test_data/{}'.format(generateStampedFileName('.xlsx')), lt.processedDataArrays)
 
     th1_stop.set()
     th2_stop.set()
@@ -114,56 +114,72 @@ class LidarThreads():
     ##
     def produce(self, dataQueue, stop_event):
         counter = 0
-        ang = 0
+        angleDegrees = 0
 
         #while not stop_event.is_set():
         for i in range (0,10):
 
-             #simulate a move of the LIDAR scanner
-                time.sleep(0.05)
+                # rotate the lidar to the correct degree setting
+                # turnTo(angleDegrees)
+                angleRadians = math.radians(int(angleDegrees))
+                # move the angle 10 degrees for next run
+                # TODO: move to bottom of fn
+                angleDegrees += 10
 
-                # wait for the Queue to empty
+                # wait for the Queue to empty so we don't overflow the buffer
                 while dataQueue.qsize() > 0:
                   pass
 
                 # get the starting theta angle
                 self.slitAngle = START_ANGLE
 
-
-                # get data from the user
-                # print "\n>>> Rotate LiDAR to {} degrees".format(ang)
-                # inp = raw_input(">>> Press enter when ready to make a scan\n")
-                # if inp == "":
-
-                # rotate the lidar to the correct degree setting
-                turnTo(ang)
-                angle = math.radians(int(ang))
-                ang += 10
-
                 # send scan request to the LIDAR
                 self.socket.send("{}\n".format(self.command))
 
+
+                # get rid of the intro information
+                intro = self.socket.recv(21) #response message
+                intro += self.socket.recv(26) #scan response intro
+                # print intro
+                # input("paused")
+                debugPrint(intro, SOCKET_DATA)
+
+                data = ''
                 # receive data from the LIDAR
-                for j in range(0, 4500):
+                for j in range(0, 1024):
                     try:
-                        temp = self.socket.recv(4500)
-                        debugPrint("Recv:\n" + temp, SOCKET_DATA)
-                        data = temp.split("\n")
-                        data.reverse()
+                        # time.sleep(0.01)
+                        # get a line of data from the LIDAR queue
+                        temp = self.socket.recv(66)
+                        if len(temp) == 66:
+                            data += temp[:-2]
+                        else:
+                            data += temp[:-3]
+
+                        # format the data we've recieved
+                        # data = temp.split("\n")
+                        # data.reverse()
                     except socket.timeout, e:
                         debugPrint("waiting for data", SOCKET_MSG)
                         break
 
-                    while data:
-                        try:
-                            str = data.pop()
-                            # put data into our queue for the consumer to use
-                            dataQueue.put((str, angle))
-
-                        except Queue.Full, e:
-                            debugPrint("Data Queue is full.", SOCKET_MSG)
-                            continue
+                try:
+                    dataQueue.put((data, angleRadians))
+                except Queue.Full, e:
+                    debugPrint("Data Queue is full.", SOCKET_MSG)
+                    continue
                     counter += 1.0
+
+                    # while data:
+                    #     try:
+                    #         string = data.pop()
+                    #         # put data into our queue for the consumer to use
+                    #         dataQueue.put((string, angleRadians))
+                    #
+                    #     except Queue.Full, e:
+                    #         debugPrint("Data Queue is full.", SOCKET_MSG)
+                    #         continue
+                    # counter += 1.0
 
     ##
     # consume
@@ -182,15 +198,29 @@ class LidarThreads():
         phiLines = []
         thetaLines = []
         distLines = []
-        timeLines = []
 
         dataSet = ""
-        currTime = None
+
+        # emptied indicates whether the queue has been exhausted (primarily for debug printing purposes)
         emptied = False
 
         while not stop_event.is_set():
-
             try:
+                # get a scan of data from the queue
+                data, anglePhi = dataQueue.get(timeout=0.05)
+                X, Y, Z, DISTS, PHIS, THETAS = decode_new(data, anglePhi)
+
+                debugPrint("X:{}\n\nY:{}\n\nZ:{}\n\nD:{}\n\nPH:{}\n\nTH:{}"
+                           .format(X,Y,Z,DISTS,PHIS,THETAS), SOCKET_DATA)
+                raw_input('paused')
+
+            except Queue.Empty, e:
+                if not emptied:
+                    debugPrint( "Data Queue is empty", SOCKET_MSG)
+                    emptied = True
+                continue
+
+                '''
                 # get some data from the queue, process it to cartesian
                 dataline, anglePhi = dataQueue.get(timeout=0.25)
                 emptied = False
@@ -198,7 +228,7 @@ class LidarThreads():
                 if dataline == "":
                     if not dataSet == "":
                         for string in splitNparts(dataSet,64):
-                            X, Y, Z, lastAngle, outVal, phi, th, dist = decodeHMZ(string, anglePhi, self.slitAngle)
+                            X, Y, Z, lastAngle, outVal, phi, th, dist = decode(string, anglePhi, self.slitAngle)
 
                             self.slitAngle = lastAngle
 
@@ -208,7 +238,6 @@ class LidarThreads():
                             phiLines = phiLines + phi
                             thetaLines = thetaLines + th
                             distLines = distLines + dist
-                            # timeLines = timeLines + currTime
 
                     dataSet = ""
                     continue
@@ -217,11 +246,11 @@ class LidarThreads():
                 else:
                     counter += 1
 
+                # print out the recieved data for debug purposes
                 debugPrint("Consumer: data= {}".format(dataline), SOCKET_DATA)
 
                 self.commandOutput += dataline + '\n'
-                # if counter == 4:
-                #     currTime = [decodeShort(dataline[:-1])]
+                # filter out the echo message, status message, and timestamp
                 if counter >= 5:
                     dataSet = dataSet + dataline
 
@@ -232,6 +261,7 @@ class LidarThreads():
                 continue
 
         self.processedDataArrays = (xLines, yLines, zLines, phiLines, thetaLines, distLines)
+    '''
 
     ##
     # exit
@@ -246,5 +276,3 @@ class LidarThreads():
         else:
             return -1
 
-# # run the program
-# main()

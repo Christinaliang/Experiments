@@ -9,16 +9,11 @@ from constants import *
 # from openpyxl import Workbook
 # from openpyxl.cell import get_column_letter as toLetter
 
-def decodeHMZ(string,angle,scanStartAngle):
-    #get the first letter of the result string
-    firstLetter = string[0]
-    lastLetter = string[len(string)-1]
-
-    #set the resolution (for default, .25 degrees per scan)
+def decode_new(string, anglePhi):
+    # resolution of the scan angle TODO: move to constants.py
     resolution = 0.25
-    
-    #output data
-    dataOutput = ""
+
+    splitData = splitNparts(string, 3)
 
     #init the result lists
     dists = []
@@ -28,54 +23,101 @@ def decodeHMZ(string,angle,scanStartAngle):
     phis = []
     thetas = []
 
-    # #pre calculate sine of phi and cosine of phi
-    # sinePhi = math.sin(math.pi/2)
-    # cosPhi = math.cos(math.pi/2)
+    # get starting angle from constants
+    angleTheta = START_ANGLE
 
-    #set the number of chars per result based off of first letter of result string
-    NUM_CHARS = 3
+    # decode all 3-letter string values to numeric values
+    for point in splitData:
+        dists.append(decodeShort(point))
 
-    #for each set of char values, decode the distance value and determine cartesian coords
-    count = 0
-    for i in range(NUM_CHARS - 1, len(string)-1, NUM_CHARS):
-
-        # record phi
-        phis.append(angle)
-
-        # Just decode an N-letter section of the data
-        dist = decodeShort(string[i-(NUM_CHARS-1):i+1])
-        dists.append(dist)
-
-        #get the current angle of the scanner for this value (may need to be changed for values)
-        currentAngle = math.radians(scanStartAngle + count*RESOLUTION)
-        thetas.append(currentAngle)
-
+    # translate to XYZ-coords based on angleTheta and anglePhi
+    for dist in dists:
         #find the cartesian coordinates
-        xCoord = dist*math.cos(currentAngle)
-        yCoord = dist*math.sin(currentAngle)
-        # zCoord = 0    # value*cosPhi
+        xCoord = dist*math.cos(angleTheta)
+        yCoord = dist*math.sin(angleTheta)
 
-        yc = yCoord*math.cos(angle)
-        zc = yCoord*(-1*math.sin(angle))
+        yCoord = yCoord*math.cos(anglePhi)
+        zCoord = yCoord*(-1*math.sin(anglePhi))
 
-        yCoord = yc
-        zCoord = zc
-
-        # print coords
-        xCoord = smallToZero(xCoord)
-        yCoord = smallToZero(yCoord)
-        zCoord = smallToZero(zCoord)
-
-        dataOutput += "Angle: " + str(math.degrees(currentAngle)) + " Dist: " + str(dist/10) +  " X: " + str(xCoord) + " Y: " + str(yCoord) + " Z: " + str(zCoord) + '\n'
-        #add values to results
         x.append(xCoord)
         y.append(yCoord)
         z.append(zCoord)
-        count += 1
+        phis.append(anglePhi)
+        thetas.append(angleTheta)
 
-    # print "Final Count: " + str(count)
-    # print "Distances: ", dists
-    return x, y, z, scanStartAngle + count*resolution, dataOutput, phis, thetas, dists
+        angleTheta += resolution
+
+    return x, y, z, dists, phis, thetas
+
+
+
+# def decode(string, angle, scanStartAngle):
+#     #get the first letter of the result string
+#     firstLetter = string[0]
+#     lastLetter = string[len(string)-1]
+#
+#     #set the resolution (for default, .25 degrees per scan)
+#     resolution = 0.25
+#
+#     #output data
+#     dataOutput = ""
+#
+#     #init the result lists
+#     dists = []
+#     x = []
+#     y = []
+#     z = []
+#     phis = []
+#     thetas = []
+#
+#     # #pre calculate sine of phi and cosine of phi
+#     # sinePhi = math.sin(math.pi/2)
+#     # cosPhi = math.cos(math.pi/2)
+#
+#     #set the number of chars per result based off of first letter of result string
+#     NUM_CHARS = 3
+#
+#     #for each set of char values, decode the distance value and determine cartesian coords
+#     count = 0
+#     for i in range(NUM_CHARS - 1, len(string)-1, NUM_CHARS):
+#
+#         # record phi
+#         phis.append(angle)
+#
+#         # Just decode an N-letter section of the data
+#         dist = decodeShort(string[i-(NUM_CHARS-1):i+1])
+#         dists.append(dist)
+#
+#         #get the current angle of the scanner for this value (may need to be changed for values)
+#         currentAngle = math.radians(scanStartAngle + count*RESOLUTION)
+#         thetas.append(currentAngle)
+#
+#         #find the cartesian coordinates
+#         xCoord = dist*math.cos(currentAngle)
+#         yCoord = dist*math.sin(currentAngle)
+#         # zCoord = 0    # value*cosPhi
+#
+#         yc = yCoord*math.cos(angle)
+#         zc = yCoord*(-1*math.sin(angle))
+#
+#         yCoord = yc
+#         zCoord = zc
+#
+#         # print coords
+#         xCoord = smallToZero(xCoord)
+#         yCoord = smallToZero(yCoord)
+#         zCoord = smallToZero(zCoord)
+#
+#         dataOutput += "Angle: " + str(math.degrees(currentAngle)) + " Dist: " + str(dist/10) +  " X: " + str(xCoord) + " Y: " + str(yCoord) + " Z: " + str(zCoord) + '\n'
+#         #add values to results
+#         x.append(xCoord)
+#         y.append(yCoord)
+#         z.append(zCoord)
+#         count += 1
+#
+#     # print "Final Count: " + str(count)
+#     # print "Distances: ", dists
+#     return x, y, z, scanStartAngle + count*resolution, dataOutput, phis, thetas, dists
 
 def splitNparts(string, n):
     doSplit = True
@@ -171,10 +213,10 @@ def debugPrint(string, lvl):
 
 
 ## UNIT TESTS FOR DECODE ##
-debugPrint("Unit test 1", UTILITY)
-X, Y, Z, scanAngle, dataOutput, TH, PHI, DIST= decodeHMZ(str('0CB0'), 0, 0)
-if dataOutput == str('Angle: 0.0 Dist: 123 X: 1234.0 Y: 0 Z: 0\n'): debugPrint( "Long Decode Passed.\n", UTILITY)
-else: debugPrint("Long decode failed with {}\n".format(dataOutput), UTILITY)
+# debugPrint("Unit test 1", UTILITY)
+# X, Y, Z, scanAngle, dataOutput, TH, PHI, DIST= decode(str('0CB0'), 0, 0)
+# if dataOutput == str('Angle: 0.0 Dist: 123 X: 1234.0 Y: 0 Z: 0\n'): debugPrint( "Long Decode Passed.\n", UTILITY)
+# else: debugPrint("Long decode failed with {}\n".format(dataOutput), UTILITY)
 
 debugPrint( "Unit test 2", UTILITY)
 result = decodeShort(str('CB'))

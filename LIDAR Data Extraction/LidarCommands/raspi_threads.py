@@ -212,7 +212,7 @@ class LidarThreads():
                 if dataline == "":
                     if not dataSet == "":
                         for string in splitNparts(dataSet,64):
-                            X, Y, Z, lastAngle, outVal, phi, th, dist = decodeHMZ(string, anglePhi, self.slitAngle)
+                            X, Y, Z, lastAngle, outVal, phi, th, dist = decode(string, anglePhi, self.slitAngle)
 
                             self.slitAngle = lastAngle
 
