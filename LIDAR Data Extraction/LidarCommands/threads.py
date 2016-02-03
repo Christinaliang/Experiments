@@ -31,9 +31,6 @@ def main():
     th1.start()
     th2.start()
 
-    # operation time = 3.0 seconds
-    # time.sleep(3.0)
-
     # close the threads down
     while th1.isAlive():
         # th1_stop.set()
@@ -168,18 +165,7 @@ class LidarThreads():
                 except Queue.Full, e:
                     debugPrint("Data Queue is full.", SOCKET_MSG)
                     continue
-                    counter += 1.0
-
-                    # while data:
-                    #     try:
-                    #         string = data.pop()
-                    #         # put data into our queue for the consumer to use
-                    #         dataQueue.put((string, angleRadians))
-                    #
-                    #     except Queue.Full, e:
-                    #         debugPrint("Data Queue is full.", SOCKET_MSG)
-                    #         continue
-                    # counter += 1.0
+                counter += 1.0
 
     ##
     # consume
@@ -191,15 +177,16 @@ class LidarThreads():
     #   stop_event - the event to watch for quitting.
     ##
     def consume(self, dataQueue, stop_event):
-        counter = 0
-        xLines = []
-        yLines = []
-        zLines = []
-        phiLines = []
-        thetaLines = []
-        distLines = []
-
-        dataSet = ""
+        # TODO delete
+        # counter = 0
+        # xLines = []
+        # yLines = []
+        # zLines = []
+        # phiLines = []
+        # thetaLines = []
+        # distLines = []
+        #
+        # dataSet = ""
 
         # emptied indicates whether the queue has been exhausted (primarily for debug printing purposes)
         emptied = False
@@ -210,58 +197,23 @@ class LidarThreads():
                 data, anglePhi = dataQueue.get(timeout=0.05)
                 X, Y, Z, DISTS, PHIS, THETAS = decode_new(data, anglePhi)
 
+                # print the data in a debug message
                 debugPrint("X:{}\n\nY:{}\n\nZ:{}\n\nD:{}\n\nPH:{}\n\nTH:{}"
                            .format(X,Y,Z,DISTS,PHIS,THETAS), SOCKET_DATA)
-                raw_input('paused')
+
+                # add the data to the global variable
+                self.processedDataArrays[X_IDX] += X
+                self.processedDataArrays[Y_IDX] += Y
+                self.processedDataArrays[Z_IDX] += Z
+                self.processedDataArrays[D_IDX] += DISTS
+                self.processedDataArrays[PHI_IDX] += PHIS
+                self.processedDataArrays[TH_IDX] += THETAS
 
             except Queue.Empty, e:
                 if not emptied:
                     debugPrint( "Data Queue is empty", SOCKET_MSG)
                     emptied = True
                 continue
-
-                '''
-                # get some data from the queue, process it to cartesian
-                dataline, anglePhi = dataQueue.get(timeout=0.25)
-                emptied = False
-
-                if dataline == "":
-                    if not dataSet == "":
-                        for string in splitNparts(dataSet,64):
-                            X, Y, Z, lastAngle, outVal, phi, th, dist = decode(string, anglePhi, self.slitAngle)
-
-                            self.slitAngle = lastAngle
-
-                            xLines = xLines + X
-                            yLines = yLines + Y
-                            zLines = zLines + Z
-                            phiLines = phiLines + phi
-                            thetaLines = thetaLines + th
-                            distLines = distLines + dist
-
-                    dataSet = ""
-                    continue
-                elif dataline == self.command:
-                    counter = 0
-                else:
-                    counter += 1
-
-                # print out the recieved data for debug purposes
-                debugPrint("Consumer: data= {}".format(dataline), SOCKET_DATA)
-
-                self.commandOutput += dataline + '\n'
-                # filter out the echo message, status message, and timestamp
-                if counter >= 5:
-                    dataSet = dataSet + dataline
-
-            except Queue.Empty, e:
-                if not emptied:
-                    debugPrint( "Data Queue is empty", SOCKET_MSG)
-                    emptied = True
-                continue
-
-        self.processedDataArrays = (xLines, yLines, zLines, phiLines, thetaLines, distLines)
-    '''
 
     ##
     # exit

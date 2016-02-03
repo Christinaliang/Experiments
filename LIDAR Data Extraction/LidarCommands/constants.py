@@ -8,10 +8,10 @@ OPERATION_FAILURE = -1
 X_IDX = 0
 Y_IDX = 1
 Z_IDX = 2
-PHI_IDX = 3
-TH_IDX = 4
-DAT_IDX = 5
-TIME_IDX = 6
+D_IDX = 3
+PHI_IDX = 4
+TH_IDX = 5
+
 
 # Starting theta angle of our scans
 START_ANGLE = 0
