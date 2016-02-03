@@ -96,8 +96,8 @@ def decodeShort(dataStr):
 
 def generateStampedFileName(ext):
     timestamp = dt.datetime.now()
-    return "test_vectors_{}_{}_{}_{}_{}_{}{}".format(timestamp.year, timestamp.month, timestamp.day,\
-           timestamp.hour, timestamp.minute, timestamp.second, ext)
+    return "test_vectors_{}_{}_{}_{}_{}_{}{}".format(timestamp.year, timestamp.month, timestamp.day,
+                                                     timestamp.hour, timestamp.minute, timestamp.second, ext)
 
 # Writes an object to a pickle file
 def writeToPickle(filename, obj):
