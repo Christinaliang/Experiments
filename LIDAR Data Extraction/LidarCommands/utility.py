@@ -33,18 +33,11 @@ def decode_new(string, anglePhi):
     for dist in dists:
 
         angleThetaRadians = math.radians(angleTheta)
+
         #find the cartesian coordinates
         xCoord = dist*math.cos(angleThetaRadians)
-        yCoord = dist*math.sin(angleThetaRadians)
-
-        yCoord = yCoord*math.cos(anglePhi)
-        zCoord = yCoord*(-1*math.sin(anglePhi))
-
-        # calculate offsets
-        yOffset, zOffset = offsetConversion(anglePhi)
-
-        yCoord += yOffset
-        zCoord += zOffset
+        yCoord = dist*math.sin(angleThetaRadians)*math.cos(anglePhi) + Z_OFFSET*math.sin(anglePhi)
+        zCoord = -dist*math.sin(angleThetaRadians)*math.sin(anglePhi) + Z_OFFSET*math.cos(anglePhi)
 
         x.append(xCoord)
         y.append(yCoord)
@@ -56,19 +49,6 @@ def decode_new(string, anglePhi):
 
     return x, y, z, dists, phis, thetas
 
-def offsetConversion(angle):
-    height = Z_OFFSET
-    width = Y_OFFSET
-
-    if width == 0:
-        startAngle = math.pi/2
-    else:
-        startAngle = math.atan(height/width)
-
-    dist = math.sqrt(height*height + width*width)
-    x = dist*math.cos(startAngle-angle)
-    y = dist*math.sin(startAngle-angle)
-    return x, y
 def splitNparts(string, n):
     doSplit = True
     strList = []
@@ -175,15 +155,5 @@ debugPrint( "Unit test 4", UTILITY)
 result = splitNparts("HelloHelloHello",4)
 if result == ["Hell", "oHel","loHe","llo"]: debugPrint("Split 4 Parts Passed.\n", UTILITY)
 else: debugPrint( "Split 4 Failed with {}".format(result), UTILITY)
-
-debugPrint( "Unit test 5", UTILITY)
-result = offsetConversion(0)
-if result == (Y_OFFSET,Z_OFFSET) : debugPrint("offsetConversion Passed.\n", UTILITY)
-else: debugPrint( "offsetConversion failed with {}".format(result), UTILITY)
-
-debugPrint( "Unit test 5", UTILITY)
-result = offsetConversion(math.pi/2)
-if result == (Z_OFFSET,Y_OFFSET) : debugPrint("offsetConversion Passed.\n", UTILITY)
-else: debugPrint( "offsetConversion failed with {}".format(result), UTILITY)
 
 pickle2xlsx("test_vectors_2015_12_10_19_20_21.dat")

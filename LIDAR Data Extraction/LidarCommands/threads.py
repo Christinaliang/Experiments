@@ -130,11 +130,12 @@ class LidarThreads():
                 # send scan request to the LIDAR
                 self.socket.send("{}\n".format(self.command))
 
-
-                # get rid of the intro information
-                intro = self.socket.recv(21) #response message
-                intro += self.socket.recv(26) #scan response intro
-                # print intro
+                try:
+                    # get rid of the intro information
+                    intro = self.socket.recv(21) #response message
+                    intro += self.socket.recv(26) #scan response intro
+                except:
+                    pass
                 # input("paused")
                 debugPrint(intro, SOCKET_DATA)
 
@@ -145,6 +146,8 @@ class LidarThreads():
                         # time.sleep(0.01)
                         # get a line of data from the LIDAR queue
                         temp = self.socket.recv(66)
+
+                        debugPrint(temp, SOCKET_DATA)
                         if len(temp) == 66:
                             data += temp[:-2]
                         else:
@@ -164,7 +167,7 @@ class LidarThreads():
                     continue
                 counter += 1.0
                 angleDegrees += 10
-                raw_input("Turn to {} degrees and press enter".format(angleDegrees))
+                raw_input("Turn to {} degrees and press enter\n".format(angleDegrees))
 
     ##
     # consume
@@ -176,16 +179,6 @@ class LidarThreads():
     #   stop_event - the event to watch for quitting.
     ##
     def consume(self, dataQueue, stop_event):
-        # TODO delete
-        # counter = 0
-        # xLines = []
-        # yLines = []
-        # zLines = []
-        # phiLines = []
-        # thetaLines = []
-        # distLines = []
-        #
-        # dataSet = ""
 
         # emptied indicates whether the queue has been exhausted (primarily for debug printing purposes)
         emptied = False

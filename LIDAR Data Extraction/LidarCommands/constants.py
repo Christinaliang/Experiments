@@ -13,12 +13,11 @@ PHI_IDX = 4
 TH_IDX = 5
 
 
-# Starting theta angle of our scans
+# Starting theta angle of our scans, in degrees
 START_ANGLE = 0
 
 #Scanner offset from rotation point (0,0,0)
-Y_OFFSET = 51.84
-Z_OFFSET = 0
+Z_OFFSET = 51.84
 
 # Resolution of LIDAR scans. this should change based on grouping
 RESOLUTION = 0.25
@@ -35,7 +34,7 @@ SOCKET_MSG = 2
 SOCKET_DATA = 3
 UTILITY = 4
 SERVO_DRIVER = 5
-DEBUG_LEVELS = [ROSTA, SERVO_DRIVER, SOCKET_MSG]
+DEBUG_LEVELS = [ROSTA, SERVO_DRIVER, SOCKET_MSG, SOCKET_DATA]
 
 
 ####### SERVO CONTROL CONSTANTS #######
