@@ -18,7 +18,7 @@ from mpl_toolkits.mplot3d import Axes3D
 # Parameters:
 #   x,y,z - data points received from lidar after processing
 ##
-def filter(x, y, z):
+def filterscans(x, y, z):
 
 #loop through and find the median z height
         total = 0
@@ -28,9 +28,9 @@ def filter(x, y, z):
 
         medianval = total/(len(z)-1)
         # the crater value will be categorized as the median +10
-        overval  = medianval + 100
+        overval  = medianval + 10
         # the pit value will be categorized as the median -10
-        underval = medianval -100
+        underval = medianval - 10
 
 
 
@@ -77,11 +77,13 @@ def filter(x, y, z):
         #plot(x,y,z)
 
         # remove the data points that are in the over and under lists
+        count = 0
         for i in range(0, len(pop) - 1):
-            popIndex = pop[i]
+            popIndex = pop[i - count]
             x.pop(popIndex)
             y.pop(popIndex)
             z.pop(popIndex)
+            count+=1
 
 
         plotFilter(underX, underY, underZ, overX, overY,overZ, x, y, z)
@@ -97,47 +99,33 @@ def filter(x, y, z):
 ##
 def plot(x,y,z):
 
-  #  winSize = 1500
-  #  plt.scatter(x,y,c='r')
-  #  plt.xlim(-1*winSize,winSize)
- #   plt.ylim(-1*winSize,winSize)
+    winSize = 1500
+    plt.scatter(x,y,c='r')
+    plt.xlim(-1*winSize,winSize)
+    plt.ylim(-1*winSize,winSize)
 
- #   plt.scatter(y,z, c= 'b')
- #   plt.xlim(-1*winSize,winSize)
-  #  plt.ylim(-1*winSize,winSize)
+    plt.scatter(y,z, c= 'b')
+    plt.xlim(-1*winSize,winSize)
+    plt.ylim(-1*winSize,winSize)
 
- #   plt.scatter(x,z,c= 'g')
-  #  plt.xlim(-1*winSize,winSize)
-  #  plt.ylim(-1*winSize,winSize)
+    plt.scatter(x,z,c= 'g')
+    plt.xlim(-1*winSize,winSize)
+    plt.ylim(-1*winSize,winSize)
 
-  #  fig = plt.figure()
+    fig = plt.figure()
    # print len(x)
-   # ax = fig.add_subplot(111)
-  #  ax = fig.add_subplot(111, projection='3d')
-  #  ax.set_xlim(-1*winSize,winSize)
-  #  ax.set_ylim(-1*winSize,winSize)
-   # ax.set_zlim(-1*winSize,winSize)
-    zArray = []
+    ax = fig.add_subplot(111)
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_xlim(-1*winSize,winSize)
+    ax.set_ylim(-1*winSize,winSize)
+    ax.set_zlim(-1*winSize,winSize)
+   # zArray = []
     #to see what order the data points are recived, lowest height is first
     #for i in range(0,len(lt.processedDataArrays[0])):
         #zArray.append(i)
-   # ax.scatter(x,y,z,c=z)
+    ax.scatter(x,y,z,c=z)
 
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    X = x
-    Y = y
-    X, Y = np.meshgrid(X, Y)
-    R = np.sqrt(X**2 + Y**2)
-    Z = np.sin(R)
-    surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
-    #ax.set_zlim(-1.01, 1.01)
 
-    ax.zaxis.set_major_locator(LinearLocator(10))
-    ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-    fig.colorbar(surf, shrink=0.5, aspect=5)
 
 
 
@@ -149,7 +137,7 @@ def plot(x,y,z):
 #commandFile.write("{}".format(lt.dataOutput))
 #commandFile.close()
 
-   # plt.show()
+    plt.show()
 
 
 
@@ -188,7 +176,7 @@ def plotFilter(overX, overY, overZ, underX, underY, underZ, x, y, z):
     #to see what order the data points are recived, lowest height is first
     #for i in range(0,len(lt.processedDataArrays[0])):
         #zArray.append(i)
-    #ax.scatter(x,y,z,c='b')
+    ax.scatter(x,y,z,c='b')
     ax.scatter(overX,overY,overZ,c='g')
     ax.scatter(underX,underY,underZ,c='r')
 

@@ -8,6 +8,7 @@ import threading
 import socket
 from utility import *
 from constants import *
+from display import *
 # from lidar_servo_driver import turnTo
 
 ##############################
@@ -49,6 +50,9 @@ def main():
 
     th1_stop.set()
     th2_stop.set()
+
+    filterscans(lt.processedDataArrays[0],lt.processedDataArrays[1],lt.processedDataArrays[2])
+
 
     debugPrint("Done running threads", ROSTA)
     debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
