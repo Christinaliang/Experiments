@@ -125,50 +125,51 @@ class LidarThreads():
                 angleRadians = math.radians(int(angleDegrees))
 
                 # wait for the Queue to empty so we don't overflow the buffer
-                while dataQueue.qsize() > 0:
-                  pass
+                # while dataQueue.qsize() > 0:
+                #   pass
 
                 # get the starting theta angle
                 self.slitAngle = START_ANGLE
 
-                # send scan request to the LIDAR
-                self.socket.send("{}\n".format(self.command))
+                for x in range(SCAN_AVERAGE_COUNT):
+                    # send scan request to the LIDAR
+                    self.socket.send("{}\n".format(self.command))
 
-                try:
-                    # get rid of the intro information
-                    intro = self.socket.recv(21) #response message
-                    intro += self.socket.recv(26) #scan response intro
-                except:
-                    pass
-                # input("paused")
-                debugPrint(intro, SOCKET_DATA)
-
-                data = ''
-                # receive data from the LIDAR
-                for j in range(0, 1024):
                     try:
-                        # time.sleep(0.01)
-                        # get a line of data from the LIDAR queue
-                        temp = self.socket.recv(66)
+                        # get rid of the intro information
+                        intro = self.socket.recv(21) #response message
+                        intro += self.socket.recv(26) #scan response intro
+                    except:
+                        pass
+                    # input("paused")
+                    debugPrint(intro, SOCKET_DATA)
 
-                        debugPrint(temp, SOCKET_DATA)
-                        if len(temp) == 66:
-                            data += temp[:-2]
-                        else:
-                            data += temp[:-3]
+                    data = ''
+                    # receive data from the LIDAR
+                    for j in range(0, 1024):
+                        try:
+                            # time.sleep(0.01)
+                            # get a line of data from the LIDAR queue
+                            temp = self.socket.recv(66)
 
-                        # format the data we've recieved
-                        # data = temp.split("\n")
-                        # data.reverse()
-                    except socket.timeout, e:
-                        debugPrint("waiting for data", SOCKET_MSG)
-                        break
+                            debugPrint(temp, SOCKET_DATA)
+                            if len(temp) == 66:
+                                data += temp[:-2]
+                            else:
+                                data += temp[:-3]
 
-                try:
-                    dataQueue.put((data, angleRadians))
-                except Queue.Full, e:
-                    debugPrint("Data Queue is full.", SOCKET_MSG)
-                    continue
+                            # format the data we've recieved
+                            # data = temp.split("\n")
+                            # data.reverse()
+                        except socket.timeout, e:
+                            debugPrint("waiting for data", SOCKET_MSG)
+                            break
+
+                    try:
+                        dataQueue.put((data, angleRadians))
+                    except Queue.Full, e:
+                        debugPrint("Data Queue is full.", SOCKET_MSG)
+                        continue
                 counter += 1.0
                 angleDegrees += 10
                 raw_input("Turn to {} degrees and press enter\n".format(angleDegrees))
@@ -188,10 +189,19 @@ class LidarThreads():
         emptied = False
 
         while not stop_event.is_set():
+
+            if dataQueue.qsize() < SCAN_AVERAGE_COUNT:
+                continue
+
             try:
-                # get a scan of data from the queue
-                data, anglePhi = dataQueue.get(timeout=0.05)
-                X, Y, Z, DISTS, PHIS, THETAS = decode_new(data, anglePhi)
+
+                dataList = []
+                for i in range(SCAN_AVERAGE_COUNT):
+                    # get a scan of data from the queue
+                    data, anglePhi = dataQueue.get(timeout=0.05)
+                    dataList.append(data)
+
+                X, Y, Z, DISTS, PHIS, THETAS = decode_new(dataList, anglePhi)
 
                 # print the data in a debug message
                 debugPrint("X:{}\n\nY:{}\n\nZ:{}\n\nD:{}\n\nPH:{}\n\nTH:{}"

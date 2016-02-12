@@ -8,11 +8,10 @@ from constants import *
 from openpyxl import Workbook
 from openpyxl.cell import get_column_letter as toLetter
 
-def decode_new(string, anglePhi):
-    # resolution of the scan angle TODO: move to constants.py
-    resolution = 0.25
-
-    splitData = splitNparts(string, 3)
+def decode_new(stringList, anglePhi):
+    splitData = []
+    for data in stringList:
+        splitData.append(splitNparts(data, 3))
 
     #init the result lists
     dists = []
@@ -25,12 +24,20 @@ def decode_new(string, anglePhi):
     # get starting angle from constants
     angleTheta = START_ANGLE
 
-    # decode all 3-letter string values to numeric values
-    for point in splitData:
-        dists.append(decodeShort(point))
+    # decode all 3-letter stringList values to numeric values
+    for data in splitData:
+        indexCount = 0;
+        for point in data:
+            if len(dists) < len(data):
+                dists.append(decodeShort(point))
+            else:
+                dists[indexCount] += decodeShort(point)
+            indexCount += 1
+
 
     # translate to XYZ-coords based on angleTheta and anglePhi
     for dist in dists:
+        dist /= SCAN_AVERAGE_COUNT
 
         angleThetaRadians = math.radians(angleTheta)
 
@@ -45,7 +52,7 @@ def decode_new(string, anglePhi):
         phis.append(anglePhi)
         thetas.append(angleTheta)
 
-        angleTheta += resolution
+        angleTheta += RESOLUTION
 
     return x, y, z, dists, phis, thetas
 
