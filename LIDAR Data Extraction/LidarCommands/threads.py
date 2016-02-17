@@ -233,4 +233,3 @@ class LidarThreads():
             return 0
         else:
             return -1
-

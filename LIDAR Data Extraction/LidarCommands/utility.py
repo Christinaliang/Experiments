@@ -1,4 +1,4 @@
-﻿__author__="Sully Cothran, Jaimiey Sears"
+﻿_author__="Sully Cothran, Jaimiey Sears"
 __copyright__="October 26, 2015"
 __version__= 1.0
 

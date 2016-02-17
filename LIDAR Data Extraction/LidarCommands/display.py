@@ -21,16 +21,16 @@ from mpl_toolkits.mplot3d import Axes3D
 def filterscans(x, y, z):
 
 #loop through and find the median z height
-        total = 0
-        for i in range (0, len(z) -1):
+       # total = 0
+       # for i in range (0, len(z) -1):
+#
+        #    total = z[i] + total
 
-            total = z[i] + total
-
-        medianval = total/(len(z)-1)
+     #   medianval = total/(len(z)-1)
         # the crater value will be categorized as the median +10
-        overval  = medianval + 10
+      #  overval  = medianval + 25
         # the pit value will be categorized as the median -10
-        underval = medianval - 10
+     #   underval = medianval - 25
 
 
 
@@ -46,7 +46,7 @@ def filterscans(x, y, z):
         #Loop through the z values and find which ones are over and under the median
         for i in range(0, len(z) -1):
             # if the value is under add the data point to the under lists
-            if z[i] <= underval:
+            if z[i] <= -25:
                 newX = [x[i]]
                 newY = [y[i]]
                 newZ = [z[i]]
@@ -55,10 +55,13 @@ def filterscans(x, y, z):
                 underY =  underY + newY
                 underZ =  underZ + newZ
 
+                newPop = [i]
+                pop = pop + newPop
+
 
 
             #if the value is over add the data point to the over lists
-            elif z[i] >= overval:
+            elif z[i] >= 25:
                 newX = [x[i]]
                 newY = [y[i]]
                 newZ = [z[i]]
@@ -67,11 +70,14 @@ def filterscans(x, y, z):
                 overY =  overY + newY
                 overZ =  overZ + newZ
 
-            #keep track of which data points to pop after the loop is finished
-            else:
-
                 newPop = [i]
                 pop = pop + newPop
+
+            #keep track of which data points to pop after the loop is finished
+           # else:
+
+               # newPop = [i]
+               # pop = pop + newPop
 
         # want to plot original points before removing any data
         #plot(x,y,z)
@@ -176,9 +182,13 @@ def plotFilter(overX, overY, overZ, underX, underY, underZ, x, y, z):
     #to see what order the data points are recived, lowest height is first
     #for i in range(0,len(lt.processedDataArrays[0])):
         #zArray.append(i)
+    ax.set_xlabel('xlabel')
+    ax.set_ylabel('ylabel')
+    ax.set_zlabel('zlabel')
+
     ax.scatter(x,y,z,c='b')
-    ax.scatter(overX,overY,overZ,c='g')
-    ax.scatter(underX,underY,underZ,c='r')
+    ax.scatter(overX,overY,overZ,c='r')
+    ax.scatter(underX,underY,underZ,c='g')
 
 
 
