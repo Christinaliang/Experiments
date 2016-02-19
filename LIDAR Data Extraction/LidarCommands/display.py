@@ -32,52 +32,53 @@ def filterscans(x, y, z):
         # the pit value will be categorized as the median -10
      #   underval = medianval - 25
 
-
-
+        # new lists to contain the data points that are the peaks
         overX = []
         overY = []
         overZ = []
+
+    # new lists to contain the data points that are the valleys
         underX = []
         underY = []
         underZ = []
+
+    # list to keep track of all the data that needs to be removed from the original list (the peaks and valleys)
         pop = []
 
-
-        #Loop through the z values and find which ones are over and under the median
-        for i in range(0, len(z) -1):
+        # set the ground to what the lidar is looking at the very last scan
+        ground = z[len(z)-1]
+        #Loop through the z values and find which ones are under the ground
             # if the value is under add the data point to the under lists
-            if z[i] <= -25:
+            if z[i] <= ground-50:
                 newX = [x[i]]
                 newY = [y[i]]
                 newZ = [z[i]]
 
-                underX =  underX + newX
-                underY =  underY + newY
-                underZ =  underZ + newZ
+                underX.extend(newX)
+                underY.extend(newY)
+                underZ.extend(newZ)
 
                 newPop = [i]
-                pop = pop + newPop
+                pop.extend(newPop)
+
 
 
 
             #if the value is over add the data point to the over lists
-            elif z[i] >= 25:
+            elif z[i] >= ground+50:
                 newX = [x[i]]
                 newY = [y[i]]
                 newZ = [z[i]]
 
-                overX =  overX + newX
-                overY =  overY + newY
-                overZ =  overZ + newZ
+                overX.extend(newX)
+                overY.extend(newY)
+                overZ.extend(newZ)
 
                 newPop = [i]
-                pop = pop + newPop
+                pop.extend(newPop)
 
-            #keep track of which data points to pop after the loop is finished
-           # else:
 
-               # newPop = [i]
-               # pop = pop + newPop
+
 
         # want to plot original points before removing any data
         #plot(x,y,z)
