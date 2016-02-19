@@ -47,6 +47,7 @@ def filterscans(x, y, z):
 
         # set the ground to what the lidar is looking at the very last scan
         ground = z[len(z)-1]
+        for i in range (0, len(z-1)):
         #Loop through the z values and find which ones are under the ground
             # if the value is under add the data point to the under lists
             if z[i] <= ground-50:
@@ -77,23 +78,20 @@ def filterscans(x, y, z):
                 newPop = [i]
                 pop.extend(newPop)
 
-
-
-
         # want to plot original points before removing any data
         #plot(x,y,z)
 
         # remove the data points that are in the over and under lists
-        count = 0
-        for i in range(0, len(pop) - 1):
-            popIndex = pop[i - count]
-            x.pop(popIndex)
-            y.pop(popIndex)
-            z.pop(popIndex)
-            count+=1
+            count = 0
+            for i in range(0, len(pop) - 1):
+                popIndex = pop[i - count]
+                x.pop(popIndex)
+                y.pop(popIndex)
+                z.pop(popIndex)
+                count+=1
 
 
-        plotFilter(underX, underY, underZ, overX, overY,overZ, x, y, z)
+            plotFilter(underX, underY, underZ, overX, overY,overZ, x, y, z)
 
 
 ##
