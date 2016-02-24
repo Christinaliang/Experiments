@@ -100,8 +100,9 @@ def pickle2xlsx(filename):
             dataArrays = pickle.load(f)
     except:
         return OPERATION_FAILURE
-    wbSave(generateStampedFileName('.xlsx'), dataArrays)
-    debugPrint("Wrote .xlsx file", UTILITY)
+    newFileName = 'test_data/{}'.format(generateStampedFileName('.xlsx'))
+    wbSave(newFileName, dataArrays)
+    debugPrint("Wrote {}.xlsx".format(newFileName), UTILITY)
     return OPERATION_SUCCESS
 
 
