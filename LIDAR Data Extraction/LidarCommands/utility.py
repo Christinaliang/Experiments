@@ -86,6 +86,7 @@ def generateStampedFileName(ext):
     return "test_vectors_{}_{}_{}_{}_{}_{}{}".format(timestamp.year, timestamp.month, timestamp.day,
                                                      timestamp.hour, timestamp.minute, timestamp.second, ext)
 
+
 # Writes an object to a pickle file
 def writeToPickle(filename, obj):
     with open(filename, 'wb') as f:
@@ -119,18 +120,33 @@ def debugPrint(string, lvl):
     return
 
 # Saves a workbook (MS Excel)
-def wbSave(filename, dataArrays):
+def wbSave(filename, dataArrays,filter):
     # write to excel workbook
     wb = Workbook()
     # outfile = load_workbook(filename=generateStampedFileName(), read_only=False, keep_vba=True)
     sheet1 = wb.active
     # sheet1 = outfile.active
-    sheet1['A1'] = "X"
-    sheet1['B1'] = "Y"
-    sheet1['C1'] = "Z"
-    sheet1['D1'] = "Dist"
-    sheet1['E1'] = "Phi"
-    sheet1['F1'] = "Theta"
+    if(filter==False):
+        sheet1['A1'] = "X"
+        sheet1['B1'] = "Y"
+        sheet1['C1'] = "Z"
+        sheet1['D1'] = "Dist"
+        sheet1['E1'] = "Phi"
+        sheet1['F1'] = "Theta"
+
+
+    else:
+
+        sheet1['A1'] = "underX"
+        sheet1['B1'] = "underY"
+        sheet1['C1'] = "underZ"
+        sheet1['D1'] = "overX"
+        sheet1['E1'] = "overY"
+        sheet1['F1'] = "overZ"
+        sheet1['G1'] = "X"
+        sheet1['H1'] = "Y"
+        sheet1['I1'] = "Z"
+
 
     # insert x y z into excel document
     for i in range(len(dataArrays)):
