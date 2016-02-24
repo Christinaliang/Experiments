@@ -5,8 +5,8 @@ __version__= 1.0
 import math, time, pickle
 import datetime as dt
 from constants import *
-from openpyxl import Workbook
-from openpyxl.cell import get_column_letter as toLetter
+# from openpyxl import Workbook
+# from openpyxl.cell import get_column_letter as toLetter
 
 def decode_new(stringList, anglePhi):
     splitData = []
@@ -59,16 +59,24 @@ def decode_new(stringList, anglePhi):
 def splitNparts(string, n):
     doSplit = True
     strList = []
-    while(doSplit):
+    while doSplit:
         if string == "":
             return strList
-        if(len(string) < n):
+        if len(string) < n :
             strList.append(string)
             return strList
         else:
             strList.append(string[0:n])
             string = string[n:len(string)]
 
+## decodeShort
+# Description: decodes an n-length string using the method specified in the Hokuyo documentation
+#
+# Parameter:
+#   dataStr - the string containing the encoded data
+# Returns:
+#   result - an integer decoded from the string
+##
 def decodeShort(dataStr):
     result = 0
     for i in range(len(dataStr)):
@@ -93,16 +101,16 @@ def writeToPickle(filename, obj):
         debugPrint("Pickle file {} written".format(filename), ROSTA)
 
 
-def pickle2xlsx(filename):
-    dataArrays = None
-    try:
-        with open(filename, 'rb') as f:
-            dataArrays = pickle.load(f)
-    except:
-        return OPERATION_FAILURE
-    wbSave(generateStampedFileName('.xlsx'), dataArrays)
-    debugPrint("Wrote .xlsx file", UTILITY)
-    return OPERATION_SUCCESS
+# def pickle2xlsx(filename):
+#     dataArrays = None
+#     try:
+#         with open(filename, 'rb') as f:
+#             dataArrays = pickle.load(f)
+#     except:
+#         return OPERATION_FAILURE
+#     wbSave(generateStampedFileName('.xlsx'), dataArrays)
+#     debugPrint("Wrote .xlsx file", UTILITY)
+#     return OPERATION_SUCCESS
 
 
 ##
@@ -118,28 +126,28 @@ def debugPrint(string, lvl):
     return
 
 # Saves a workbook (MS Excel)
-def wbSave(filename, dataArrays):
-    # write to excel workbook
-    wb = Workbook()
-    # outfile = load_workbook(filename=generateStampedFileName(), read_only=False, keep_vba=True)
-    sheet1 = wb.active
-    # sheet1 = outfile.active
-    sheet1['A1'] = "X"
-    sheet1['B1'] = "Y"
-    sheet1['C1'] = "Z"
-    sheet1['D1'] = "Dist"
-    sheet1['E1'] = "Phi"
-    sheet1['F1'] = "Theta"
-
-    # insert x y z into excel document
-    for i in range(len(dataArrays)):
-        dataset = dataArrays[i]
-        for j in range(len(dataset)):
-            cell = '{}{}'.format(toLetter(i+1),j+2)
-            sheet1[cell] = dataset[j]
-
-    wb.save(filename)
-    debugPrint("workbook saved as {}".format(filename), ROSTA)
+# def wbSave(filename, dataArrays):
+#     # write to excel workbook
+#     wb = Workbook()
+#     # outfile = load_workbook(filename=generateStampedFileName(), read_only=False, keep_vba=True)
+#     sheet1 = wb.active
+#     # sheet1 = outfile.active
+#     sheet1['A1'] = "X"
+#     sheet1['B1'] = "Y"
+#     sheet1['C1'] = "Z"
+#     sheet1['D1'] = "Dist"
+#     sheet1['E1'] = "Phi"
+#     sheet1['F1'] = "Theta"
+#
+#     # insert x y z into excel document
+#     for i in range(len(dataArrays)):
+#         dataset = dataArrays[i]
+#         for j in range(len(dataset)):
+#             cell = '{}{}'.format(toLetter(i+1),j+2)
+#             sheet1[cell] = dataset[j]
+#
+#     wb.save(filename)
+#     debugPrint("workbook saved as {}".format(filename), ROSTA)
 
 
 ## UNIT TESTS FOR DECODE ##
@@ -163,4 +171,4 @@ result = splitNparts("HelloHelloHello",4)
 if result == ["Hell", "oHel","loHe","llo"]: debugPrint("Split 4 Parts Passed.\n", UTILITY)
 else: debugPrint( "Split 4 Failed with {}".format(result), UTILITY)
 
-pickle2xlsx("test_vectors_2015_12_10_19_20_21.dat")
+# pickle2xlsx("test_vectors_2015_12_10_19_20_21.dat")

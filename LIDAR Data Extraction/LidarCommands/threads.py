@@ -8,8 +8,8 @@ import threading
 import socket
 from utility import *
 from constants import *
-from display import *
-# from lidar_servo_driver import turnTo
+# from display import *
+from lidar_servo_driver import turnTo
 
 ##############################
 #  PROGRAM MAIN ENTRY POINT  #
@@ -46,12 +46,13 @@ def main():
     debugPrint("consumer stopped", ROSTA)
 
     #save into an excel worksheet
-    wbSave('test_data/{}'.format(generateStampedFileName('.xlsx')), lt.processedDataArrays)
+    # wbSave('test_data/{}'.format(generateStampedFileName('.xlsx')), lt.processedDataArrays)
+    writeToPickle('test_data/{}'.format(generateStampedFileName('.dat')), lt.processedDataArrays)
 
     th1_stop.set()
     th2_stop.set()
 
-    filterscans(lt.processedDataArrays[0],lt.processedDataArrays[1],lt.processedDataArrays[2])
+    # filterscans(lt.processedDataArrays[0],lt.processedDataArrays[1],lt.processedDataArrays[2])
 
 
     debugPrint("Done running threads", ROSTA)
@@ -121,7 +122,7 @@ class LidarThreads():
         for i in range (0,19):
 
                 # rotate the lidar to the correct degree setting
-                # turnTo(angleDegrees)
+                turnTo(angleDegrees)
                 angleRadians = math.radians(int(angleDegrees))
 
                 # wait for the Queue to empty so we don't overflow the buffer
@@ -141,7 +142,6 @@ class LidarThreads():
                         intro += self.socket.recv(26) #scan response intro
                     except:
                         pass
-                    # input("paused")
                     debugPrint(intro, SOCKET_DATA)
 
                     data = ''
