@@ -6,7 +6,14 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
-
+from openpyxl import Workbook
+from openpyxl.cell import get_column_letter as toLetter
+import Queue
+import threading
+import socket
+from utility import *
+from constants import *
+from display import *
 import matplotlib.cm as cmx
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -66,7 +73,7 @@ def filterscans(x, y, z):
                 pop = pop + newPop
 
         # want to plot original points before removing any data
-            #plot(x,y,z)
+        #plot(x,y,z)
 
         # remove the data points that are in the over and under lists
             count = 0
@@ -78,11 +85,25 @@ def filterscans(x, y, z):
             count+=1
 
 
-        plotFilter(underX, underY, underZ, overX, overY,overZ, x, y, z)
+        #plotFilter(underX, underY, underZ, overX, overY,overZ, x, y, z)
+
+        exceldata = [[],[],[],[],[],[],[],[],[]]
+
+        exceldata[0] = underX
+        exceldata[1] = underY
+        exceldata[2] = underZ
+        exceldata[3] = overX
+        exceldata[4] = overY
+        exceldata[5] = overZ
+        exceldata[6] = x
+        exceldata[7] = y
+        exceldata[8] = z
+
+        wbSave('filter_test_data/{}'.format(generateStampedFileName('.xlsx')), exceldata, True)
 
 
 ##
-# plot
+# plots
 #
 # Description: 3D plot the points that have not yet been filtered
 #
@@ -91,7 +112,7 @@ def filterscans(x, y, z):
 ##
 def plot(x,y,z):
 
-    #winSize = 1500
+    winSize = 1500
     plt.scatter(x,y,c='r')
    # plt.xlim(-1*winSize,winSize)
     #plt.ylim(-1*winSize,winSize)
@@ -130,7 +151,7 @@ def plot(x,y,z):
 # Description: 3D plot the points that have been filtered
 #
 # Parameters:
-#   x,y,z - data points received from lidar after processing and filtering
+#  underX,underY,underZ,overX,overY,OverZ x,y,z - data points received from lidar after processing and filtering
 ##
 def plotFilter(underX, underY, underZ, overX, overY, overZ, x, y, z):
 
@@ -160,8 +181,12 @@ def plotFilter(underX, underY, underZ, overX, overY, overZ, x, y, z):
     #ax.scatter(x,y,z,c='b')
     #ax.scatter(overX,overY,overZ,c='r')
     #ax.scatter(underX,underY,underZ,c='g')
-
-
-
-
     plt.show()
+
+
+
+
+
+
+
+
