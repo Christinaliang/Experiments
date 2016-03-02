@@ -99,6 +99,7 @@ def pickle2xlsx(filename):
         with open(filename, 'rb') as f:
             dataArrays = pickle.load(f)
     except:
+        print "Error in filename"
         return OPERATION_FAILURE
     newFileName = 'test_data/{}'.format(generateStampedFileName('.xlsx'))
     wbSave(newFileName, dataArrays)
