@@ -122,7 +122,7 @@ class LidarThreads():
         for i in range (0,19):
 
                 # rotate the lidar to the correct degree setting
-                turnTo(angleDegrees)
+                turnTo(angleDegrees + ANGLE_OFFSET)
                 angleRadians = math.radians(int(angleDegrees))
 
                 # wait for the Queue to empty so we don't overflow the buffer
