@@ -51,7 +51,7 @@ def main():
     th1_stop.set()
     th2_stop.set()
 
-    filterscans(lt.processedDataArrays[0],lt.processedDataArrays[1],lt.processedDataArrays[2])
+    #filterscans(lt.processedDataArrays[0],lt.processedDataArrays[1],lt.processedDataArrays[2])
 
 
     debugPrint("Done running threads", ROSTA)

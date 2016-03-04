@@ -7,6 +7,7 @@ import datetime as dt
 from constants import *
 from openpyxl import Workbook
 from openpyxl.cell import get_column_letter as toLetter
+from display import *
 
 def decode_new(stringList, anglePhi):
     splitData = []
@@ -102,6 +103,7 @@ def pickle2xlsx(filename):
     except:
         print "Error in filename"
         return OPERATION_FAILURE
+    filterscans(dataArrays[0], dataArrays[1], dataArrays[2])
     newFileName = 'test_data/{}'.format(generateStampedFileName('.xlsx'))
     wbSave(newFileName, dataArrays, False)
     debugPrint("Wrote {}.xlsx".format(newFileName), UTILITY)
