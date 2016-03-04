@@ -103,7 +103,7 @@ def pickle2xlsx(filename):
         print "Error in filename"
         return OPERATION_FAILURE
     newFileName = 'test_data/{}'.format(generateStampedFileName('.xlsx'))
-    wbSave(newFileName, dataArrays)
+    wbSave(newFileName, dataArrays, False)
     debugPrint("Wrote {}.xlsx".format(newFileName), UTILITY)
     return OPERATION_SUCCESS
 
