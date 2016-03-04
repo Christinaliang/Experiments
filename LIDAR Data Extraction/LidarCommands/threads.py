@@ -116,10 +116,10 @@ class LidarThreads():
     ##
     def produce(self, dataQueue, stop_event):
         counter = 0
-        angleDegrees = 0
+        angleDegrees = 180
 
         #while not stop_event.is_set():
-        for i in range (0,19):
+        for i in range (0,90):
 
                 # rotate the lidar to the correct degree setting
                 turnTo(angleDegrees + ANGLE_OFFSET)
@@ -171,7 +171,7 @@ class LidarThreads():
                         debugPrint("Data Queue is full.", SOCKET_MSG)
                         continue
                 counter += 1.0
-                angleDegrees += 5
+                angleDegrees -= 1
                 raw_input("Turn to {} degrees and press enter\n".format(angleDegrees))
 
     ##
