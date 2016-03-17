@@ -78,10 +78,10 @@ def filterscans(x, y, z):
         # remove the data points that are in the over and under lists
             count = 0
         for i in range(0, len(pop) - 1):
-            popIndex = pop[i - count]
-            x.pop(popIndex)
-            y.pop(popIndex)
-            z.pop(popIndex)
+            popIndex = pop[i]
+            x.pop(popIndex - count)
+            y.pop(popIndex - count)
+            z.pop(popIndex - count)
             count+=1
 
 
