@@ -103,9 +103,11 @@ def pickle2xlsx(filename):
     except:
         print "Error in filename"
         return OPERATION_FAILURE
-    filterscans(dataArrays[0], dataArrays[1], dataArrays[2])
+
     newFileName = 'test_data/{}'.format(generateStampedFileName('.xlsx'))
     wbSave(newFileName, dataArrays, False)
+    filterData = filterscans(dataArrays[0], dataArrays[1], dataArrays[2])
+    wbSave('filter_test_data/{}'.format(generateStampedFileName('.xlsx')), filterData, True)
     debugPrint("Wrote {}.xlsx".format(newFileName), UTILITY)
     return OPERATION_SUCCESS
 

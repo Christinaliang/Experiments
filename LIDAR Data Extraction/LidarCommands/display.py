@@ -99,7 +99,9 @@ def filterscans(x, y, z):
         exceldata[7] = y
         exceldata[8] = z
 
-        wbSave('filter_test_data/{}'.format(generateStampedFileName('.xlsx')), exceldata, True)
+        return exceldata
+
+
 
 
 ##
