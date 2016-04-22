@@ -73,8 +73,6 @@ def filterscans(x, y, z):
             count+=1
 
 
-        #plotFilter(underX, underY, underZ, overX, overY,overZ, x, y, z)
-
         exceldata = [[],[],[],[],[],[],[],[],[]]
 
         exceldata[0] = underX
