@@ -1,21 +1,9 @@
-_author__="Taylor Stadeli, Lysa Pinto"
+_author__="Taylor Stadeli"
 __copyright__="January 21, 2016"
 __version__= 0.5
 
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
-import numpy as np
-from openpyxl import Workbook
-from openpyxl.cell import get_column_letter as toLetter
-import Queue
-import threading
-import socket
 from utility import *
-from constants import *
-from display import *
-import matplotlib.cm as cmx
-from mpl_toolkits.mplot3d import Axes3D
+
 
 ##
 # filter
@@ -100,92 +88,6 @@ def filterscans(x, y, z):
         exceldata[8] = z
 
         return exceldata
-
-
-
-
-##
-# plots
-#
-# Description: 3D plot the points that have not yet been filtered
-#
-# Parameters:
-#   x,y,z - data points received from lidar after processing
-##
-def plot(x,y,z):
-
-    winSize = 1500
-    plt.scatter(x,y,c='r')
-   # plt.xlim(-1*winSize,winSize)
-    #plt.ylim(-1*winSize,winSize)
-
-    plt.scatter(y,z, c= 'b')
-    #plt.xlim(-1*winSize,winSize)
-    #plt.ylim(-1*winSize,winSize)
-
-    plt.scatter(x,z,c= 'g')
-   # plt.xlim(-1*winSize,winSize)
-   # plt.ylim(-1*winSize,winSize)
-
-    fig = plt.figure()
-
-    ax = fig.add_subplot(111)
-    ax = fig.add_subplot(111, projection='3d')
-    ax.set_xlim(-1*winSize,winSize)
-    ax.set_ylim(-1*winSize,winSize)
-    ax.set_zlim(-1*winSize,winSize)
-
-    ax.set_xlabel('xlabel')
-    ax.set_ylabel('ylabel')
-    ax.set_zlabel('zlabel')
-    ax.scatter(x,y,z,c='b')
-
-
-
-    plt.show()
-
-
-
-
-##
-# plotFilter
-#
-# Description: 3D plot the points that have been filtered
-#
-# Parameters:
-#  underX,underY,underZ,overX,overY,OverZ x,y,z - data points received from lidar after processing and filtering
-##
-def plotFilter(underX, underY, underZ, overX, overY, overZ, x, y, z):
-
-    winSize = 10000
-    plt.scatter(underX,underY,color='r')
-    plt.xlim(-1*winSize,winSize)
-    plt.ylim(0,winSize)
-
-    plt.scatter(overX,overY, color='g')
-    plt.xlim(-1*winSize,winSize)
-    plt.ylim(0,winSize)
-
-    plt.scatter(x,y,color ='b')
-    plt.xlim(-1*winSize,winSize)
-    plt.ylim(0,winSize)
-
-    fig = plt.figure()
-    #ax = fig.add_subplot(111, projection='3d')
-    #ax.set_xlim(-1*winSize,winSize)
-    #ax.set_ylim(-1*winSize,winSize)
-    #ax.set_zlim(-1*winSize,winSize)
-
-    #ax.set_xlabel('xlabel')
-    #ax.set_ylabel('ylabel')
-    #ax.set_zlabel('zlabel')
-
-    #ax.scatter(x,y,z,c='b')
-    #ax.scatter(overX,overY,overZ,c='r')
-    #ax.scatter(underX,underY,underZ,c='g')
-    plt.show()
-
-
 
 
 
