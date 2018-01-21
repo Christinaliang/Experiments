@@ -82,6 +82,7 @@ void loop() {
 //        128
 //        130
 //        131
+        //driveClockwise(int motorID, int speed, unsigned char command)
         driveClockwise(128, readValue, 1);
         driveClockwise(130, readValue, 1);
         driveClockwise(131, readValue, 1);
@@ -128,6 +129,7 @@ void actuate(int steps) {
 
     //update and print position as we move
     currentSteps += dir;
+    //every 50,000 ms print new position
     if (i%500 == 0) printPosition();
     
     //wait for 100 ms
@@ -144,6 +146,7 @@ void interrupt() {
   if (Serial.available()) {
     char command = Serial.read();
     switch (command) {
+      //emergency stom if command == 's' or 'S'
       case 's':
         e_stop = true;
         break;
