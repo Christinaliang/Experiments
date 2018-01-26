@@ -12,8 +12,8 @@ __version__ = 2
 #########################################################################
 
 import RPi.GPIO as GPIO
-from .utility import debugPrint
-from .constants import *
+from utility import debugPrint
+from constants import *
 
 ### ONE-TIME SETUP ###
 GPIO.setmode(GPIO.BCM)
@@ -29,11 +29,11 @@ pwm.start(0)
 ##
 def runManual():
     while True:
-        degree = eval(input("What angle do you want me to turn to?\n"))
+        degree = input("What angle do you want me to turn to?\n")
         if isinstance(degree, int) and degree >= DEGREE_MIN and degree <= DEGREE_MAX:
             turnTo(degree)
         else:
-            print("Input should be a number of degrees [0, 200]")
+            print "Input should be a number of degrees [0, 200]"
 
 ##
 # turnto()
