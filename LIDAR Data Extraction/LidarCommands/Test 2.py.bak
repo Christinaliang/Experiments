@@ -1,4 +1,4 @@
-import usb, sys, time, argparse, struct, socket, binascii, queue
+import usb, sys, time, argparse, struct, socket, binascii, Queue
 from threading import Thread
 
 class hokuyoDataReader():
@@ -24,7 +24,7 @@ class hokuyoDataReader():
 					# nhokreadings += 1
 				#print ("HOK", rectime, len(sres))
 				scan = lres.pop()
-				print(scan)
+				print scan
 				# print '==============='
 				#res = [ lres.pop() ]
 			# print res
