@@ -3,12 +3,12 @@ __author__="Jaimiey Sears"
 __copyright__="October 26, 2015"
 __version__= 0.50
 
-import queue
+import Queue
 import threading
 import socket
-from .utility import *
-from .constants import *
-from .lidar_servo_driver import turnTo
+from utility import *
+from constants import *
+from lidar_servo_driver import turnTo
 import pickle
 
 ##############################
@@ -108,13 +108,13 @@ class LidarThreads():
         try:
             self.socket.settimeout(.1)
             self.socket.connect(("192.168.0.10", 10940))
-        except socket.timeout as e:
+        except socket.timeout, e:
             debugPrint("I can't connect. Exiting.", SOCKET_MSG)
             exit(-1)
 
         # dataQueue is a Queue of strings
         # each string representing a slice (scan)
-        self.dataQueue = queue.Queue()
+        self.dataQueue = Queue.Queue()
 
         self.processedDataArrays = []
 
@@ -164,7 +164,7 @@ class LidarThreads():
                         debugPrint("Recv:\n" + temp, SOCKET_DATA)
                         data = temp.split("\n")
                         data.reverse()
-                    except socket.timeout as e:
+                    except socket.timeout, e:
                         debugPrint("waiting for data", SOCKET_MSG)
                         break
 
@@ -174,7 +174,7 @@ class LidarThreads():
                             # put data into our queue for the consumer to use
                             dataQueue.put((str, angle))
 
-                        except queue.Full as e:
+                        except Queue.Full, e:
                             debugPrint("Data Queue is full.", SOCKET_MSG)
                             continue
                     counter += 1.0
@@ -239,7 +239,7 @@ class LidarThreads():
                 if counter >= 5:
                     dataSet = dataSet + dataline
 
-            except queue.Empty as e:
+            except Queue.Empty, e:
                 if not emptied:
                     debugPrint( "Data Queue is empty", SOCKET_MSG)
                     emptied = True
