@@ -3,11 +3,11 @@ __author__="Jaimiey Sears, Sully Cothran"
 __copyright__="January 31, 2016"
 __version__= 2
 
-import queue
+import Queue
 import threading
 import socket
-from .utility import *
-from .constants import *
+from utility import *
+from constants import *
 # from lidar_servo_driver import turnTo
 
 ##############################
@@ -90,13 +90,13 @@ class LidarThreads():
         try:
             self.socket.settimeout(.1)
             self.socket.connect(("192.168.0.10", 10940))
-        except socket.timeout as e:
+        except socket.timeout, e:
             debugPrint("I can't connect. Exiting.", SOCKET_MSG)
             exit(-1)
 
         # dataQueue is a Queue of strings
         # each string representing a slice (scan)
-        self.dataQueue = queue.Queue()
+        self.dataQueue = Queue.Queue()
 
         self.processedDataArrays = []
 
@@ -156,13 +156,13 @@ class LidarThreads():
                         # format the data we've recieved
                         # data = temp.split("\n")
                         # data.reverse()
-                    except socket.timeout as e:
+                    except socket.timeout, e:
                         debugPrint("waiting for data", SOCKET_MSG)
                         break
 
                 try:
                     dataQueue.put((data, angleRadians))
-                except queue.Full as e:
+                except Queue.Full, e:
                     debugPrint("Data Queue is full.", SOCKET_MSG)
                     continue
                 counter += 1.0
@@ -209,7 +209,7 @@ class LidarThreads():
                 self.processedDataArrays[PHI_IDX] += PHIS
                 self.processedDataArrays[TH_IDX] += THETAS
 
-            except queue.Empty as e:
+            except Queue.Empty, e:
                 if not emptied:
                     debugPrint( "Data Queue is empty", SOCKET_MSG)
                     emptied = True
