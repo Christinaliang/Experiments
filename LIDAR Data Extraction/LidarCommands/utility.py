@@ -5,7 +5,7 @@ __version__= 1.0
 
 import math, time, pickle
 import datetime as dt
-from .constants import *
+from constants import *
 # from openpyxl import Workbook
 # from openpyxl.cell import get_column_letter as toLetter
 

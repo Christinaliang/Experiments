@@ -6,9 +6,9 @@ __version__= 0.50
 import queue
 import threading
 import socket
-from .utility import *
-from .constants import *
-from .lidar_servo_driver import turnTo
+from utility import *
+from constants import *
+from lidar_servo_driver import turnTo
 import pickle
 
 ##############################

@@ -1,7 +1,7 @@
 __author__ = 'Jaimiey'
 __version__ = 1
 
-from .threads import main as runTest
+from threads import main as runTest
 import datetime as dt
 
 # Get information from user regarding number of test cases

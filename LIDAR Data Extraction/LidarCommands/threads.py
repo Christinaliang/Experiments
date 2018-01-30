@@ -6,8 +6,8 @@ __version__= 2
 import queue
 import threading
 import socket
-from .utility import *
-from .constants import *
+from utility import *
+from constants import *
 # from lidar_servo_driver import turnTo
 
 ##############################

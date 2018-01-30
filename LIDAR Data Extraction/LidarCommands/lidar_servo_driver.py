@@ -12,8 +12,8 @@ __version__ = 2
 #########################################################################
 
 import RPi.GPIO as GPIO
-from .utility import debugPrint
-from .constants import *
+from utility import debugPrint
+from constants import *
 
 ### ONE-TIME SETUP ###
 GPIO.setmode(GPIO.BCM)
