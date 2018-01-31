@@ -6,13 +6,13 @@ import datetime as dt
 
 # Get information from user regarding number of test cases
 try:
-    ip = int(input("Number of scans to do: "))
+    ip = int(raw_input("Number of scans to do: "))
 except ValueError:
-    print("Not a valid number. Exiting")
+    print "Not a valid number. Exiting"
     raise SystemExit
 
 # run x tests, prompting for input
 for i in range(ip):
-    for j in range(3): print("----------------------------------")
-    print("Beginning Scan {} at {}".format(i, dt.datetime.now()))
+    for j in range(3): print "----------------------------------"
+    print "Beginning Scan {} at {}".format(i, dt.datetime.now())
     runTest()
