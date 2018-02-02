@@ -3,12 +3,12 @@ __author__="Jaimiey Sears"
 __copyright__="October 26, 2015"
 __version__= 0.50
 
-import queue
+import Queue
 import threading
 import socket
 from utility import *
 from constants import *
-#from lidar_servo_driver import turnTo
+from lidar_servo_driver import turnTo
 import pickle
 
 ##############################
@@ -100,31 +100,21 @@ class LidarThreads():
 
         self.slitAngle = START_ANGLE
 
-        #command to get data from the lidar.
-        #MD=Distance measurement with continuous scanning
-        #Parameters:
-        #Position at the starting step, length 4, name:Start. 
-        #Position at the ending step, length 4, name:End.Units unknown
-        #Number of group steps, length 2, name:Grouping Units unknown
-        #Number of scans to skip, length 1, name:Skips
-        #Number of measurement scans, length 2, name:Scans
-        #Documentation: https://en.manu-systems.com/HOK-UTM-30LX-EW_communication_protocol.pdf
-        strcommand = 'MD'+'0000'+'1000'+'00'+'0'+'00'
-        #strcommand = 'GD'+'0000'+'1000'+'00'
-        #strcommand = 'RB'
-        self.command=bytes(strcommand, 'ascii')
+        #command to get data from the lidar
+        self.command = 'MD'+'0180'+'0900'+'00'+'0'+'01'
+
         # establish communication with the sensor
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            self.socket.settimeout(1)
+            self.socket.settimeout(.1)
             self.socket.connect(("192.168.0.10", 10940))
-        except socket.timeout as e:
+        except socket.timeout, e:
             debugPrint("I can't connect. Exiting.", SOCKET_MSG)
             exit(-1)
 
         # dataQueue is a Queue of strings
         # each string representing a slice (scan)
-        self.dataQueue = queue.Queue()
+        self.dataQueue = Queue.Queue()
 
         self.processedDataArrays = []
 
@@ -142,7 +132,7 @@ class LidarThreads():
         ang = 0
 
         #while not stop_event.is_set():
-        for i in range (0,1):
+        for i in range (0,10):
 
              #simulate a move of the LIDAR scanner
                 time.sleep(0.05)
@@ -160,21 +150,21 @@ class LidarThreads():
                 # if inp == "":
 
                 # rotate the lidar to the correct degree setting
-                #turnTo(ang)
+                turnTo(ang)
                 angle = math.radians(int(ang))
                 ang += 10
 
                 # send scan request to the LIDAR
-                self.socket.send(self.command)
+                self.socket.send("{}\n".format(self.command))
 
                 # receive data from the LIDAR
                 for j in range(0, 4500):
                     try:
-                        temp = self.socket.recvfrom(4500)
+                        temp = self.socket.recv(4500)
                         debugPrint("Recv:\n" + temp, SOCKET_DATA)
                         data = temp.split("\n")
                         data.reverse()
-                    except socket.timeout as e:
+                    except socket.timeout, e:
                         debugPrint("waiting for data", SOCKET_MSG)
                         break
 
@@ -184,7 +174,7 @@ class LidarThreads():
                             # put data into our queue for the consumer to use
                             dataQueue.put((str, angle))
 
-                        except queue.Full as e:
+                        except Queue.Full, e:
                             debugPrint("Data Queue is full.", SOCKET_MSG)
                             continue
                     counter += 1.0
@@ -249,7 +239,7 @@ class LidarThreads():
                 if counter >= 5:
                     dataSet = dataSet + dataline
 
-            except queue.Empty as e:
+            except Queue.Empty, e:
                 if not emptied:
                     debugPrint( "Data Queue is empty", SOCKET_MSG)
                     emptied = True

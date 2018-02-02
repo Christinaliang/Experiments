@@ -1,4 +1,4 @@
-import usb, sys, time, argparse, struct, socket, binascii, queue
+import usb, sys, time, argparse, struct, socket, binascii, Queue
 from threading import Thread
 
 parser = argparse.ArgumentParser(description='Data log imu and laser')
@@ -6,21 +6,21 @@ parser.add_argument('-f', '--file', dest='filename', help="logfilename", metavar
 parser.add_argument("-q", "--quiet", action="store_false", dest="verbose", default=False, help="don't print status messages to stdout")
 args = parser.parse_args()
 
-dataqueue = queue.Queue()
+dataqueue = Queue.Queue()
 nimureadings, nhokreadings = 0, 0
 bTerminate = False
 
 # handle incoming commands from command line
 def ReadStdin():
     global bTerminate
-    print("Type 'q' and return to quit")
+    print "Type 'q' and return to quit"
     while True:
         x = sys.stdin.read(2) 
         if x[0] == 'q':
             bTerminate = True
             dataqueue.put("TERMINATE")
             break
-        print([x])
+        print [x]
 
 
 # handle the output to file
@@ -29,7 +29,7 @@ def OutputQueue():
     while True:
         try:
             x = dataqueue.get(timeout=10)
-        except queue.Empty as e:
+        except Queue.Empty, e:
             continue
         if x == "TERMINATE":
             fout.write("TERMINATE\n")
@@ -78,7 +78,7 @@ def HOKreading():
             sres = "".join(res)
             if not sres:
                 nhokreadings += 1
-            print(("HOK", rectime, len(sres)))
+            print ("HOK", rectime, len(sres))
             res = [ lres.pop() ]
             
     # should turn it off
@@ -93,7 +93,7 @@ for f in [ OutputQueue, ReadStdin, IMUreading, HOKreading ]:
 while not bTerminate:
     time.sleep(1)
     if int(time.clock()) % 5 == 1:
-        print(time.clock(), "seconds passed; hokreadings:", nhokreadings, " imureadings:", nimureadings)
+        print time.clock(), "seconds passed; hokreadings:", nhokreadings, " imureadings:", nimureadings
 
 threads[0].join()
     

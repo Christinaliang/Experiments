@@ -183,7 +183,7 @@ def writeToPickle(filename, obj):
 ##
 def debugPrint(string, lvl):
     if lvl in DEBUG_LEVELS:
-        print("{}\t\t{}".format("DEBUG LOG:",string))
+        print "{}\t\t{}".format("DEBUG LOG:",string)
     return
 
 # Saves a workbook (MS Excel)
