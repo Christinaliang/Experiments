@@ -74,14 +74,6 @@ def main():
 #####################
 
 
-##
-# Placeholder for cartesian conversion ftn
-##
-def sphericalToCartesian(data):
-    time.sleep(0.005)
-    #print("Placeholder: Cartesian map conversion")
-    return data
-
 
 ##
 # LidarThreads
