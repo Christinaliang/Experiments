@@ -228,9 +228,9 @@ class LidarThreads():
                 if dataline == "":
                     if not dataSet == "":
                         for string in splitNparts(dataSet,64):
-                            X, Y, Z, lastAngle, outVal, phi, th, dist = decode(string, anglePhi, self.slitAngle)
+                            X, Y, Z, dist, phi, th = decode_new(string, anglePhi)
 
-                            self.slitAngle = lastAngle
+                            #self.slitAngle = lastAngle
 
                             xLines = xLines + X
                             yLines = yLines + Y
@@ -247,7 +247,7 @@ class LidarThreads():
                 else:
                     counter += 1
 
-                debugPrint("Consumer: data= {}".format(dataline), SOCKET_DATA)
+                #debugPrint("Consumer: data= {}".format(dataline), SOCKET_DATA)
 
                 self.commandOutput += dataline + '\n'
                 # if counter == 4:
