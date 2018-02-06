@@ -36,8 +36,9 @@ def decode_new(string, anglePhi):
         xCoord = dist*math.cos(angleTheta)
         yCoord = dist*math.sin(angleTheta)
 
-        yCoord = yCoord*math.cos(anglePhi)
         zCoord = yCoord*(-1*math.sin(anglePhi))
+        yCoord = yCoord*math.cos(anglePhi)
+        
 
         x.append(xCoord)
         y.append(yCoord)
