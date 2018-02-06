@@ -10,6 +10,7 @@ from utility import *
 from constants import *
 #from lidar_servo_driver import turnTo
 import pickle
+from time import sleep
 
 ##############################
 #  PROGRAM MAIN ENTRY POINT  #
@@ -109,14 +110,15 @@ class LidarThreads():
         #Number of scans to skip, length 1, name:Skips
         #Number of measurement scans, length 2, name:Scans
         #Documentation: https://en.manu-systems.com/HOK-UTM-30LX-EW_communication_protocol.pdf
-        strcommand = 'MD'+'0000'+'1000'+'00'+'0'+'00'
-        #strcommand = 'GD'+'0000'+'1000'+'00'
-        #strcommand = 'RB'
+        strcommand = 'MD'+'0000'+'1000'+'00'+'0'+'00'+'\n'
+        #strcommand = 'GD'+'0000'+'1000'+'00'+'\n'
+        #strcommand = 'RB'+'\n'
         self.command=bytes(strcommand, 'ascii')
         # establish communication with the sensor
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            self.socket.settimeout(1)
+            self.socket.settimeout(2)
+            self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             self.socket.connect(("192.168.0.10", 10940))
         except socket.timeout as e:
             debugPrint("I can't connect. Exiting.", SOCKET_MSG)
@@ -165,18 +167,22 @@ class LidarThreads():
                 ang += 10
 
                 # send scan request to the LIDAR
-                self.socket.send(self.command)
+                self.socket.sendall(self.command)
+                #astr ='MD'+'0180'+'0900'+'00'+'0'+'01'+'\n'
+                #self.socket.sendall(astr.encode())
+                #sleep(0.1)
 
                 # receive data from the LIDAR
                 for j in range(0, 4500):
                     try:
-                        temp = self.socket.recvfrom(4500)
-                        debugPrint("Recv:\n" + temp, SOCKET_DATA)
-                        data = temp.split("\n")
+                        temp = self.socket.recv(4500)
+                        #debugPrint("Recv:\n" + temp.decode()[:8], SOCKET_DATA)
+                        data = temp.decode().split("\n")
                         data.reverse()
                     except socket.timeout as e:
                         debugPrint("waiting for data", SOCKET_MSG)
                         break
+                    
 
                     while data:
                         try:
