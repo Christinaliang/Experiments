@@ -6,6 +6,8 @@ __version__= 0.50
 import queue
 import threading
 import socket
+import matplotlib.pyplot as plt
+import numpy as np
 from utility import *
 from constants import *
 #from lidar_servo_driver import turnTo
@@ -64,6 +66,14 @@ def main():
 
     th1_stop.set()
     th2_stop.set()
+	
+    #output using matplotlib
+    x, y = np.meshgrid(lt.processedDataArrays[0], lt.processedDataArrays[1])
+    intensity = np.array(lt.processedDataArrays[5]
+    #plug the data into pcolormesh,
+    plt.pcolormesh(x, y, intensity)
+    plt.colorbar() #need a colorbar to show the intensity scale
+    plt.show()
 
     debugPrint("Done running threads", ROSTA)
     debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
