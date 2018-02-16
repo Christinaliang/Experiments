@@ -76,17 +76,17 @@ def main():
     #intensity = np.reshape(intensity, (4500, -1))
     #debugPrint(str(intensity), ROSTA)
     
-    X = np.arange(np.asarray(lt.processedDataArrays[0]))
-    y = np.arange(np.asarray(lt.processedDataArrays[1]))
-    z = np.arange(np.asarray(lt.processedDataArrays[2]))
+    X = np.asarray(lt.processedDataArrays[0])
+    y = np.asarray(lt.processedDataArrays[1])
+    z = np.asarray(lt.processedDataArrays[2])
     
-    surf = ax.plot_surface(X, y, z, cmap=cm.coolwarm, linewidth = 0, antialiasing = False)
-    plt.show();
+    #surf = ax.plot_surface(X, y, z, cmap=cm.coolwarm, linewidth = 0, antialiasing = False)
+    #plt.show();
 	
     #plug the data into pcolormesh,
-    #plt.pcolormesh([lt.processedDataArrays[2], lt.processedDataArrays[5]])
-    #plt.colorbar() #need a colorbar to show the intensity scale
-    #plt.show()
+    plt.pcolormesh([z, lt.processedDataArrays[5]])
+    plt.colorbar() #need a colorbar to show the intensity scale
+    plt.show()
     
     debugPrint("Done running threads", ROSTA)
     debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
@@ -162,7 +162,6 @@ class LidarThreads():
         for i in range (0,1):
 
              #simulate a move of the LIDAR scanner
-                time.sleep(0.05)
 
                 # wait for the Queue to empty
                 while dataQueue.qsize() > 0:
