@@ -131,7 +131,7 @@ class LidarThreads():
                 self.slitAngle = START_ANGLE
 
                 # send scan request to the LIDAR
-                self.socket.send("{}\n".format(self.command))
+                self.socket.send(("{}\n".format(self.command)).encode())
 
 
                 # get rid of the intro information
@@ -149,9 +149,9 @@ class LidarThreads():
                         # get a line of data from the LIDAR queue
                         temp = self.socket.recv(66)
                         if len(temp) == 66:
-                            data += temp[:-2]
+                            data += temp[:-2].decode()
                         else:
-                            data += temp[:-3]
+                            data += temp[:-3].decode()
 
                         # format the data we've recieved
                         # data = temp.split("\n")

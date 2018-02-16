@@ -6,6 +6,8 @@ __version__= 0.50
 import queue
 import threading
 import socket
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
 import matplotlib.pyplot as plt
 import numpy as np
 from utility import *
@@ -63,18 +65,29 @@ def main():
 
     # pickle the file to be used later
     writeToPickle(generateStampedFileName('.dat'), lt.processedDataArrays)
-
+    
     th1_stop.set()
     th2_stop.set()
-	
+    
     #output using matplotlib
-    x, y = np.meshgrid(lt.processedDataArrays[0], lt.processedDataArrays[1])
-    intensity = np.array(lt.processedDataArrays[5]
+    #x, y = np.meshgrid(lt.processedDataArrays[0], lt.processedDataArrays[1])
+    #intensity = np.asarray(lt.processedDataArrays[5])
+    
+    #intensity = np.reshape(intensity, (4500, -1))
+    #debugPrint(str(intensity), ROSTA)
+    
+    X = np.arange(np.asarray(lt.processedDataArrays[0]))
+    y = np.arange(np.asarray(lt.processedDataArrays[1]))
+    z = np.arange(np.asarray(lt.processedDataArrays[2]))
+    
+    surf = ax.plot_surface(X, y, z, cmap=cm.coolwarm, linewidth = 0, antialiasing = False)
+    plt.show();
+	
     #plug the data into pcolormesh,
-    plt.pcolormesh(x, y, intensity)
-    plt.colorbar() #need a colorbar to show the intensity scale
-    plt.show()
-
+    #plt.pcolormesh([lt.processedDataArrays[2], lt.processedDataArrays[5]])
+    #plt.colorbar() #need a colorbar to show the intensity scale
+    #plt.show()
+    
     debugPrint("Done running threads", ROSTA)
     debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
     debugPrint("queue size at exit: {}".format(lt.dataQueue.qsize()), ROSTA)
@@ -119,7 +132,7 @@ class LidarThreads():
         # establish communication with the sensor
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            self.socket.settimeout(2)
+            self.socket.settimeout(.1)
             self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             self.socket.connect(("192.168.0.10", 10940))
         except socket.timeout as e:
@@ -219,6 +232,8 @@ class LidarThreads():
         dataSet = ""
         currTime = None
         emptied = False
+		
+        index = 0
 
         while not stop_event.is_set():
 
@@ -241,6 +256,7 @@ class LidarThreads():
                             thetaLines = thetaLines + th
                             distLines = distLines + dist
                             # timeLines = timeLines + currTime
+                            #debugPrint(str(distLines), SOCKET_DATA)
 
                     dataSet = ""
                     continue
