@@ -187,7 +187,7 @@ class LidarThreads():
                 #sleep(0.1)
 
                 # receive data from the LIDAR
-                for j in range(0, 4500):
+                for j in range(0, 90):
                     try:
                         temp = self.socket.recv(4500)
                         #debugPrint("Recv:\n" + temp.decode()[:8], SOCKET_DATA)
