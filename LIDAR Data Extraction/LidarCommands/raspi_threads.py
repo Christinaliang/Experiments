@@ -84,7 +84,7 @@ def main():
     #plt.show();
 	
     #plug the data into pcolormesh,
-    plt.pcolormesh([z, lt.processedDataArrays[5]])
+    plt.pcolormesh([z, lt.processedDataArrays[5]])#Figure out how this works! Also, why z and dist 
     plt.colorbar() #need a colorbar to show the intensity scale
     plt.show()
     
