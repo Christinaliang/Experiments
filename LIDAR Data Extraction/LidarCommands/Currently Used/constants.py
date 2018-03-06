@@ -39,10 +39,10 @@ DEBUG_LEVELS = [ROSTA, SERVO_DRIVER, SOCKET_MSG, SOCKET_DATA]
 # pwm frequency is 50 Hz
 PWM_FREQ = 50
 # connect to BCM pin 21 on RPi
-SERVO_PIN = 21
+SERVO_PIN = 18
 
-# pwm range is 1.8 to 11.9
-PWM_MIN = 1.8
-PWM_MAX = 11.9
+# pwm range is 1.8 to 11.9... 5 to 10? (1 ms to 2 ms)
+PWM_MIN = 5
+PWM_MAX = 10
 DEGREE_MIN = 0
-DEGREE_MAX = 200
+DEGREE_MAX = 180

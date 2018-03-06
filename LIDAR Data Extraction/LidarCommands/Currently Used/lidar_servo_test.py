@@ -14,18 +14,18 @@ __date__ = '26/02/2018'
 import RPi.GPIO as GPIO
 from utility import debugPrint
 from constants import *
-
-GPIO.setmode(GPIO.BOARD) #Use board pin numbering
-GPIO.setup(SERVO_PIN, GPIO.OUT) #Setup SERVO_PIN to OUT
-GPIO.output(SERVO_PIN, GPIO.LOW) #Turn off SERVO_PIN
-state=False
+GPIO.setmode(GPIO.BCM) #Use board pin numbering
+GPIO.setup(18, GPIO.OUT) #Setup SERVO_PIN to OUT
 
 def run():
-    while True:
+    GPIO.output(18, GPIO.LOW) #Turn off SERVO_PIN
+    state=False;
+    while True:#switch output either high or low
         input("Press any key to switch pin")
         if state:
-            GPIO.output(SERVO_PIN, GPIO.LOW)
+            GPIO.output(18, GPIO.LOW)
             state=False
         else:
-            GPIO.output(SERVO_PIN, GPIO.HIGH)
+            GPIO.output(18, GPIO.HIGH)
             state=True
+run()
