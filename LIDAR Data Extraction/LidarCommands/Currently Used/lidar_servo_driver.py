@@ -47,12 +47,12 @@ def runManual():
 # runTest()
 # Description: Do a sweep test, sending a signal to change degree from min to max over a period of time
 ##
-def runTest()
+def runTest():
     i = PWM_MIN
     while i <= PWM_MAX:
         pwm.ChangeDutyCycle(i)
         i = i + (PWM_MAX-PWM_MIN) / (DEGREE_MAX-DEGREE_MIN)#increment by one degree
-        sleep(.01)#wait 10 ms (arbitrary wait time)
+        time.sleep(.1)#wait 100 ms (arbitrary wait time)
 
 ##
 # turnto()
