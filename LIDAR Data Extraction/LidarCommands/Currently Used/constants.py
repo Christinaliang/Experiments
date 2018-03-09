@@ -42,7 +42,8 @@ PWM_FREQ = 50
 SERVO_PIN = 18
 
 # pwm range is 1.8 to 11.9... 5 to 10? (1 ms to 2 ms)
-PWM_MIN = 5
-PWM_MAX = 10
+#Update: Website says 553 to 2520 us (2.765 to 12.6)
+PWM_MIN = 2.765
+PWM_MAX = 12.6
 DEGREE_MIN = 0
-DEGREE_MAX = 180
+DEGREE_MAX = 197 #Website also says it can rotate up to 197 degrees

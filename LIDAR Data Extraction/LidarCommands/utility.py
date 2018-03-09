@@ -10,7 +10,10 @@ from constants import *
 # from openpyxl.cell import get_column_letter as toLetter
 
 def decode_new(string, anglePhi):
-    splitData = splitNparts(string, 3)#Split into three letter strings
+    # resolution of the scan angle TODO: move to constants.py
+    resolution = 0.25
+
+    splitData = splitNparts(string, 3)
 
     #init the result lists
     dists = []

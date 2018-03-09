@@ -1,5 +1,5 @@
 
-__author__="Jaimiey Sears"
+__author__="Jaimiey Sears, updated by Alex Schendel and Alex Reinmann, 2018"
 __copyright__="October 26, 2015"
 __version__= 0.50
 
@@ -22,23 +22,20 @@ from time import sleep
 def main():
     lt = LidarThreads(debug=False)
 
-    # make the first string for reading LIDAR data
+    # make the first thread for reading LIDAR data
     debugPrint("Starting", ROSTA)
     th1_stop = threading.Event()
     th1 = threading.Thread(target=lt.produce, args=(lt.dataQueue, th1_stop,), name="data_reader")
     debugPrint("Done making thread 1", ROSTA)
 
-    # make the second string to process the LIDAR data
+    # make the second thread to process the LIDAR data
     th2_stop = threading.Event()
     th2 = threading.Thread(target=lt.consume, args=(lt.dataQueue, th2_stop,), name="cartesian_converter")
     debugPrint("done making thread 2", ROSTA)
 
-    # start both strings
+    # start both threads
     th1.start()
     th2.start()
-
-    # operation time = 3.0 seconds
-    # time.sleep(3.0)
 
     # close the threads down
     while th1.isAlive():
@@ -64,7 +61,7 @@ def main():
     # wbSave(generateStampedFileName(), lt.processedDataArrays)
 
     # pickle the file to be used later
-    writeToPickle(generateStampedFileName('.dat'), lt.processedDataArrays)
+    writeToPickle(generateStampedFileName('.dat'), lt.processedDataArrays)#saves data in a pickle (it defaults to form of binary, so it will not be human-readable by default)
     
     th1_stop.set()
     th2_stop.set()
@@ -75,7 +72,8 @@ def main():
     
     #intensity = np.reshape(intensity, (4500, -1))
     #debugPrint(str(intensity), ROSTA)
-    
+
+    # Convert read x, y, and z data to numpy arrays
     X = np.asarray(lt.processedDataArrays[0])
     y = np.asarray(lt.processedDataArrays[1])
     z = np.asarray(lt.processedDataArrays[2])
@@ -83,7 +81,7 @@ def main():
     #surf = ax.plot_surface(X, y, z, cmap=cm.coolwarm, linewidth = 0, antialiasing = False)
     #plt.show();
 	
-    #plug the data into pcolormesh,
+    #plug the data into pcolormesh.
     plt.pcolormesh([z, lt.processedDataArrays[5]])#Figure out how this works! Also, why z and dist 
     plt.colorbar() #need a colorbar to show the intensity scale
     plt.show()
@@ -126,10 +124,10 @@ class LidarThreads():
         #Number of measurement scans, length 2, name:Scans
         #Documentation: https://en.manu-systems.com/HOK-UTM-30LX-EW_communication_protocol.pdf
         strcommand = 'MD'+'0000'+'1000'+'00'+'0'+'00'+'\n'
-        #strcommand = 'GD'+'0000'+'1000'+'00'+'\n'
-        #strcommand = 'RB'+'\n'
-        self.command=bytes(strcommand, 'ascii')
-        # establish communication with the sensor
+        self.command=bytes(strcommand, 'ascii')#convert to ascii encoded binary
+        # establish communication with the sensor.
+        # NOTE, special network settings are required to connect:
+        # IP: 192.168.1.11, Subnet Mask: 255.255.255.0 (default) Default Gateway: 192.168.0.1
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.socket.settimeout(.1)
@@ -159,9 +157,7 @@ class LidarThreads():
         ang = 0
 
         #while not stop_event.is_set():
-        for i in range (0,1):
-
-             #simulate a move of the LIDAR scanner
+        for i in range (0,1):#number of slices to scan along y-axis (moving servo motor)
 
                 # wait for the Queue to empty
                 while dataQueue.qsize() > 0:
@@ -187,11 +183,11 @@ class LidarThreads():
                 #sleep(0.1)
 
                 # receive data from the LIDAR
-                for j in range(0, 90):
+                for j in range(0, 90):#number of slices to scan along x-axis (resolution)
                     try:
-                        temp = self.socket.recv(4500)
+                        temp = self.socket.recv(4500)#receive up to 4500 bytes of data
                         #debugPrint("Recv:\n" + temp.decode()[:8], SOCKET_DATA)
-                        data = temp.decode().split("\n")
+                        data = temp.decode().split("\n")#decode the data and split it by new line
                         data.reverse()
                     except socket.timeout as e:
                         debugPrint("waiting for data", SOCKET_MSG)
