@@ -1,4 +1,4 @@
-__author__ = 'Jaimiey'
+__author__ = 'Jaimiey Sears and Alex Schendel'
 
 ####### GENERAL PURPOSE CONSTANTS #######
 OPERATION_SUCCESS = 0
@@ -39,11 +39,20 @@ DEBUG_LEVELS = [ROSTA, SERVO_DRIVER, SOCKET_MSG, SOCKET_DATA]
 # pwm frequency is 50 Hz
 PWM_FREQ = 50
 # connect to BCM pin 21 on RPi
-SERVO_PIN = 18
+SERVO_PIN = 21
 
 # pwm range is 1.8 to 11.9... 5 to 10? (1 ms to 2 ms)
 #Update: Website says 553 to 2520 us (2.765 to 12.6)
-PWM_MIN = 2.765
-PWM_MAX = 12.6
+# FOR HS-645MG
+#PWM_MIN = 2.765
+#PWM_MAX = 12.6
+#DEGREE_MIN = 0
+#DEGREE_MAX = 197 #Website also says it can rotate up to 197 degrees
+
+#For TowerPro SG-5010
+#1 ms to 2 ms (5 to 10)
+#Note: 1 ms is -90 degrees to 2 ms is +90 degrees, so defining this from 0 to 180 will just change the origin
+PWM_MIN = 5
+PWM_MAX = 10
 DEGREE_MIN = 0
-DEGREE_MAX = 197 #Website also says it can rotate up to 197 degrees
+DEGREE_MAX = 180

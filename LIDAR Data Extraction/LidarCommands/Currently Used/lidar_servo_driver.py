@@ -5,6 +5,7 @@ __version__ = 2.1
 # lidar mount.
 #
 # The servo is the high torque HS-645MG from HiTEC (www.hitecrcd.com)
+# New servo is the cheap TowerPro SG-5010 from AdaFruit (https://www.adafruit.com/product/155)
 #
 # Servo motors use PWM (pulse width modulation) to control their angle.
 # PWM is oscillating voltages. For example, a frequency of 50 means 50 Hz,
