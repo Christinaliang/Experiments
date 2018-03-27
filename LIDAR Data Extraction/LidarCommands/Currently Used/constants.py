@@ -38,6 +38,7 @@ DEBUG_LEVELS = [ROSTA, SERVO_DRIVER, SOCKET_MSG, SOCKET_DATA]
 #initial setup
 # pwm frequency is 50 Hz
 PWM_FREQ = 50
+
 # connect to BCM pin 21 on RPi
 SERVO_PIN = 18
 

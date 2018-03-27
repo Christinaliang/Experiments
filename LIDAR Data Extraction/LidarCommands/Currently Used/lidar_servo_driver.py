@@ -22,7 +22,6 @@ __version__ = 2.1
 import RPi.GPIO as GPIO
 from utility import debugPrint
 from constants import *
-import time
 
 ### ONE-TIME SETUP ###
 GPIO.setmode(GPIO.BCM)
@@ -54,7 +53,6 @@ def runTest():
         pwm.ChangeDutyCycle(i)
         print(i)
         i = i + ((PWM_MAX-PWM_MIN) / (DEGREE_MAX-DEGREE_MIN))#increment by one degree
-        time.sleep(.1)#wait 100 ms (arbitrary wait time)
 
 ##
 # turnto()
@@ -77,4 +75,4 @@ def turnTo(degree):
 def stop():
     pwm.ChangeDutyCycle(0)
 
-runManual()
+runTest()
