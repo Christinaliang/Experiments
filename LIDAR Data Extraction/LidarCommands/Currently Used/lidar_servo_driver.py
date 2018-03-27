@@ -30,7 +30,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(SERVO_PIN, GPIO.OUT)
 # make a PWM object with frequency PWM_FREQ
 pwm = GPIO.PWM(SERVO_PIN, PWM_FREQ)#sets up pwm on servo pin to frequency 50Hz (20 ms polling rate) on GPIO pin 18. All found in constants.py
-pwm.start((PWM_MIN + PWM_MAX) / 2)#set duty cycle to the halfway point
+pwm.start(0)#set duty cycle to the halfway point
 
 ##
 # runManual()
@@ -52,7 +52,8 @@ def runTest():
     i = PWM_MIN
     while i <= PWM_MAX:
         pwm.ChangeDutyCycle(i)
-        i = i + (PWM_MAX-PWM_MIN) / (DEGREE_MAX-DEGREE_MIN)#increment by one degree
+        print(i)
+        i = i + ((PWM_MAX-PWM_MIN) / (DEGREE_MAX-DEGREE_MIN))#increment by one degree
         time.sleep(.1)#wait 100 ms (arbitrary wait time)
 
 ##
@@ -76,4 +77,4 @@ def turnTo(degree):
 def stop():
     pwm.ChangeDutyCycle(0)
 
-runTest()
+runManual()
