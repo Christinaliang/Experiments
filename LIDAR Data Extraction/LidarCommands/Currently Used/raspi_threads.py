@@ -6,15 +6,15 @@ __version__= 0.50
 import queue
 import threading
 import socket
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-import matplotlib.pyplot as plt
-import numpy as np
+#from mpl_toolkits.mplot3d import Axes3D
+#from matplotlib import cm
+#import matplotlib.pyplot as plt
+#import numpy as np
 from utility import *
 from constants import *
 from lidar_servo_driver import turnTo
 import pickle
-from time import sleep
+#from time import sleep
 
 ##############################
 #  PROGRAM MAIN ENTRY POINT  #
@@ -74,17 +74,17 @@ def main():
     #debugPrint(str(intensity), ROSTA)
 
     # Convert read x, y, and z data to numpy arrays
-    X = np.asarray(lt.processedDataArrays[0])
-    y = np.asarray(lt.processedDataArrays[1])
-    z = np.asarray(lt.processedDataArrays[2])
+    #X = np.asarray(lt.processedDataArrays[0])
+    #y = np.asarray(lt.processedDataArrays[1])
+    #z = np.asarray(lt.processedDataArrays[2])
     
     #surf = ax.plot_surface(X, y, z, cmap=cm.coolwarm, linewidth = 0, antialiasing = False)
     #plt.show();
 	
     #plug the data into pcolormesh.
-    plt.pcolormesh([z, lt.processedDataArrays[5]])#Figure out how this works! Also, why z and dist 
-    plt.colorbar() #need a colorbar to show the intensity scale
-    plt.show()
+    #plt.pcolormesh([z, lt.processedDataArrays[5]])#Figure out how this works! Also, why z and dist
+    #plt.colorbar() #need a colorbar to show the intensity scale
+    #plt.show()
     
     debugPrint("Done running threads", ROSTA)
     debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
