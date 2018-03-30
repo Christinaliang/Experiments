@@ -37,10 +37,10 @@ DEBUG_LEVELS = [ROSTA, SERVO_DRIVER, SOCKET_MSG, SOCKET_DATA]
 ####### SERVO CONTROL CONSTANTS #######
 #initial setup
 # pwm frequency is 50 Hz
-PWM_FREQ = 50
+#PWM_FREQ = 50
 
 # connect to BCM pin 21 on RPi
-SERVO_PIN = 18
+SERVO_PIN = 21
 # pwm range is 1.8 to 11.9... 5 to 10? (1 ms to 2 ms)
 #Update: Website says 553 to 2520 us (2.765 to 12.6)
 # FOR HS-645MG

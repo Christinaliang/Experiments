@@ -13,8 +13,9 @@
 Servo servo;//create a servo object
 int servoPin=9;
 int pos = 0;//integer to store position in degrees(for loop iterator) 
-const int START_POS = 70;
-const int END_POS = 0;
+const int MID = 90;
+const int START_POS = MID+30;
+const int END_POS = MID-40;
 int scanDelay = 15;//May need to increase delay for scanning...
 const int FRONT = 0;//for rotating LIDAR, can do front scan or back scan
 const int BACK = 180;
@@ -47,15 +48,17 @@ void setup() {
 }
 
 void scan() {
-  if(pos == END_POS){
+  if(pos <= END_POS){
     isComplete = true;
   }
   if(!isComplete){
     pos -= 1;
+    servo.write(pos);
     delay(scanDelay);
   }
   else if(isComplete){
-    pos = START_POS
+    pos = START_POS;
+    servo.write(pos);
   }
 }
 

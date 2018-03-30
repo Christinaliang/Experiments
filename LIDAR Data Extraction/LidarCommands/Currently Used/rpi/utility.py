@@ -11,7 +11,7 @@ from constants import *
 
 def decode_new(string, anglePhi):
     splitData = splitNparts(string, 3)#Split into three letter strings
-
+    resolution = 1#1 degree per scan
     #init the result lists
     dists = []
     x = []

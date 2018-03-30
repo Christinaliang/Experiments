@@ -12,7 +12,7 @@ import socket
 #import numpy as np
 from utility import *
 from constants import *
-from lidar_servo_driver import turnTo
+from pin_control import *
 import pickle
 #from time import sleep
 
@@ -154,15 +154,15 @@ class LidarThreads():
     ##
     def produce(self, dataQueue, stop_event):
         counter = 0
-        ang = 0
-
-        #while not stop_event.is_set():
-        for i in range (0,1):#number of slices to scan along y-axis (moving servo motor)
+        angle = -1
+        #publish request to Arduino to start rotation scan and direction to scan in.
+        debugPrint("Turning LIDAR...\n", SOCKET_DATA)
+        for i in range (0,2):#number of slices to scan along y-axis (moving servo motor)
 
                 # wait for the Queue to empty
                 while dataQueue.qsize() > 0:
                   pass
-
+                angle = angle+1
                 # get the starting theta angle
                 self.slitAngle = START_ANGLE
 
@@ -171,17 +171,12 @@ class LidarThreads():
                 # inp = raw_input(">>> Press enter when ready to make a scan\n")
                 # if inp == "":
 
-                # rotate the lidar to the correct degree setting
-                turnTo(ang)
-                angle = math.radians(int(ang))
-                ang += 10
-
                 # send scan request to the LIDAR
                 self.socket.sendall(self.command)
                 #astr ='MD'+'0180'+'0900'+'00'+'0'+'01'+'\n'
                 #self.socket.sendall(astr.encode())
                 #sleep(0.1)
-
+                debugPrint("Scanning angle...\n", SOCKET_DATA)
                 # receive data from the LIDAR
                 for j in range(0, 90):#number of slices to scan along x-axis (resolution)
                     try:
