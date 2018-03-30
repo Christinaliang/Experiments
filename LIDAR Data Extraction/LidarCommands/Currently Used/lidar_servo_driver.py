@@ -19,52 +19,30 @@ __version__ = 2.1
 # available on the RPi.
 #########################################################################
 
-import RPi.GPIO as GPIO
 from utility import debugPrint
 from constants import *
 
 ### ONE-TIME SETUP ###
-GPIO.setmode(GPIO.BCM)
+#GPIO.setmode(GPIO.BCM)
 # Set up the pin as an output
-GPIO.setup(SERVO_PIN, GPIO.OUT)
+#GPIO.setup(SERVO_PIN, GPIO.OUT)
 # make a PWM object with frequency PWM_FREQ
-pwm = GPIO.PWM(SERVO_PIN, PWM_FREQ)#sets up pwm on servo pin to frequency 50Hz (20 ms polling rate) on GPIO pin 18. All found in constants.py
-pwm.start(0)#set duty cycle to the halfway point
-
-##
-# runManual()
-# Description: begin infinite loop of servo control
-##
-def runManual():
-    while True:
-        degree = int(float(input("What angle do you want me to turn to?\n")))
-        if isinstance(degree, int) and degree >= DEGREE_MIN and degree <= DEGREE_MAX:#make sure input is an int and is between degree bounds
-            turnTo(degree)#if it is, then we can turn there
-        else:
-            print("Input should be a number of degrees [0, 180]")
-
-##
-# runTest()
-# Description: Do a sweep test, sending a signal to change degree from min to max over a period of time
-##
-def runTest():
-    i = PWM_MIN
-    while i <= PWM_MAX:
-        pwm.ChangeDutyCycle(i)
-        print(i)
-        i = i + ((PWM_MAX-PWM_MIN) / (DEGREE_MAX-DEGREE_MIN))#increment by one degree
+#pwm = GPIO.PWM(SERVO_PIN, PWM_FREQ)#sets up pwm on servo pin to frequency 50Hz (20 ms polling rate) on GPIO pin 18. All found in constants.py
+#pwm.start(0)#set duty cycle to the halfway point
 
 ##
 # turnto()
-# Description: write a PWM signal to the servo
+# Description: turn to specified degree
 #
 # Perameters:
-#   degree - the degree to turn to between DEGREE_MIN and DEGREE_MAX, found in constants.py
+#   degree - int to determine what angle to rotate the LIDAR to
 ##
 def turnTo(degree):
     if degree in range(DEGREE_MIN, DEGREE_MAX):#Make sure degree is within bounds
-        pwm_duty_cycle = (degree * (PWM_MAX-PWM_MIN) / (DEGREE_MAX-DEGREE_MIN)) + PWM_MIN#degree times PWM/degree + PWM_MIN will result in the PWM duty cycle to set (do the math and see!)
-        pwm.ChangeDutyCycle(pwm_duty_cycle)
+        #pwm_duty_cycle = (degree * (PWM_MAX-PWM_MIN) / (DEGREE_MAX-DEGREE_MIN)) + PWM_MIN#degree times PWM/degree + PWM_MIN will result in the PWM duty cycle to set (do the math and see!)
+        #pwm.ChangeDutyCycle(pwm_duty_cycle)
+        debugPrint("Valid angle!", SERVO_DRIVER)
+        #Tell Arduino what angle to turn to via ROS publish!
     else:
         debugPrint("Degree input outside expected range", SERVO_DRIVER)
 
@@ -74,5 +52,3 @@ def turnTo(degree):
 ##
 def stop():
     pwm.ChangeDutyCycle(0)
-
-runTest()

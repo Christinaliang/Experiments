@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from utility import *
 from constants import *
-#from lidar_servo_driver import turnTo
+from lidar_servo_driver import turnTo
 import pickle
 from time import sleep
 
@@ -172,7 +172,7 @@ class LidarThreads():
                 # if inp == "":
 
                 # rotate the lidar to the correct degree setting
-                #turnTo(ang)
+                turnTo(ang)
                 angle = math.radians(int(ang))
                 ang += 10
 

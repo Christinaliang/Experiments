@@ -41,7 +41,6 @@ PWM_FREQ = 50
 
 # connect to BCM pin 21 on RPi
 SERVO_PIN = 18
-
 # pwm range is 1.8 to 11.9... 5 to 10? (1 ms to 2 ms)
 #Update: Website says 553 to 2520 us (2.765 to 12.6)
 # FOR HS-645MG
@@ -53,7 +52,7 @@ SERVO_PIN = 18
 #For TowerPro SG-5010
 #1 ms to 2 ms (5 to 10)
 #Note: 1 ms is -90 degrees to 2 ms is +90 degrees, so defining this from 0 to 180 will just change the origin
-PWM_MIN = 5.0
-PWM_MAX = 10.0
-DEGREE_MIN = 0
-DEGREE_MAX = 180
+#PWM_MIN = 5.0
+#PWM_MAX = 10.0
+#DEGREE_MIN = 0
+#DEGREE_MAX = 180
