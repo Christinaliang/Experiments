@@ -1,5 +1,5 @@
 /*
- * Author: Alex Schendel
+ * Author: Alex Schendel, Alex Reinemann
  * 29 March 2018
  * Arduino sketch to control servo motor.
  * Use ROS publisher/subscriber

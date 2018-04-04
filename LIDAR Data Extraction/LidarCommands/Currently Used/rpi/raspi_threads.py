@@ -61,7 +61,7 @@ def main():
     # wbSave(generateStampedFileName(), lt.processedDataArrays)
 
     # pickle the file to be used later
-    writeToPickle(generateStampedFileName('.dat'), lt.processedDataArrays)#saves data in a pickle (it defaults to form of binary, so it will not be human-readable by default)
+    #writeToPickle(generateStampedFileName('.dat'), lt.processedDataArrays)#saves data in a pickle (it defaults to form of binary, so it will not be human-readable by default)
     
     th1_stop.set()
     th2_stop.set()
@@ -85,6 +85,13 @@ def main():
     #plt.pcolormesh([z, lt.processedDataArrays[5]])#Figure out how this works! Also, why z and dist
     #plt.colorbar() #need a colorbar to show the intensity scale
     #plt.show()
+
+    X = np.asarray(data[0])
+    y = np.asarray(data[1])
+    z = np.asarray(data[2])
+    plt.pcolormesh([z, data[5]])  # Figure out how this works! Also, why z and dist
+    plt.colorbar()  # need a colorbar to show the intensity scale
+    plt.show()
     
     debugPrint("Done running threads", ROSTA)
     debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
