@@ -1,5 +1,5 @@
 
-__author__="Jaimiey Sears, updated by Alex Schendel and Alex Reinmann, 2018"
+__author__="Jaimiey Sears, updated by Alex Schendel and Alex Reinemann, 2018"
 __copyright__="October 26, 2015"
 __version__= 0.50
 
@@ -8,8 +8,8 @@ import threading
 import socket
 #from mpl_toolkits.mplot3d import Axes3D
 #from matplotlib import cm
-#import matplotlib.pyplot as plt
-#import numpy as np
+import matplotlib.pyplot as plt
+import numpy as np
 from utility import *
 from constants import *
 from pin_control import *
@@ -19,7 +19,7 @@ import pickle
 ##############################
 #  PROGRAM MAIN ENTRY POINT  #
 ##############################
-def main():
+def scan():
     lt = LidarThreads(debug=False)
 
     # make the first thread for reading LIDAR data
@@ -49,50 +49,18 @@ def main():
         th2.join(1.0)
 
     debugPrint("consumer stopped", ROSTA)
-    # print "\n\n\n"
-    # print "Final Data:"
-    # print "__________________________"
-    # print "=========================="
-    # print "X = {}".format(lt.processedDataArrays[0])
-    # print "Y = {}".format(lt.processedDataArrays[1])
-    # print "Z = {}".format(lt.processedDataArrays[2])
 
-    #save into an excel worksheet
-    # wbSave(generateStampedFileName(), lt.processedDataArrays)
-
-    # pickle the file to be used later
-    #writeToPickle(generateStampedFileName('.dat'), lt.processedDataArrays)#saves data in a pickle (it defaults to form of binary, so it will not be human-readable by default)
-    
     th1_stop.set()
     th2_stop.set()
-    
-    #output using matplotlib
-    #x, y = np.meshgrid(lt.processedDataArrays[0], lt.processedDataArrays[1])
-    #intensity = np.asarray(lt.processedDataArrays[5])
-    
-    #intensity = np.reshape(intensity, (4500, -1))
-    #debugPrint(str(intensity), ROSTA)
 
-    # Convert read x, y, and z data to numpy arrays
-    #X = np.asarray(lt.processedDataArrays[0])
-    #y = np.asarray(lt.processedDataArrays[1])
-    #z = np.asarray(lt.processedDataArrays[2])
-    
-    #surf = ax.plot_surface(X, y, z, cmap=cm.coolwarm, linewidth = 0, antialiasing = False)
-    #plt.show();
-	
-    #plug the data into pcolormesh.
-    #plt.pcolormesh([z, lt.processedDataArrays[5]])#Figure out how this works! Also, why z and dist
-    #plt.colorbar() #need a colorbar to show the intensity scale
-    #plt.show()
-
-    X = np.asarray(data[0])
+    x = np.asarray(data[0])
     y = np.asarray(data[1])
     z = np.asarray(data[2])
     plt.pcolormesh([z, data[5]])  # Figure out how this works! Also, why z and dist
     plt.colorbar()  # need a colorbar to show the intensity scale
     plt.show()
-    
+
+    return data[2], data[5]
     debugPrint("Done running threads", ROSTA)
     debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
     debugPrint("queue size at exit: {}".format(lt.dataQueue.qsize()), ROSTA)
@@ -292,4 +260,4 @@ class LidarThreads():
             return -1
 
 # run the program
-main()
+scan()
