@@ -13,6 +13,7 @@ import numpy as np
 from LidarCommands.utility import *
 from LidarCommands.constants import *
 import pickle
+import time
 #from time import sleep
 
 ##############################
@@ -55,9 +56,9 @@ def scan():
     x = np.asarray(lt.processedDataArrays[0])
     y = np.asarray(lt.processedDataArrays[1])
     z = np.asarray(lt.processedDataArrays[2])
-    plt.pcolormesh([z, lt.processedDataArrays[5]])  # Figure out how this works! Also, why z and dist
-    plt.colorbar()  # need a colorbar to show the intensity scale
-    plt.show()
+    #plt.pcolormesh([z, lt.processedDataArrays[5]])  # Figure out how this works! Also, why z and dist
+    #plt.colorbar()  # need a colorbar to show the intensity scale
+    #plt.show()
 
     return lt.processedDataArrays[2], lt.processedDataArrays[5]
     debugPrint("Done running threads", ROSTA)
@@ -129,7 +130,7 @@ class LidarThreads():
     def produce(self, dataQueue, stop_event):
         counter = 0
         angle = -1
-        for i in range (0,2):#number of slices to scan along y-axis (moving servo motor)
+        for i in range (0,1):#number of slices to scan along y-axis (moving servo motor)
 
                 # wait for the Queue to empty
                 while dataQueue.qsize() > 0:
@@ -142,9 +143,11 @@ class LidarThreads():
                 # print "\n>>> Rotate LiDAR to {} degrees".format(ang)
                 # inp = raw_input(">>> Press enter when ready to make a scan\n")
                 # if inp == "":
-
+                start = time.time()
                 # send scan request to the LIDAR
                 self.socket.sendall(self.command)
+                end = time.time()
+                debugPrint("Time difference: {}".format(end-start), ROSTA)
                 #astr ='MD'+'0180'+'0900'+'00'+'0'+'01'+'\n'
                 #self.socket.sendall(astr.encode())
                 #sleep(0.1)
