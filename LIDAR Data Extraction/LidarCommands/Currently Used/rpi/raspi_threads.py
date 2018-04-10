@@ -10,9 +10,8 @@ import socket
 #from matplotlib import cm
 import matplotlib.pyplot as plt
 import numpy as np
-from utility import *
-from constants import *
-from pin_control import *
+from LidarCommands.utility import *
+from LidarCommands.constants import *
 import pickle
 #from time import sleep
 
@@ -256,6 +255,3 @@ class LidarThreads():
             return 0
         else:
             return -1
-
-# run the program
-scan()
