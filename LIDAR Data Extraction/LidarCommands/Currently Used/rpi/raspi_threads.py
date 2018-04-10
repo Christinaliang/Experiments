@@ -53,14 +53,14 @@ def scan():
     th1_stop.set()
     th2_stop.set()
 
-    x = np.asarray(data[0])
-    y = np.asarray(data[1])
-    z = np.asarray(data[2])
-    plt.pcolormesh([z, data[5]])  # Figure out how this works! Also, why z and dist
+    x = np.asarray(lt.processedDataArrays[0])
+    y = np.asarray(lt.processedDataArrays[1])
+    z = np.asarray(lt.processedDataArrays[2])
+    plt.pcolormesh([z, lt.processedDataArrays[5]])  # Figure out how this works! Also, why z and dist
     plt.colorbar()  # need a colorbar to show the intensity scale
     plt.show()
 
-    return data[2], data[5]
+    return lt.processedDataArrays[2], lt.processedDataArrays[5]
     debugPrint("Done running threads", ROSTA)
     debugPrint("exiting with code {}".format(lt.exit()), ROSTA)
     debugPrint("queue size at exit: {}".format(lt.dataQueue.qsize()), ROSTA)
