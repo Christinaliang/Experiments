@@ -130,8 +130,6 @@ class LidarThreads():
     def produce(self, dataQueue, stop_event):
         counter = 0
         angle = -1
-        #publish request to Arduino to start rotation scan and direction to scan in.
-        debugPrint("Turning LIDAR...\n", SOCKET_DATA)
         for i in range (0,2):#number of slices to scan along y-axis (moving servo motor)
 
                 # wait for the Queue to empty

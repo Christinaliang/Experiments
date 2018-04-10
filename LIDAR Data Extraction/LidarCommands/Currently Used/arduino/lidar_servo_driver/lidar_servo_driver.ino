@@ -43,6 +43,7 @@ ros::Subscriber<command2ros::ScanCommand> sub("scan_msg", &messageCb);
 
 void setup() {
   servo.attach(servoPin);//attach servo to pin 9
+  Serial.begin(9600);
   nh.initNode();
   nh.subscribe(sub);
 }
