@@ -39,7 +39,7 @@ void messageCb(const command2ros::ScanCommand& scan_msg){
   }
 }
 
-ros::Subscriber<command2ros::ScanCommand> sub("scan_msg", &messageCb);
+ros::Subscriber<command2ros::ScanCommand> sub("Scan", &messageCb);
 
 void setup() {
   servo.attach(servoPin);//attach servo to pin 9
