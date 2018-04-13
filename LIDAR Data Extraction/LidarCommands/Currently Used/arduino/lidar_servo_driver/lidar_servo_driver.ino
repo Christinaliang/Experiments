@@ -21,7 +21,7 @@ const int FRONT = 0;//for rotating LIDAR, can do front scan or back scan
 const int BACK = 180;
 int id=0;
 bool isComplete = false;//if scan is complete, go back to initial state
-
+bool led = false;
 ros::NodeHandle nh;
 
 void messageCb(const command2ros::ScanCommand& scan_msg){
@@ -36,14 +36,23 @@ void messageCb(const command2ros::ScanCommand& scan_msg){
     else{
       //rotate to back
     }
+    if(led){
+      digitalWrite(LED_BUILTIN, HIGH);
+      led = !led;
+    }
+    else{
+      digitalWrite(LED_BUILTIN, LOW);
+      led = !led;
+    }
   }
 }
 
 ros::Subscriber<command2ros::ScanCommand> sub("Scan", &messageCb);
 
 void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
   servo.attach(servoPin);//attach servo to pin 9
-  Serial.begin(9600);
+  Serial.begin(57600);
   nh.initNode();
   nh.subscribe(sub);
 }
