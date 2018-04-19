@@ -103,8 +103,10 @@ class LidarThreads():
         #Number of scans to skip, length 1, name:Skips
         #Number of measurement scans, length 2, name:Scans
         #Documentation: https://en.manu-systems.com/HOK-UTM-30LX-EW_communication_protocol.pdf
-        strcommand = 'MD'+'0100'+'0700'+'00'+'0'+'99'+'\n'
-        self.command=bytes(strcommand, 'ascii')#convert to ascii encoded binary
+        strStartCommand = 'MD'+'0100'+'0700'+'00'+'0'+'99'+'\n'
+        strEndCommand = 'QT'+'\n'
+        self.StartCommand=bytes(strStartCommand, 'ascii')#convert to ascii encoded binary
+        self.EndCommand=bytes(strEndCommand, 'ascii')
         # establish communication with the sensor.
         # NOTE, special network settings are required to connect:
         # IP: 192.168.1.11, Subnet Mask: 255.255.255.0 (default) Default Gateway: 192.168.0.1
@@ -149,7 +151,7 @@ class LidarThreads():
                 # inp = raw_input(">>> Press enter when ready to make a scan\n")
                 # if inp == "":
                 # send scan request to the LIDAR
-                self.socket.sendall(self.command)
+                self.socket.sendall(self.StartCommand)
                 
                 sID=sID+1
                 #astr ='MD'+'0180'+'0900'+'00'+'0'+'01'+'\n'
@@ -180,6 +182,7 @@ class LidarThreads():
                     counter += 1.0
         end = time.time()
         debugPrint("Time difference: {}".format(end-start), ROSTA)
+        self.socket.sendall(self.EndCommand)
         self.scanID = sID
 
     ##
@@ -232,7 +235,7 @@ class LidarThreads():
 
                     dataSet = ""
                     continue
-                elif dataline == self.command:
+                elif dataline == self.StartCommand:
                     counter = 0
                 else:
                     counter += 1
